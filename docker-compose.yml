@@ -1,0 +1,45 @@
+# Stack completa: PostgreSQL + API (Spring Boot) + PWA servido pelo Nginx.
+# Uso: cp .env.example .env  (e defina JWT_SECRET)  →  docker compose up --build
+name: gasmtask
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: gasmtask
+      POSTGRES_USER: ${DB_USER:-gasmtask}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-gasmtask}
+    ports:
+      - "5432:5432" # exposto para rodar o backend fora do Docker em desenvolvimento
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/gasmtask
+      DB_USER: ${DB_USER:-gasmtask}
+      DB_PASSWORD: ${DB_PASSWORD:-gasmtask}
+      JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET no arquivo .env (veja .env.example)}
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+    ports:
+      - "8080:8080" # API e Swagger direto, sem passar pelo Nginx
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  db-data:

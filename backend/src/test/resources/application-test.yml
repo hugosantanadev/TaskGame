@@ -1,0 +1,8 @@
+app:
+  security:
+    jwt:
+      secret: test-secret-only-for-automated-tests-0123456789
+    refresh-token:
+      # Nos testes de integração, qualquer reuso de token rotacionado conta como roubo.
+      # A janela de tolerância é coberta pelo teste unitário do RefreshTokenService.
+      reuse-grace-period: 0s

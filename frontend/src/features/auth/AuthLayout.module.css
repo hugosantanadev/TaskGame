@@ -1,0 +1,65 @@
+.page {
+  display: grid;
+  align-content: start;
+  gap: var(--space-6);
+  max-width: 26rem;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 3rem) var(--space-4) calc(env(safe-area-inset-bottom, 0px) + var(--space-8));
+}
+
+.brand {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.tagline {
+  max-width: 21rem;
+  color: var(--pencil);
+}
+
+/* Folha de caderno com a linha de margem vermelha */
+.sheet {
+  position: relative;
+  padding: var(--space-6) var(--space-4) var(--space-6) 3rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+}
+
+.sheet::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2rem;
+  border-left: 2px solid var(--margin-line);
+}
+
+.title {
+  margin-bottom: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.note {
+  font-size: var(--text-s);
+  color: var(--pencil);
+}
+
+.noteError {
+  font-size: var(--text-s);
+  font-weight: 700;
+  color: var(--danger);
+}
+
+.footer {
+  text-align: center;
+  color: var(--pencil);
+}

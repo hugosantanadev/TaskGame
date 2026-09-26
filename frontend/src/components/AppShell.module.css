@@ -1,0 +1,6 @@
+.content {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + var(--space-6)) var(--space-4)
+    calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + var(--space-8));
+}

@@ -1,0 +1,71 @@
+# Exemplos de requisição da API do GasmTask.
+# Feito para o HTTP Client do IntelliJ: clique no ▶ ao lado de cada requisição, na ordem.
+# O cliente guarda o cookie gt_refresh sozinho, como o navegador.
+# No VS Code (extensão REST Client), troque {{accessToken}} por {{login.response.body.$.accessToken}}.
+
+@host = http://localhost:8080
+@email = hugo@example.com
+@password = senha-forte-123
+
+### Cadastro: cria a conta, devolve o access token e define o cookie de refresh
+# @name register
+POST {{host}}/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "displayName": "Hugo",
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "timeZone": "America/Recife"
+}
+
+> {% client.global.set("accessToken", response.body.accessToken); %}
+
+### Login (resposta igual à do cadastro, com status 200)
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("accessToken", response.body.accessToken); %}
+
+### Perfil do usuário autenticado
+GET {{host}}/api/v1/me
+Authorization: Bearer {{accessToken}}
+
+### Atualização parcial do perfil: só os campos enviados mudam
+PATCH {{host}}/api/v1/me
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "displayName": "Hugo M.",
+  "timeZone": "America/Sao_Paulo",
+  "rankingVisible": false
+}
+
+### Renovação: troca o cookie de refresh por um novo par de tokens (o cookie antigo deixa de valer)
+POST {{host}}/api/v1/auth/refresh
+
+> {% client.global.set("accessToken", response.body.accessToken); %}
+
+### Erro de validação: 400 com o campo de cada problema
+POST {{host}}/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "displayName": "A",
+  "email": "nao-e-email",
+  "password": "curta",
+  "timeZone": "Marte/Olympus"
+}
+
+### Sem token: 401 em Problem Details, com o code UNAUTHENTICATED
+GET {{host}}/api/v1/me
+
+### Logout: revoga a sessão deste dispositivo e apaga o cookie (204)
+POST {{host}}/api/v1/auth/logout

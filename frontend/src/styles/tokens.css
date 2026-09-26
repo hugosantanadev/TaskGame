@@ -1,0 +1,69 @@
+/*
+ * Tokens visuais do GasmTask: uma agenda de papel.
+ * Papel com grade de pontos, tinta azul de caneta para ações, grafite para texto secundário.
+ * Os marca-textos têm significado fixo: amarelo = moedas, verde = concluído (usados a partir da Fase 2).
+ */
+:root {
+  color-scheme: light;
+
+  --paper: #f7f9fa;
+  --paper-raised: #ffffff;
+  --dot: #cad8e4;
+  --rule: #d5e3ee;
+  --margin-line: #e6a1a8;
+  --ink: #1b2440;
+  --pencil: #5b6477;
+  --pen: #2440a8;
+  --pen-strong: #19307f;
+  --on-pen: #ffffff;
+  --highlight-yellow: #ffe45c;
+  --highlight-green: #a9ec9d;
+  --danger: #b3261e;
+  --danger-paper: #fdecea;
+
+  --font-text: 'Atkinson Hyperlegible Next Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Bricolage Grotesque Variable', 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif;
+
+  /* Escala tipográfica clássica: 12, 14, 16, 21, 24, 36 e 60 px */
+  --text-xs: 0.75rem;
+  --text-s: 0.875rem;
+  --text-m: 1rem;
+  --text-l: 1.3125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2.25rem;
+  --text-display: 3.75rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --line: 2.75rem; /* altura de uma linha da pauta */
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --nav-height: 4rem;
+  --content-width: 34rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --paper: #121926;
+    --paper-raised: #182132;
+    --dot: #253247;
+    --rule: #2a384f;
+    --margin-line: #8a4450;
+    --ink: #e6ebf4;
+    --pencil: #9ea8bb;
+    --pen: #a3b6ff;
+    --pen-strong: #c3d0ff;
+    --on-pen: #0f1733;
+    --highlight-yellow: #f0d64a;
+    --highlight-green: #79d488;
+    --danger: #ffb4ab;
+    --danger-paper: #3a1c1b;
+  }
+}

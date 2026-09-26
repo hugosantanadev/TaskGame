@@ -1,0 +1,29 @@
+.screen {
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.loading {
+  color: var(--pencil);
+}
+
+.offline {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  max-width: 22rem;
+}
+
+.title {
+  font-weight: 700;
+}
+
+.hint {
+  color: var(--pencil);
+  font-size: var(--text-s);
+}

@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: gasmtask
+  config:
+    # Permite rodar localmente reaproveitando o .env da raiz do repositório (o mesmo usado pelo Docker Compose)
+    import:
+      - optional:file:.env[.properties]
+      - optional:file:../.env[.properties]
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/gasmtask}
+    username: ${DB_USER:gasmtask}
+    password: ${DB_PASSWORD:gasmtask}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate          # o schema é das migrations; o Hibernate só confere
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+
+server:
+  forward-headers-strategy: native   # atrás do Nginx
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET}         # obrigatório, mínimo de 32 bytes
+      issuer: gasmtask
+      access-token-ttl: 15m
+    refresh-token:
+      ttl: 30d
+      reuse-grace-period: 10s     # tolera duas renovações quase simultâneas do mesmo token
+      cookie-name: gt_refresh
+      cookie-path: /api/v1/auth
+      cookie-secure: ${AUTH_COOKIE_SECURE:true}
+      cleanup-cron: "0 30 3 * * *"
