@@ -1,4 +1,4 @@
-# GasmTask
+# TaskGame
 
 App de produtividade gamificada e mobile-first: tarefas da vida real, como estudar, ler, treinar e dormir no horário, viram pontos, moedas e uma sequência de dias cumpridos, no estilo do Duolingo e do Habitica. Roda como PWA instalável no celular.
 
