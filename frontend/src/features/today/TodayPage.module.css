@@ -1,18 +1,39 @@
 .page {
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-4);
+  --sky: var(--sky-morning);
+  --on-sky: var(--on-sky-day);
 }
 
-.header {
+.page[data-period='AFTERNOON'] {
+  --sky: var(--sky-afternoon);
+}
+
+.page[data-period='SUNSET'] {
+  --sky: var(--sky-sunset);
+}
+
+.page[data-period='NIGHT'] {
+  --sky: var(--sky-night);
+  --on-sky: var(--on-sky-night);
+}
+
+/* O céu do dia: um bloco de cor chapada que acompanha o período, com o número do dia em destaque */
+.sky {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4) var(--space-4);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-l);
+  background: var(--sky);
+  color: var(--on-sky);
+  box-shadow: 4px 4px 0 var(--ink);
 }
 
 .greeting {
-  color: var(--pencil);
+  font-weight: 700;
 }
 
-/* Cabeçalho de agenda: o número do dia grande, dia da semana e mês ao lado */
 .date {
   display: flex;
   align-items: center;
@@ -23,7 +44,7 @@
 .day {
   font-family: var(--font-display);
   font-size: var(--text-display);
-  font-weight: 750;
+  font-weight: 800;
   line-height: 0.9;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
@@ -37,16 +58,136 @@
 .weekday {
   font-family: var(--font-display);
   font-size: var(--text-l);
-  font-weight: 650;
+  font-weight: 700;
   line-height: 1.2;
 }
 
 .month {
   font-size: var(--text-s);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 2rem;
+  padding: 0 var(--space-3);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.streakChip {
+  background: var(--streak);
+  color: var(--streak-ink);
+}
+
+.coinChip {
+  background: var(--coin);
+  color: var(--coin-ink);
+}
+
+.pointChip {
+  background: var(--paper-raised);
+  color: var(--pen);
+}
+
+.loading {
   color: var(--pencil);
 }
 
-/* Página da agenda: pauta azul e margem vermelha com os períodos do dia */
+.failure {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-4);
+  border-radius: var(--radius-m);
+  background: var(--danger-paper);
+  color: var(--danger);
+}
+
+.progress {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.progressTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-l);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.bar {
+  height: 0.875rem;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper-raised);
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: var(--done);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bar span {
+    transition: width 400ms ease-out;
+  }
+}
+
+.progressText {
+  color: var(--pencil);
+  font-size: var(--text-s);
+}
+
+.next {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 var(--space-3);
+  align-items: baseline;
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--pen);
+  border-radius: var(--radius-m);
+  background: color-mix(in srgb, var(--pen) 10%, var(--paper-raised));
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nextLabel {
+  grid-column: 1 / -1;
+  color: var(--pen);
+  font-size: var(--text-s);
+  font-weight: 700;
+}
+
+.nextTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-l);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.nextTime {
+  color: var(--pencil);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Página da agenda: pauta, margem rosa e os períodos do dia como seções */
 .agenda {
   position: relative;
   overflow: hidden;
@@ -62,28 +203,24 @@
   bottom: 0;
   left: 3.5rem;
   border-left: 2px solid var(--margin-line);
+  pointer-events: none;
 }
 
-.periods {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.period {
+.periodHead {
   display: grid;
   grid-template-columns: 3.5rem 1fr;
   align-items: center;
   min-height: var(--line);
   border-bottom: 1px solid var(--rule);
+  font-size: inherit;
+  font-weight: inherit;
 }
 
 .periodStart {
-  padding-left: var(--space-3);
-  font-family: var(--font-display);
-  font-size: var(--text-s);
+  padding-right: var(--space-2);
   color: var(--pencil);
-  font-variant-numeric: tabular-nums;
+  font-size: var(--text-xs);
+  text-align: right;
 }
 
 .periodName {
@@ -91,28 +228,33 @@
   align-items: center;
   gap: var(--space-2);
   padding-left: var(--space-4);
-  color: var(--pencil);
+  font-family: var(--font-display);
+  font-weight: 700;
 }
 
-.current .periodName {
+.period[data-current] .periodName {
   color: var(--pen);
-  font-weight: 700;
 }
 
 .now {
   padding: 0 var(--space-2);
   border-radius: var(--radius-s);
-  background: var(--pen);
-  color: var(--on-pen);
+  background: var(--sky);
+  color: var(--on-sky);
+  font-family: var(--font-text);
   font-size: var(--text-xs);
-  font-weight: 700;
-  line-height: 1.5;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .empty {
   display: grid;
   gap: var(--space-1);
-  padding: var(--space-4) var(--space-4) var(--space-6) calc(3.5rem + var(--space-4));
+  padding: var(--space-6) var(--space-4) var(--space-6) calc(3.5rem + var(--space-4));
 }
 
 .emptyTitle {
@@ -120,6 +262,17 @@
 }
 
 .emptyText {
-  font-size: var(--text-s);
   color: var(--pencil);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+@media (max-width: 22rem) {
+  .actions {
+    grid-template-columns: 1fr;
+  }
 }

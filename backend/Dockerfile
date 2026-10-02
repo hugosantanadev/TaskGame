@@ -18,6 +18,8 @@ RUN apt-get update \
  && useradd --system --uid 10001 --create-home app
 WORKDIR /app
 COPY --from=build /workspace/target/app.jar app.jar
+# Fotos de prova; no Compose, um volume nomeado é montado aqui e herda o dono do diretório
+RUN mkdir -p /app/data && chown app:app /app/data
 USER app
 EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=3s --start-period=40s --retries=10 \

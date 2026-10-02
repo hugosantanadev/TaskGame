@@ -3,7 +3,10 @@ import { useMemo, useState, type FormEvent } from 'react'
 import type { User } from '../../api/types'
 import { asApiError } from '../../api/errors'
 import { useAuth, useCurrentUser } from '../../auth/context'
+import { Link } from 'react-router'
+
 import { Button } from '../../components/Button'
+import { ShirtIcon, SofaIcon, TrophyIcon } from '../../components/gameIcons'
 import { Field, FormAlert, SelectField } from '../../components/Field'
 import { PageTitle } from '../../components/PageTitle'
 import { formatLongDate, safeTimeZone, timeZoneOptions } from '../../lib/datetime'
@@ -18,6 +21,21 @@ export function ProfilePage() {
     <div className={styles.page}>
       <PageTitle title="Perfil" />
       <h1 className={styles.title}>Perfil</h1>
+
+      <nav className={styles.collection} aria-label="Sua coleção">
+        <Link to="/perfil/conquistas" className={styles.collectionLink}>
+          <TrophyIcon />
+          Conquistas
+        </Link>
+        <Link to="/perfil/quarto" className={styles.collectionLink}>
+          <SofaIcon />
+          Quarto
+        </Link>
+        <Link to="/perfil/personagem" className={styles.collectionLink}>
+          <ShirtIcon />
+          Personagem
+        </Link>
+      </nav>
 
       <section className={styles.section} aria-labelledby="profile-data">
         <h2 id="profile-data" className={styles.sectionTitle}>

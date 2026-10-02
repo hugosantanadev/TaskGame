@@ -2,7 +2,7 @@
 
 App de produtividade gamificada e mobile-first: tarefas da vida real, como estudar, ler, treinar e dormir no horário, viram pontos, moedas e uma sequência de dias cumpridos, no estilo do Duolingo e do Habitica. Roda como PWA instalável no celular.
 
-**Status:** Fase 1 de 5 concluída. A base está pronta: autenticação completa, perfil, estrutura do app, PWA e Docker. Missões e recompensas chegam na Fase 2. Veja as [fases](#fases).
+**Status:** Fase 3 de 5 concluída. Além do loop principal (missões, plano da semana, tela Hoje, conclusão com foto, moedas, sequência e virada do dia), já dá para gastar moedas na loja, montar a coleção, colocar itens no quarto, vestir o personagem e desbloquear conquistas. Ranking, estatísticas e resumo semanal chegam na Fase 4. Veja as [fases](#fases).
 
 ## Stack
 
@@ -31,6 +31,8 @@ docker compose up --build
 
 O primeiro build baixa as dependências do Maven e do npm e leva alguns minutos.
 
+As fotos de prova ficam no volume `proofs`, montado em `/app/data` no backend, e sobrevivem a rebuilds. Fora do Docker, ficam na pasta `data/` do diretório onde o backend roda (ignorada pelo Git).
+
 ## Desenvolvimento
 
 Pré-requisitos: JDK 25, Node 22 (ou 20.19+) e Docker, usado pelo banco e pelos testes de integração.
@@ -52,7 +54,7 @@ O backend lê o `.env` da raiz, o mesmo do Compose, e as migrations do Flyway ro
 
 ```bash
 cd backend
-./mvnw test       # unitários: tokens, regras de domínio e validadores
+./mvnw test       # unitários: tokens, dia congelado, recompensas, streak, conquistas, estado do personagem e outras regras puras
 ./mvnw verify     # unitários + integração (sobe um PostgreSQL com Testcontainers; precisa do Docker)
 
 cd frontend
@@ -76,7 +78,7 @@ Com o app atrás de HTTPS, dá para usar `AUTH_COOKIE_SECURE=true` no `.env`.
 PWA (React) ──HTTPS──▶ Nginx ──/api──▶ Spring Boot (monólito modular) ──▶ PostgreSQL
 ```
 
-- **Backend:** monólito modular, com um pacote por funcionalidade (`auth`, `user` e, nas próximas fases, `task`, `planning`, `economy`, `streak`…) e as camadas controller, service, repository, domain, dto e mapper dentro de cada um. Regras ficam em entidades com comportamento e em políticas puras, testáveis sem Spring.
+- **Backend:** monólito modular, com um pacote por funcionalidade (`auth`, `user`, `task`, `planning`, `completion`, `economy`, `streak`, `today`, `store`, `room`, `character`, `achievement` e, na próxima fase, ranking, estatísticas e game-state) e as camadas controller, service, repository, domain, dto e mapper dentro de cada um. Regras ficam em entidades com comportamento e em políticas puras, testáveis sem Spring.
 - **Frontend:** telas organizadas por funcionalidade; hooks de dados (TanStack Query) separados dos componentes de apresentação, para a futura camada visual do jogo entrar por composição.
 - **Mesma origem:** o Nginx serve o app e encaminha `/api` ao backend (em desenvolvimento, o proxy do Vite faz isso). Sem CORS.
 - **Erros:** toda resposta de erro sai em Problem Details (RFC 9457) com um `code` estável, que o frontend traduz em mensagem.
@@ -176,7 +178,7 @@ gasmtask/
 ## Fases
 
 1. **Fundação (concluída).** Monorepo, Docker Compose, migrations, autenticação completa, perfil, tratamento de erros, Swagger, PWA, telas de entrar e cadastro, navegação inferior, tela Hoje inicial e perfil.
-2. **Loop principal.** Missões, plano semanal, dia congelado, tela Hoje, conclusão com recompensas e provas, carteira, streak e fechamento do dia.
-3. **Coleção.** Loja, inventário, quarto, personagem e conquistas.
+2. **Loop principal (concluída).** Missões com recorrência e sugestão de dias, plano da semana atual e da próxima, dia congelado (hoje aceita inclusões, não remoções), tela Hoje, conclusão com ou sem foto, recompensas calculadas no backend, carteira com extrato, sequência e fechamento automático do dia. Visual com marca-textos neon por categoria e o cabeçalho que muda de cor com o período do dia.
+3. **Coleção (concluída).** Loja com 18 itens (de 5 a 200 moedas), compra atômica com extrato, coleção, quarto e personagem com slots (como listas, sem ilustração por enquanto), estado do personagem derivado da tarefa em andamento e 15 conquistas avaliadas a cada conclusão e na virada do dia.
 4. **Visão.** Ranking, estatísticas, resumo semanal, estrutura de lembretes e game-state.
 5. **Entrega.** Testes restantes, usuário de demonstração e revisão final.

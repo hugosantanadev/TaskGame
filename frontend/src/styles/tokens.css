@@ -1,25 +1,53 @@
 /*
- * Tokens visuais do GasmTask: uma agenda de papel.
- * Papel com grade de pontos, tinta azul de caneta para ações, grafite para texto secundário.
- * Os marca-textos têm significado fixo: amarelo = moedas, verde = concluído (usados a partir da Fase 2).
+ * Tokens visuais do GasmTask: uma agenda de papel com estojo de marca-textos neon.
+ * Papel frio com grade de pontos, caneta violeta para ações, grafite para texto secundário.
+ * Cada cor viva tem um significado fixo e só aparece com ele:
+ *   recompensas (moedas, sequência, concluído), categorias (fita na borda da tarefa)
+ *   e o céu do dia (o cabeçalho de Hoje muda de cor com o período).
  */
 :root {
   color-scheme: light;
 
-  --paper: #f7f9fa;
+  --paper: #f6f7fb;
   --paper-raised: #ffffff;
-  --dot: #cad8e4;
-  --rule: #d5e3ee;
-  --margin-line: #e6a1a8;
-  --ink: #1b2440;
-  --pencil: #5b6477;
-  --pen: #2440a8;
-  --pen-strong: #19307f;
+  --dot: #cfd5e8;
+  --rule: #e0e4f1;
+  --margin-line: #ff9cbd;
+  --ink: #1b1838;
+  --pencil: #5d5a7a;
+  --pen: #6b2bd9;
+  --pen-strong: #5420b5;
   --on-pen: #ffffff;
-  --highlight-yellow: #ffe45c;
-  --highlight-green: #a9ec9d;
-  --danger: #b3261e;
-  --danger-paper: #fdecea;
+  --danger: #c4122f;
+  --danger-paper: #ffe9ec;
+
+  /* Recompensas */
+  --coin: #ffd60a;
+  --coin-ink: #3d3100;
+  --streak: #ff8a1f;
+  --streak-ink: #3f1d00;
+  --done: #3ddc84;
+  --done-ink: #053a1d;
+  --highlight-yellow: var(--coin);
+  --highlight-green: var(--done);
+
+  /* Categorias */
+  --cat-study: #2f6bff;
+  --cat-reading: #ff4fa3;
+  --cat-spirituality: #9b5cff;
+  --cat-exercise: #ff3b47;
+  --cat-sleep: #00b8d9;
+  --cat-project: #7cc800;
+  --cat-home: #ffb000;
+  --cat-other: #8a94a8;
+
+  /* Céu do dia */
+  --sky-morning: #ffc56b;
+  --sky-afternoon: #6fd0ff;
+  --sky-sunset: #ff8fab;
+  --sky-night: #5b4fe0;
+  --on-sky-day: #1b1838;
+  --on-sky-night: #ffffff;
 
   --font-text: 'Atkinson Hyperlegible Next Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Bricolage Grotesque Variable', 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif;
@@ -43,6 +71,7 @@
   --line: 2.75rem; /* altura de uma linha da pauta */
   --radius-s: 6px;
   --radius-m: 10px;
+  --radius-l: 1.25rem;
   --nav-height: 4rem;
   --content-width: 34rem;
 }
@@ -51,19 +80,27 @@
   :root {
     color-scheme: dark;
 
-    --paper: #121926;
-    --paper-raised: #182132;
-    --dot: #253247;
-    --rule: #2a384f;
-    --margin-line: #8a4450;
-    --ink: #e6ebf4;
-    --pencil: #9ea8bb;
-    --pen: #a3b6ff;
-    --pen-strong: #c3d0ff;
-    --on-pen: #0f1733;
-    --highlight-yellow: #f0d64a;
-    --highlight-green: #79d488;
-    --danger: #ffb4ab;
-    --danger-paper: #3a1c1b;
+    --paper: #0f0d1f;
+    --paper-raised: #1a1631;
+    --dot: #2b2652;
+    --rule: #2f2a55;
+    --margin-line: #a8466c;
+    --ink: #efeaff;
+    --pencil: #aaa4cc;
+    --pen: #b79cff;
+    --pen-strong: #d3c4ff;
+    --on-pen: #1a1040;
+    --danger: #ff8a9a;
+    --danger-paper: #3b1420;
+
+    --coin: #f5cf1d;
+    --streak: #ff9a3d;
+    --done: #36c977;
+
+    --sky-morning: #9c5a14;
+    --sky-afternoon: #1f6f9f;
+    --sky-sunset: #a3385e;
+    --sky-night: #3b2fa8;
+    --on-sky-day: #ffffff;
   }
 }

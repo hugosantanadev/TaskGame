@@ -1,0 +1,19 @@
+.sticker {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--sticker);
+  color: var(--ink);
+  font-size: 1.5rem;
+  transform: rotate(-3deg);
+}
+
+.sticker[data-size='l'] {
+  width: 4.5rem;
+  height: 4.5rem;
+  font-size: 2.25rem;
+}

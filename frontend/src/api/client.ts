@@ -21,8 +21,11 @@ const listeners = new Set<SessionListener>()
 
 export type RequestOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+  /** Objeto vira JSON; FormData vai como multipart (o navegador define o boundary). */
   body?: unknown
   signal?: AbortSignal
+  /** 'blob' para arquivos, como a foto de prova. */
+  responseType?: 'json' | 'blob'
 }
 
 /** Avisa quando a sessão começa, é renovada (com o usuário atualizado) ou termina (null). */
@@ -94,7 +97,7 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
     if (!freshToken) throw unauthenticated()
     response = await send(path, options, freshToken)
   }
-  return parse<T>(response)
+  return parse<T>(response, options.responseType)
 }
 
 /** Requisição sem access token (rotas /auth). */
@@ -104,14 +107,15 @@ export async function publicRequest<T>(path: string, options: RequestOptions = {
 
 async function send(path: string, options: RequestOptions, token: string | null): Promise<Response> {
   const headers = new Headers({ Accept: 'application/json, application/problem+json' })
-  if (options.body !== undefined) headers.set('Content-Type', 'application/json')
+  const isForm = options.body instanceof FormData
+  if (options.body !== undefined && !isForm) headers.set('Content-Type', 'application/json')
   if (token) headers.set('Authorization', `Bearer ${token}`)
 
   try {
     return await fetch(`${BASE_URL}${path}`, {
       method: options.method ?? 'GET',
       headers,
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      body: options.body === undefined ? undefined : isForm ? (options.body as FormData) : JSON.stringify(options.body),
       credentials: 'same-origin',
       signal: options.signal,
     })
@@ -121,9 +125,10 @@ async function send(path: string, options: RequestOptions, token: string | null)
   }
 }
 
-async function parse<T>(response: Response): Promise<T> {
+async function parse<T>(response: Response, responseType: 'json' | 'blob' = 'json'): Promise<T> {
   if (!response.ok) throw await toApiError(response)
   if (response.status === 204) return undefined as T
+  if (responseType === 'blob') return (await response.blob()) as T
   return (await response.json()) as T
 }
 

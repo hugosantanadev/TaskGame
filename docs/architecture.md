@@ -69,7 +69,7 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
 
 **Tempo e calendário**
 - RN01 — A semana vai de segunda a domingo. "Hoje", "amanhã" e "semana" são calculados no fuso do usuário.
-- RN02 ⚑ — **Dia congelado**: hoje e o passado não mudam no plano. Criar, remover, mover ou mudar o tipo de ocorrências só vale a partir de amanhã. É a regra do enunciado para extras, estendida às obrigatórias. Sem ela, daria para apagar às 23h a academia não feita e salvar o streak.
+- RN02 ⚑ — **Dia congelado** (revisada na Fase 2): o passado nunca muda. Hoje aceita inclusões de obrigatórias, inclusive de uma missão recém-criada (opção "Incluir hoje"), mas não aceita remover, mover para outro dia nem trocar o horário. Tirar uma obrigatória de hoje é o que permitiria apagar às 23h a academia não feita e salvar o streak; incluir só deixa o dia mais difícil. Extras continuam só a partir de amanhã (RN11).
 - RN03 ⚑ — Exceção de onboarding: no dia do cadastro, o plano de hoje fica editável até a primeira conclusão. Assim o usuário já usa o app no primeiro dia, sem brecha para criar e concluir tarefas em série.
 - RN04 — TimeOfDay, sempre no fuso do usuário:
 
@@ -80,7 +80,7 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
   | SUNSET | 17:00–18:59 |
   | NIGHT | 19:00–04:59 |
 
-- RN05 — O estado do personagem é derivado, nunca gravado. Uma tarefa em andamento define a atividade: Estudo → STUDYING, Projeto → AT_COMPUTER, Leitura e Espiritualidade → READING, Sono → SLEEPING. Fora disso, o estado é IDLE.
+- RN05 — O estado do personagem é derivado, nunca gravado. Uma tarefa em andamento define a atividade: Estudo → STUDYING, Projeto → AT_COMPUTER, Leitura e Espiritualidade → READING, Sono → SLEEPING. Fora disso, o estado é IDLE. Em andamento é uma tarefa pendente de hoje cujo horário já começou e ainda não terminou; sem duração, vale uma janela de 30 minutos, e concluir a tarefa encerra a atividade.
 
 **Missões e plano**
 - RN06 ⚑ — Categorias fixas no MVP: Estudo, Leitura, Espiritualidade, Exercício, Sono, Projeto, Casa e Outros. Conquistas por categoria, ranking por categoria e o estado do personagem dependem de categorias conhecidas.
@@ -100,7 +100,7 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
 **Conclusão**
 - RN13 — Uma ocorrência só pode ser concluída pelo dono, uma única vez, no próprio dia (até 23:59 no fuso dele). No MVP, a conclusão não pode ser desfeita.
 - RN14 — Se a missão exige prova, a conclusão só é aceita com imagem.
-- RN15 ⚑ — "No horário" significa concluir entre (horário planejado − 30 min) e (horário planejado + duração estimada + 30 min). Sem horário planejado, não há bônus de pontualidade. O limite inferior impede que alguém marque tudo às 00:01 e leve o bônus.
+- RN15 ⚑ — "No horário" significa concluir entre (horário planejado − 30 min) e (horário planejado + duração estimada + 30 min). Sem horário planejado, não há bônus de pontualidade. O limite inferior impede que alguém marque tudo às 00:01 e leve o bônus. O bônus também exige que a tarefa tenha sido planejada antes do próprio dia; senão bastaria incluir uma tarefa "para agora" e concluí-la em seguida.
 - RN16 — Na virada do dia, as ocorrências pendentes viram perdidas. Nada do passado é apagado. Só ocorrências futuras e pendentes podem ser removidas, porque isso é editar o plano, não o histórico.
 
 **Recompensas**
@@ -124,12 +124,12 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
   - **cumprido**: havia ao menos uma obrigatória e todas foram concluídas. Soma 1 ao streak.
   - **descanso**: não havia obrigatória planejada. Não soma nem quebra.
   - **falha**: alguma obrigatória foi perdida. O streak volta a zero.
-- RN23 — O streak sobe no instante em que a última obrigatória do dia é concluída. A quebra é aplicada no fechamento do dia. O maior streak é atualizado sempre que superado.
+- RN23 — O streak sobe no instante em que a última obrigatória do dia é concluída. A quebra é aplicada no fechamento do dia. O maior streak é atualizado sempre que superado. Por isso o banco guarda só os dias fechados e o dia de hoje é somado na leitura: se uma obrigatória for incluída em hoje depois de o dia estar cumprido, ele volta a ficar pendente sem desfazer nada no banco. O fechamento roda num job a cada 10 minutos e, como garantia, antes das telas que mostram o streak.
 - RN24 — Extras nunca afetam o streak.
 
 **Loja, inventário, quarto e personagem**
 - RN25 — Uma compra exige item disponível, saldo suficiente e item ainda não possuído (no MVP cada item é único, como numa coleção). Débito, lançamento no extrato e entrada no inventário acontecem na mesma transação, e o preço pago fica registrado.
-- RN26 — Só itens do inventário podem ser usados. Móveis e decoração vão para o quarto. Itens de personagem ocupam um slot (cabeça, roupa ou acessório), com um item por slot.
+- RN26 — Só itens do inventário podem ser usados. Móveis e decoração vão para o quarto. Itens de personagem ocupam um slot (cabeça, roupa ou acessório), com um item por slot. Colocar no quarto um item que já está lá não duplica, e vestir num slot ocupado troca o item.
 
 **Conquistas e ranking**
 - RN27 — Conquistas são avaliadas após cada conclusão e no fechamento do dia e da semana. O desbloqueio é único e permanente. Critérios do MVP:
@@ -138,6 +138,8 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
   - conclusões da mesma missão;
   - streak atingido;
   - semana completa (todas as obrigatórias da semana concluídas).
+
+  Os critérios são uma enum no padrão strategy (`AchievementCriterion`): um critério novo é uma constante e uma linha no seed. A avaliação roda depois de cada conclusão (o resultado traz as conquistas desbloqueadas) e no fechamento dos dias, que é quando streak e semanas completas mudam. O catálogo da loja vai de 5 a 200 moedas, para a primeira compra caber no primeiro dia.
 - RN28 ⚑ — "Ler 10 livros" não é mensurável: o sistema sabe que você leu, não que terminou um livro. Virou "50 sessões de leitura". "Livro concluído" pode virar um evento próprio depois. "Estudar Java 20 vezes" vira o critério genérico "concluir a mesma missão 20 vezes".
 - RN29 — O ranking é semanal e global, ordenado por pontos (padrão), tarefas concluídas, moedas ganhas ou streak atual. Mostra só o nome de exibição e o valor. O critério já é modelado como (período, métrica, escopo), então rankings mensais, por categoria, entre amigos e por grupos entram depois como novos valores.
 
@@ -269,10 +271,10 @@ gasmtask/
 │   │   ├── economy/           # RewardPolicy, RewardService, Wallet, CoinTransaction
 │   │   ├── streak/            # Streak, DailyResult, StreakService, DayClosingJob
 │   │   ├── achievement/       # Achievement, AchievementService, critérios (strategy)
-│   │   ├── store/             # StoreItem, StoreService
+│   │   ├── store/             # StoreItem, InventoryItem, StoreService, InventoryService
 │   │   ├── inventory/         # InventoryItem, InventoryService
 │   │   ├── room/              # Room, RoomItem
-│   │   ├── character/         # Character, CharacterEquipment, CharacterSlot, CharacterState
+│   │   ├── character/         # PlayerCharacter (não Character, por causa de java.lang.Character), CharacterEquipment, CharacterSlot, CharacterStateResolver
 │   │   ├── ranking/           # RankingService, RankingCriteria
 │   │   ├── stats/             # estatísticas e resumo semanal (somente leitura)
 │   │   ├── notification/      # ReminderPlanner, NotificationGateway
@@ -327,6 +329,8 @@ Todas as rotas ficam sob `/api/v1`, trocam JSON e exigem `Authorization: Bearer 
 | GET · POST | `/tasks` | Listar missões (ativas ou arquivadas); criar missão |
 | GET · PUT | `/tasks/{id}` | Detalhar; editar (vale a partir de amanhã) |
 | POST | `/tasks/{id}/archive` | Arquivar e remover ocorrências futuras |
+| GET | `/tasks/schedule-suggestion?timesPerWeek=3` | Dias sugeridos para "N vezes por semana" (RN07) |
+| GET | `/weeks/current` · `/weeks/next` | Atalhos para a semana atual e a próxima |
 | GET | `/weeks/{weekStart}` | Plano da semana por dia, indicando o que é editável |
 | POST | `/weeks/{weekStart}/occurrences` | Incluir ocorrência de uma missão num dia futuro |
 | POST | `/extras` | Criar extra para uma data futura |
@@ -334,7 +338,7 @@ Todas as rotas ficam sob `/api/v1`, trocam JSON e exigem `Authorization: Bearer 
 | GET | `/today` | Tela Hoje em uma chamada |
 | POST | `/occurrences/{id}/complete` | Concluir (multipart, `proof` opcional); devolve a recompensa detalhada |
 | POST | `/occurrences/{id}/proof` | Anexar prova depois, no mesmo dia |
-| GET | `/proofs/{id}/content` | Imagem da prova (só o dono) |
+| GET | `/occurrences/{id}/proof` | Imagem da prova (só o dono) |
 | GET | `/streak` | Streak atual, maior streak e status de hoje |
 | GET | `/achievements` | Conquistas com progresso e data de desbloqueio |
 | GET | `/wallet` | Saldo e totais ganhos e gastos |

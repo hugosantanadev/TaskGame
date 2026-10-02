@@ -3,3 +3,5 @@
 .vscode/
 *.iml
 .DS_Store
+/backend/data/
+/data/

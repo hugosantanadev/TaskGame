@@ -30,3 +30,169 @@ export type ProblemDetails = {
   code?: string
   errors?: FieldViolation[]
 }
+
+// ---------------------------------------------------------------- Fase 2: missões, plano e conclusão
+
+export type TaskCategory = 'STUDY' | 'READING' | 'SPIRITUALITY' | 'EXERCISE' | 'SLEEP' | 'PROJECT' | 'HOME' | 'OTHER'
+export type TaskKind = 'MANDATORY' | 'EXTRA'
+export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+export type OccurrenceStatus = 'PENDING' | 'COMPLETED' | 'MISSED'
+export type TodayStatus = 'FULFILLED' | 'PENDING' | 'REST'
+export type Period = 'MORNING' | 'AFTERNOON' | 'SUNSET' | 'NIGHT'
+
+/** Horários chegam como "HH:mm:ss"; `null` é "sem horário". */
+export type ScheduleEntry = { dayOfWeek: DayOfWeek; time: string | null }
+
+export type Mission = {
+  id: string
+  name: string
+  description: string | null
+  category: TaskCategory
+  kind: TaskKind
+  points: number
+  coins: number
+  durationMinutes: number | null
+  requiresProof: boolean
+  schedule: ScheduleEntry[]
+  archived: boolean
+  createdAt: string
+}
+
+export type MissionInput = {
+  name: string
+  description: string | null
+  category: TaskCategory
+  kind: TaskKind
+  points: number | null
+  durationMinutes: number | null
+  requiresProof: boolean
+  schedule: ScheduleEntry[]
+  startToday: boolean
+}
+
+export type Occurrence = {
+  id: string
+  taskId: string | null
+  date: string
+  plannedTime: string | null
+  title: string
+  category: TaskCategory
+  kind: TaskKind
+  points: number
+  coins: number
+  durationMinutes: number | null
+  requiresProof: boolean
+  status: OccurrenceStatus
+  completedAt: string | null
+  onTime: boolean | null
+  earnedPoints: number | null
+  earnedCoins: number | null
+  proofAttached: boolean
+  removable: boolean
+}
+
+export type DayPlan = {
+  date: string
+  dayOfWeek: DayOfWeek
+  today: boolean
+  past: boolean
+  canAddMandatory: boolean
+  canAddExtra: boolean
+  occurrences: Occurrence[]
+}
+
+export type Week = { weekStart: string; weekEnd: string; current: boolean; editable: boolean; days: DayPlan[] }
+
+export type Progress = {
+  mandatoryPlanned: number
+  mandatoryDone: number
+  extrasPlanned: number
+  extrasDone: number
+  points: number
+  coins: number
+  fulfilled: boolean
+}
+
+export type Streak = { current: number; longest: number; todayStatus: TodayStatus; lastFulfilledDate: string | null }
+
+export type Today = {
+  date: string
+  timeOfDay: Period
+  occurrences: Occurrence[]
+  nextOccurrenceId: string | null
+  progress: Progress
+  walletBalance: number
+  streak: Streak
+  onboarding: boolean
+}
+
+export type Reward = { points: number; baseCoins: number; onTimeBonus: number; proofBonus: number; totalCoins: number }
+
+export type CompletionResult = {
+  occurrence: Occurrence
+  onTime: boolean
+  reward: Reward
+  walletBalance: number
+  day: { status: TodayStatus; mandatoryDone: number; mandatoryPlanned: number }
+  streak: { current: number; longest: number; increasedNow: boolean }
+  unlockedAchievements: UnlockedAchievement[]
+}
+
+export type ProofAttached = { occurrence: Occurrence; proofBonus: number; walletBalance: number }
+
+export type ExtraInput = {
+  title: string
+  category: TaskCategory
+  points: number
+  date: string
+  time: string | null
+  durationMinutes: number | null
+  requiresProof: boolean
+}
+
+// ---------------------------------------------------------------- Fase 3: loja, coleção, quarto, personagem e conquistas
+
+export type StoreItemCategory = 'FURNITURE' | 'DECORATION' | 'CHARACTER'
+export type CharacterSlot = 'HEAD' | 'OUTFIT' | 'ACCESSORY'
+export type CharacterState = 'IDLE' | 'STUDYING' | 'AT_COMPUTER' | 'READING' | 'SLEEPING'
+
+export type StoreItem = {
+  id: string
+  code: string
+  name: string
+  description: string
+  category: StoreItemCategory
+  slot: CharacterSlot | null
+  price: number
+  assetKey: string | null
+  owned: boolean
+}
+
+/** `id` é o item no inventário: é ele que vai para o quarto ou para o personagem. */
+export type InventoryItem = {
+  id: string
+  item: StoreItem
+  pricePaid: number
+  acquiredAt: string
+  inRoom: boolean
+  equippedSlot: CharacterSlot | null
+}
+
+export type PurchaseResult = { inventoryItem: InventoryItem; walletBalance: number }
+export type Room = { items: InventoryItem[] }
+export type CharacterView = { state: CharacterState; slots: { slot: CharacterSlot; item: InventoryItem | null }[] }
+export type Wallet = { balance: number; totalEarned: number; totalSpent: number }
+export type UnlockedAchievement = { code: string; name: string; description: string }
+
+export type Achievement = {
+  code: string
+  name: string
+  description: string
+  criterion: string
+  category: TaskCategory | null
+  threshold: number
+  progress: number
+  unlocked: boolean
+  unlockedAt: string | null
+  assetKey: string | null
+}

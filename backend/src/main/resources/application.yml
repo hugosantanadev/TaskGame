@@ -51,3 +51,21 @@ app:
       cookie-path: /api/v1/auth
       cookie-secure: ${AUTH_COOKIE_SECURE:true}
       cleanup-cron: "0 30 3 * * *"
+  storage:
+    dir: ${STORAGE_DIR:./data}       # fotos de prova; no Docker, um volume
+  rewards:                          # RN17: valores fixos para o ranking não ser inflável
+    mandatory-points: 5
+    mandatory-coins: 3
+    extra-min-points: 1
+    extra-max-points: 2
+    extra-coins: 1
+    on-time-bonus: 1
+    proof-bonus: 1
+    on-time-tolerance: 30m          # RN15: de 30 min antes do horário até 30 min depois do fim previsto
+  planning:
+    max-mandatory-per-day: 10       # RN12
+    max-extras-per-day: 5
+  day-closing:
+    enabled: true                   # fecha os dias de todos os usuários (pendentes viram perdidas)
+    interval: PT10M
+    initial-delay: PT1M

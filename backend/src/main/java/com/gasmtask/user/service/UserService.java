@@ -2,7 +2,9 @@ package com.gasmtask.user.service;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -80,6 +82,20 @@ public class UserService {
             user.changeRankingVisibility(request.rankingVisible(), now);
         }
         return UserMapper.toResponse(user);
+    }
+
+    /** Fuso e data de cadastro: base de "hoje" e da exceção do primeiro dia (RN03). */
+    @Transactional(readOnly = true)
+    public UserTimeInfo timeInfo(UUID userId) {
+        User user = load(userId);
+        ZoneId zone = user.zoneId();
+        return new UserTimeInfo(zone, LocalDate.ofInstant(user.getCreatedAt(), zone));
+    }
+
+    /** Ids de todos os usuários, para os jobs que percorrem a base (fechamento do dia). */
+    @Transactional(readOnly = true)
+    public List<UUID> allIds() {
+        return repository.findAllIds();
     }
 
     private User load(UUID userId) {

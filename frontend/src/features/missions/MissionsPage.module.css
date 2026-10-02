@@ -1,0 +1,73 @@
+.page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.intro,
+.note {
+  color: var(--pencil);
+}
+
+.error {
+  padding: var(--space-3);
+  border-radius: var(--radius-s);
+  background: var(--danger-paper);
+  color: var(--danger);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--rule);
+  border-left: 8px solid var(--cat);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+a.card:hover {
+  border-color: var(--ink);
+  border-left-color: var(--cat);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-l);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.schedule {
+  font-weight: 700;
+}
+
+.meta {
+  color: var(--pencil);
+  font-size: var(--text-s);
+}

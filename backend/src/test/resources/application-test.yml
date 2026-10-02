@@ -6,3 +6,7 @@ app:
       # Nos testes de integração, qualquer reuso de token rotacionado conta como roubo.
       # A janela de tolerância é coberta pelo teste unitário do RefreshTokenService.
       reuse-grace-period: 0s
+  storage:
+    dir: ${java.io.tmpdir}/gasmtask-test-storage
+  day-closing:
+    enabled: false                  # nos testes, o fechamento roda sob demanda, com relógio controlado

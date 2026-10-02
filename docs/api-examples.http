@@ -69,3 +69,136 @@ GET {{host}}/api/v1/me
 
 ### Logout: revoga a sessão deste dispositivo e apaga o cookie (204)
 POST {{host}}/api/v1/auth/logout
+
+### ================================================================ Fase 2: missões, plano e conclusão
+
+### Sugestão de dias para "3 vezes por semana"
+GET {{host}}/api/v1/tasks/schedule-suggestion?timesPerWeek=3
+Authorization: Bearer {{accessToken}}
+
+### Criar missão (obrigatória, seg a sex às 08:00, já entrando hoje se hoje estiver na recorrência)
+POST {{host}}/api/v1/tasks
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Estudar Java",
+  "category": "STUDY",
+  "kind": "MANDATORY",
+  "durationMinutes": 60,
+  "requiresProof": false,
+  "schedule": [
+    {"dayOfWeek": "MONDAY", "time": "08:00"},
+    {"dayOfWeek": "TUESDAY", "time": "08:00"},
+    {"dayOfWeek": "WEDNESDAY", "time": "08:00"},
+    {"dayOfWeek": "THURSDAY", "time": "08:00"},
+    {"dayOfWeek": "FRIDAY", "time": "08:00"}
+  ],
+  "startToday": true
+}
+
+> {% client.global.set("taskId", response.body.id); %}
+
+### Missões ativas (archived=true para as arquivadas)
+GET {{host}}/api/v1/tasks
+Authorization: Bearer {{accessToken}}
+
+### Tela Hoje em uma chamada
+GET {{host}}/api/v1/today
+Authorization: Bearer {{accessToken}}
+
+> {% if (response.body.occurrences.length > 0) client.global.set("occurrenceId", response.body.occurrences[0].id); %}
+
+### Plano da semana atual (e /weeks/next para a próxima)
+GET {{host}}/api/v1/weeks/current
+Authorization: Bearer {{accessToken}}
+
+> {% client.global.set("weekStart", response.body.weekStart); client.global.set("lastDay", response.body.weekEnd); %}
+
+### Incluir a missão no último dia da semana
+POST {{host}}/api/v1/weeks/{{weekStart}}/occurrences
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{"taskId": "{{taskId}}", "date": "{{lastDay}}", "time": "10:00"}
+
+### Extra avulsa (só a partir de amanhã)
+POST {{host}}/api/v1/extras
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{"title": "Arrumar a mesa", "category": "HOME", "points": 2, "date": "{{lastDay}}"}
+
+### Concluir sem foto
+POST {{host}}/api/v1/occurrences/{{occurrenceId}}/complete
+Authorization: Bearer {{accessToken}}
+
+### Concluir com foto (multipart, campo "proof"; coloque uma foto.jpg ao lado deste arquivo)
+POST {{host}}/api/v1/occurrences/{{occurrenceId}}/complete
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=gasmtask
+
+--gasmtask
+Content-Disposition: form-data; name="proof"; filename="foto.jpg"
+Content-Type: image/jpeg
+
+< ./foto.jpg
+--gasmtask--
+
+### Ver a foto da prova
+GET {{host}}/api/v1/occurrences/{{occurrenceId}}/proof
+Authorization: Bearer {{accessToken}}
+
+### Carteira, extrato e streak
+GET {{host}}/api/v1/wallet
+Authorization: Bearer {{accessToken}}
+
+###
+GET {{host}}/api/v1/wallet/transactions?page=0&size=20
+Authorization: Bearer {{accessToken}}
+
+###
+GET {{host}}/api/v1/streak
+Authorization: Bearer {{accessToken}}
+
+### ================================================================ Fase 3: loja, coleção, quarto, personagem e conquistas
+
+### Catálogo (filtros: category=FURNITURE, DECORATION ou CHARACTER)
+GET {{host}}/api/v1/store/items
+Authorization: Bearer {{accessToken}}
+
+> {% client.global.set("mugId", response.body.filter(function (item) { return item.code === "mug_coffee"; })[0].id); %}
+
+### Comprar a caneca (5 moedas)
+POST {{host}}/api/v1/store/items/{{mugId}}/purchase
+Authorization: Bearer {{accessToken}}
+
+> {% client.global.set("inventoryItemId", response.body.inventoryItem.id); %}
+
+### Coleção, dizendo onde cada item está em uso
+GET {{host}}/api/v1/inventory
+Authorization: Bearer {{accessToken}}
+
+### Colocar no quarto (DELETE no mesmo endereço tira)
+PUT {{host}}/api/v1/room/items/{{inventoryItemId}}
+Authorization: Bearer {{accessToken}}
+
+### Quarto
+GET {{host}}/api/v1/room
+Authorization: Bearer {{accessToken}}
+
+### Personagem: estado derivado e slots
+GET {{host}}/api/v1/character
+Authorization: Bearer {{accessToken}}
+
+### Vestir um item de personagem no slot (HEAD, OUTFIT ou ACCESSORY); a caneca daqui volta 422 ITEM_NOT_FOR_SLOT
+PUT {{host}}/api/v1/character/slots/HEAD
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{"inventoryItemId": "{{inventoryItemId}}"}
+
+### Conquistas com progresso
+GET {{host}}/api/v1/achievements
+Authorization: Bearer {{accessToken}}
+

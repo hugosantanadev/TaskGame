@@ -10,6 +10,7 @@ import com.jayway.jsonpath.JsonPath;
 
 import jakarta.servlet.http.Cookie;
 
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -26,7 +27,7 @@ import org.springframework.test.web.servlet.MvcResult;
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(PostgresTestcontainer.class)
+@Import({PostgresTestcontainer.class, TestClockConfig.class})
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
 
@@ -40,6 +41,15 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected MockMvc mvc;
+
+    /** Relógio da aplicação nos testes: começa no horário real e só pode ser adiantado. */
+    @Autowired
+    protected TestClock clock;
+
+    @AfterEach
+    void resetClock() {
+        clock.reset();
+    }
 
     protected RegisteredUser registerUser() throws Exception {
         String email = "pessoa-" + UUID.randomUUID() + "@gasmtask.test";

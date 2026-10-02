@@ -49,3 +49,9 @@
 .block {
   width: 100%;
 }
+
+/* Links com cara de botão (ButtonLink) */
+.primary,
+.secondary {
+  text-decoration: none;
+}

@@ -1,0 +1,112 @@
+.row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  align-items: stretch;
+  min-height: var(--line);
+  border-bottom: 1px solid var(--rule);
+}
+
+.time {
+  padding: var(--space-3) var(--space-2) 0 0;
+  color: var(--pencil);
+  font-size: var(--text-s);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* A fita da categoria fica colada na margem, como um adesivo na página */
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 3.5rem;
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+  border: none;
+  border-left: 6px solid var(--cat);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card:focus-visible {
+  outline-offset: -3px;
+}
+
+.text {
+  display: grid;
+  flex: 1;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.title {
+  justify-self: start;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  color: var(--pencil);
+  font-size: var(--text-xs);
+}
+
+.category {
+  color: var(--ink);
+}
+
+.tag {
+  padding: 0 var(--space-1);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-s);
+}
+
+.nextTag {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-s);
+  background: var(--pen);
+  color: var(--on-pen);
+  font-weight: 700;
+}
+
+.mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  font-size: 1.25rem;
+}
+
+.row[data-next] .card {
+  background: color-mix(in srgb, var(--pen) 8%, transparent);
+}
+
+/* Concluída: o título ganha marca-texto verde e o círculo vira um visto */
+.row[data-status='COMPLETED'] .title {
+  background: linear-gradient(transparent 52%, color-mix(in srgb, var(--done) 70%, transparent) 52% 92%, transparent 92%);
+}
+
+.row[data-status='COMPLETED'] .mark {
+  border-color: var(--done);
+  background: var(--done);
+  color: var(--done-ink);
+}
+
+.row[data-status='MISSED'] .title {
+  color: var(--pencil);
+  text-decoration: line-through;
+}
+
+.row[data-status='MISSED'] .mark {
+  border-color: var(--pencil);
+  color: var(--pencil);
+}

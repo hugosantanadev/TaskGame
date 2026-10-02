@@ -1,0 +1,204 @@
+.page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.balance {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 2.25rem;
+  padding: 0 var(--space-3);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--coin);
+  color: var(--coin-ink);
+  font-size: var(--text-l);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  color: var(--pencil);
+}
+
+.error {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-s);
+  background: var(--danger-paper);
+  color: var(--danger);
+  font-size: var(--text-s);
+}
+
+/* Vitrine em duas colunas no celular, como uma cartela de adesivos */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.grid > li {
+  display: grid;
+}
+
+.card {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.card[data-owned] {
+  box-shadow: none;
+  border-style: dashed;
+}
+
+.card > span:first-child {
+  margin-bottom: var(--space-2);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-m);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.kind {
+  color: var(--pencil);
+  font-size: var(--text-xs);
+}
+
+.description {
+  color: var(--ink);
+  font-size: var(--text-s);
+  line-height: 1.4;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.price {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.price svg {
+  color: var(--coin-ink);
+  background: var(--coin);
+  border-radius: 50%;
+}
+
+.buy {
+  min-height: 2.5rem;
+  padding: 0 var(--space-3);
+}
+
+.owned,
+.missing {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-s);
+  font-weight: 700;
+}
+
+.owned {
+  color: var(--done-ink);
+  background: var(--done);
+  padding: 0.125rem var(--space-2);
+  border-radius: 999px;
+}
+
+.missing {
+  color: var(--pencil);
+}
+
+.confirm {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.confirmItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.empty {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-6) var(--space-4);
+  border: 2px dashed var(--rule);
+  border-radius: var(--radius-m);
+  text-align: center;
+}
+
+.emptyTitle {
+  font-weight: 700;
+}
+
+.collection {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ownedCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+  color: var(--ink);
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.ownedText {
+  display: grid;
+  flex: 1;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.links {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}

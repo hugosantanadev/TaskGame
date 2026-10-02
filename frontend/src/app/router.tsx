@@ -3,7 +3,15 @@ import { createBrowserRouter } from 'react-router'
 import { AppShell } from '../components/AppShell'
 import { LoginPage } from '../features/auth/LoginPage'
 import { RegisterPage } from '../features/auth/RegisterPage'
+import { AchievementsPage } from '../features/achievements/AchievementsPage'
+import { ExtraFormPage } from '../features/missions/ExtraFormPage'
+import { MissionFormPage } from '../features/missions/MissionFormPage'
+import { MissionsPage } from '../features/missions/MissionsPage'
 import { PlaceholderPage } from '../features/placeholder/PlaceholderPage'
+import { WeekPage } from '../features/planning/WeekPage'
+import { CharacterPage } from '../features/profile/CharacterPage'
+import { RoomPage } from '../features/profile/RoomPage'
+import { StorePage } from '../features/store/StorePage'
 import { ProfilePage } from '../features/profile/ProfilePage'
 import { TodayPage } from '../features/today/TodayPage'
 import { NotFoundPage, RouteError } from './ErrorPages'
@@ -27,6 +35,11 @@ export const router = createBrowserRouter([
             element: <AppShell />,
             children: [
               { path: '/', element: <TodayPage /> },
+              { path: '/semana', element: <WeekPage /> },
+              { path: '/missoes', element: <MissionsPage /> },
+              { path: '/missoes/nova', element: <MissionFormPage /> },
+              { path: '/missoes/:id', element: <MissionFormPage /> },
+              { path: '/extras/nova', element: <ExtraFormPage /> },
               {
                 path: '/estatisticas',
                 element: (
@@ -36,15 +49,7 @@ export const router = createBrowserRouter([
                   />
                 ),
               },
-              {
-                path: '/loja',
-                element: (
-                  <PlaceholderPage
-                    title="Loja"
-                    description="Aqui você vai trocar moedas por móveis, decoração e roupas para o seu quarto e personagem."
-                  />
-                ),
-              },
+              { path: '/loja', element: <StorePage /> },
               {
                 path: '/ranking',
                 element: (
@@ -55,6 +60,9 @@ export const router = createBrowserRouter([
                 ),
               },
               { path: '/perfil', element: <ProfilePage /> },
+              { path: '/perfil/conquistas', element: <AchievementsPage /> },
+              { path: '/perfil/quarto', element: <RoomPage /> },
+              { path: '/perfil/personagem', element: <CharacterPage /> },
             ],
           },
         ],

@@ -1,0 +1,157 @@
+.page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.fieldset {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.legend {
+  margin-bottom: var(--space-2);
+  padding: 0;
+  font-weight: 700;
+}
+
+.hint,
+.note {
+  color: var(--pencil);
+  font-size: var(--text-s);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Opções como etiquetas: o input real fica invisível por cima, o rótulo inteiro é clicável */
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0 var(--space-4);
+  border: 2px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper-raised);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chip input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.chip:has(input:checked) {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper-raised);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 3px solid var(--pen);
+  outline-offset: 2px;
+}
+
+.dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: var(--cat);
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-1);
+}
+
+.days .chip {
+  justify-content: center;
+  padding: 0;
+}
+
+.suggest {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.suggest select {
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  border: 2px solid var(--rule);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+  color: var(--ink);
+  font: inherit;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.check input {
+  flex: none;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin-top: 0.125rem;
+  accent-color: var(--pen);
+}
+
+.checkText {
+  display: grid;
+  gap: 0.125rem;
+}
+
+.checkLabel {
+  font-weight: 700;
+}
+
+.error {
+  padding: var(--space-3);
+  border-radius: var(--radius-s);
+  background: var(--danger-paper);
+  color: var(--danger);
+}
+
+.fieldError {
+  color: var(--danger);
+  font-size: var(--text-s);
+}
+
+.actions {
+  display: grid;
+  gap: var(--space-3);
+}

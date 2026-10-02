@@ -1,0 +1,120 @@
+.region {
+  position: fixed;
+  inset: var(--space-3) 0 auto;
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--space-3);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  width: 100%;
+  max-width: var(--content-width);
+  padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  pointer-events: auto;
+}
+
+.text {
+  display: grid;
+  flex: 1;
+  gap: var(--space-1);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-l);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.points,
+.coins,
+.streak {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.125rem var(--space-2);
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.points {
+  background: var(--pen);
+  color: var(--on-pen);
+}
+
+.coins {
+  background: var(--coin);
+  color: var(--coin-ink);
+}
+
+.detail {
+  color: var(--pencil);
+  font-size: var(--text-s);
+}
+
+.streak {
+  justify-self: start;
+  background: var(--streak);
+  color: var(--streak-ink);
+}
+
+.close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--pencil);
+  font-size: var(--text-l);
+  cursor: pointer;
+}
+
+/* O único movimento automático do app: o aviso entra como um carimbo */
+@media (prefers-reduced-motion: no-preference) {
+  .toast {
+    animation: stamp 260ms cubic-bezier(0.2, 1.4, 0.4, 1);
+  }
+}
+
+@keyframes stamp {
+  from {
+    transform: scale(0.9) rotate(-2deg);
+    opacity: 0;
+  }
+}
+
+/* Pode quebrar em duas linhas no celular: canto menos redondo que as pílulas de uma linha */
+.streak {
+  border-radius: var(--radius-m);
+}
+
+.achievement {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-1);
+  padding: 0.125rem var(--space-2);
+  border-radius: var(--radius-m);
+  background: var(--ink);
+  color: var(--coin);
+  font-weight: 700;
+}

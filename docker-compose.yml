@@ -27,6 +27,9 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-gasmtask}
       JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET no arquivo .env (veja .env.example)}
       AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+      STORAGE_DIR: /app/data
+    volumes:
+      - proofs:/app/data   # fotos de prova sobrevivem a rebuilds do container
     ports:
       - "8080:8080" # API e Swagger direto, sem passar pelo Nginx
     depends_on:
@@ -43,3 +46,4 @@ services:
 
 volumes:
   db-data:
+  proofs:

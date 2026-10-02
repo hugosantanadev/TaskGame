@@ -1,0 +1,154 @@
+.page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.back {
+  justify-self: start;
+  padding: 0;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.note,
+.rowMeta {
+  color: var(--pencil);
+}
+
+.rowMeta {
+  font-size: var(--text-s);
+}
+
+.error {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-s);
+  background: var(--danger-paper);
+  color: var(--danger);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+}
+
+.rowText {
+  display: grid;
+  flex: 1;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.rowTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-m);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* Conquista: troféu dourado quando desbloqueada, cadeado cinza com barra de progresso quando não */
+.badge {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 2px solid var(--pencil);
+  border-radius: 50%;
+  color: var(--pencil);
+  font-size: 1.375rem;
+}
+
+.row[data-unlocked] {
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.row[data-unlocked] .badge {
+  border-color: var(--ink);
+  background: var(--coin);
+  color: var(--coin-ink);
+}
+
+.bar {
+  height: 0.5rem;
+  margin-top: var(--space-1);
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--rule);
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: var(--pen);
+}
+
+.empty {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-6) var(--space-4);
+  border: 2px dashed var(--rule);
+  border-radius: var(--radius-m);
+  text-align: center;
+}
+
+.emptyTitle {
+  font-weight: 700;
+}
+
+.emptySlot {
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  border: 2px dashed var(--pencil);
+  border-radius: var(--radius-m);
+}
+
+.state {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-l);
+  background: color-mix(in srgb, var(--pen) 12%, var(--paper-raised));
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.stateIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: var(--pen);
+  color: var(--on-pen);
+  font-size: 2rem;
+}
+
+.stateTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.2;
+}

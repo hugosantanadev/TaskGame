@@ -1,0 +1,63 @@
+.sheet {
+  width: 100%;
+  max-width: var(--content-width);
+  max-height: 90dvh;
+  margin: auto auto 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-l) var(--radius-l) 0 0;
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: 0 -12px 40px rgb(27 24 56 / 0.22);
+}
+
+.sheet::backdrop {
+  background: rgb(15 13 31 / 0.5);
+}
+
+.body {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-4) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.title {
+  padding-top: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--pencil);
+  font-size: var(--text-xl);
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sheet[open] {
+    animation: rise 200ms ease-out;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(2rem);
+  }
+}

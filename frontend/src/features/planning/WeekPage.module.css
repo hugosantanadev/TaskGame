@@ -1,0 +1,144 @@
+.page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.range,
+.note {
+  color: var(--pencil);
+}
+
+.failure {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-4);
+  border-radius: var(--radius-m);
+  background: var(--danger-paper);
+  color: var(--danger);
+}
+
+/* Cada dia é uma página da agenda, com a mesma margem rosa da tela Hoje */
+.day {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+}
+
+.day::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3.5rem;
+  border-left: 2px solid var(--margin-line);
+  pointer-events: none;
+}
+
+.day[data-today] {
+  border: 2px solid var(--pen);
+}
+
+.dayHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 var(--space-2);
+  min-height: var(--line);
+  padding: var(--space-1) var(--space-2) var(--space-1) calc(3.5rem + var(--space-4));
+  border-bottom: 1px solid var(--rule);
+}
+
+.dayTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-m);
+  font-weight: 700;
+}
+
+.day[data-past] .dayTitle {
+  color: var(--pencil);
+}
+
+.dayDate {
+  color: var(--pencil);
+  font-family: var(--font-text);
+  font-size: var(--text-s);
+  font-weight: 400;
+}
+
+.todayTag {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-s);
+  background: var(--pen);
+  color: var(--on-pen);
+  font-family: var(--font-text);
+  font-size: var(--text-xs);
+}
+
+.dayActions {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list > li:last-child {
+  border-bottom: none;
+}
+
+.free {
+  padding: var(--space-3) var(--space-4) var(--space-3) calc(3.5rem + var(--space-4));
+  color: var(--pencil);
+  font-size: var(--text-s);
+}
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.error {
+  padding: var(--space-3);
+  border-radius: var(--radius-s);
+  background: var(--danger-paper);
+  color: var(--danger);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+@media (max-width: 22rem) {
+  .actions {
+    grid-template-columns: 1fr;
+  }
+}

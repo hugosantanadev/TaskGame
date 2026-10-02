@@ -26,9 +26,30 @@ const MESSAGES: Record<string, string> = {
   NETWORK_ERROR: 'Sem conexão com o servidor. Confira sua internet e tente de novo.',
   SERVER_UNAVAILABLE: 'O servidor está fora do ar agora. Tente de novo em instantes.',
   INTERNAL_ERROR: 'Erro inesperado no servidor. Tente de novo em instantes.',
+  PAYLOAD_TOO_LARGE: 'A foto passou de 5 MB. Tire outra ou envie uma menor.',
+  DAY_LOCKED: 'Hoje e os dias passados não aceitam essa mudança. Ela vale a partir de amanhã.',
+  DAILY_LIMIT_REACHED: 'Esse dia já está cheio: o limite é de 10 obrigatórias e 5 extras.',
+  WEEK_NOT_AVAILABLE: 'Só dá para planejar a semana atual e a próxima.',
+  OCCURRENCE_ALREADY_ON_DATE: 'Essa missão já está planejada nesse dia.',
+  OCCURRENCE_NOT_PENDING: 'Essa tarefa já foi concluída ou perdida.',
+  NOT_COMPLETABLE_TODAY: 'Uma tarefa só pode ser concluída no próprio dia.',
+  PROOF_REQUIRED: 'Essa missão pede uma foto como prova.',
+  PROOF_ALREADY_ATTACHED: 'Essa tarefa já tem foto.',
+  INVALID_IMAGE: 'Envie uma foto em JPEG, PNG ou WebP.',
+  TASK_ARCHIVED: 'Essa missão está arquivada.',
+  INVALID_SCHEDULE: 'Cada dia da semana pode aparecer só uma vez.',
+  INSUFFICIENT_COINS: 'Faltam moedas para essa compra. Conclua mais tarefas e volte aqui.',
+  ITEM_ALREADY_OWNED: 'Esse item já está na sua coleção.',
+  ITEM_NOT_AVAILABLE: 'Esse item saiu da loja.',
+  ITEM_NOT_FOR_ROOM: 'Esse item é do personagem, não do quarto.',
+  ITEM_NOT_FOR_SLOT: 'Esse item não serve nesse lugar do personagem.',
 }
 
+/** Códigos em que o texto do servidor é mais específico que o genérico (diz o dia ou o limite). */
+const DETAIL_FIRST = new Set(['DAY_LOCKED', 'DAILY_LIMIT_REACHED'])
+
 export function messageFor(code: string, detail?: string): string {
+  if (detail && DETAIL_FIRST.has(code)) return detail
   return MESSAGES[code] ?? detail ?? 'Não foi possível concluir a ação. Tente de novo.'
 }
 

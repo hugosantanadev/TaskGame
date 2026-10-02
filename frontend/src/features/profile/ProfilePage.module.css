@@ -117,3 +117,30 @@
 .logout {
   justify-self: start;
 }
+
+.collection {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.collectionLink {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-1);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+  color: var(--ink);
+  font-size: var(--text-s);
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.collectionLink svg {
+  color: var(--pen);
+  font-size: 1.75rem;
+}
