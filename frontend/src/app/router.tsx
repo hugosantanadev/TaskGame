@@ -7,8 +7,8 @@ import { AchievementsPage } from '../features/achievements/AchievementsPage'
 import { ExtraFormPage } from '../features/missions/ExtraFormPage'
 import { MissionFormPage } from '../features/missions/MissionFormPage'
 import { MissionsPage } from '../features/missions/MissionsPage'
-import { PlaceholderPage } from '../features/placeholder/PlaceholderPage'
 import { WeekPage } from '../features/planning/WeekPage'
+import { RankingPage } from '../features/ranking/RankingPage'
 import { CharacterPage } from '../features/profile/CharacterPage'
 import { RoomPage } from '../features/profile/RoomPage'
 import { StatsPage } from '../features/stats/StatsPage'
@@ -43,15 +43,7 @@ export const router = createBrowserRouter([
               { path: '/extras/nova', element: <ExtraFormPage /> },
               { path: '/estatisticas', element: <StatsPage /> },
               { path: '/loja', element: <StorePage /> },
-              {
-                path: '/ranking',
-                element: (
-                  <PlaceholderPage
-                    title="Ranking"
-                    description="Aqui vai aparecer o ranking da semana por pontos, missões concluídas, moedas ganhas e sequência."
-                  />
-                ),
-              },
+              { path: '/ranking', element: <RankingPage /> },
               { path: '/perfil', element: <ProfilePage /> },
               { path: '/perfil/conquistas', element: <AchievementsPage /> },
               { path: '/perfil/quarto', element: <RoomPage /> },

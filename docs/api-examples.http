@@ -214,3 +214,7 @@ Authorization: Bearer {{accessToken}}
 ### Resumo da semana (parcial enquanto ela corre, final depois do domingo); a data é a segunda-feira
 GET {{host}}/api/v1/weeks/{{weekStart}}/summary
 Authorization: Bearer {{accessToken}}
+
+### Ranking da semana (metric: POINTS, COMPLETED_TASKS, COINS_EARNED ou STREAK), paginado, com a sua posição em "me"
+GET {{host}}/api/v1/rankings?period=WEEK&metric=POINTS&page=0&size=20
+Authorization: Bearer {{accessToken}}

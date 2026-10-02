@@ -245,3 +245,20 @@ export type WeekSummary = {
   days: { date: string; dayOfWeek: DayOfWeek; status: SummaryDayStatus; totals: Totals }[]
   achievements: UnlockedAchievement[]
 }
+
+/** Página da API (PageResponse do backend). */
+export type Page<T> = { content: T[]; page: number; size: number; totalElements: number; totalPages: number }
+
+export type RankingMetric = 'POINTS' | 'COMPLETED_TASKS' | 'COINS_EARNED' | 'STREAK'
+export type RankingEntry = { position: number; displayName: string; value: number; you: boolean }
+
+/** `me.position` é onde a pessoa está (ou estaria, se oculta) entre os visíveis; null sem pontuação. */
+export type Ranking = {
+  period: 'WEEK'
+  metric: RankingMetric
+  scope: 'GLOBAL'
+  from: string
+  to: string
+  entries: Page<RankingEntry>
+  me: { position: number | null; value: number; visible: boolean }
+}

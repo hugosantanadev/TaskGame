@@ -25,6 +25,8 @@ export function useUpdateProfile() {
     onSuccess: (user) => {
       queryClient.setQueryData(profileKey, user)
       updateUser(user)
+      // Aparecer ou não no ranking muda a lista
+      void queryClient.invalidateQueries({ queryKey: ['ranking'] })
     },
   })
 }
