@@ -141,7 +141,7 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
 
   Os critérios são uma enum no padrão strategy (`AchievementCriterion`): um critério novo é uma constante e uma linha no seed. A avaliação roda depois de cada conclusão (o resultado traz as conquistas desbloqueadas) e no fechamento dos dias, que é quando streak e semanas completas mudam. O catálogo da loja vai de 5 a 200 moedas, para a primeira compra caber no primeiro dia.
 - RN28 ⚑ — "Ler 10 livros" não é mensurável: o sistema sabe que você leu, não que terminou um livro. Virou "50 sessões de leitura". "Livro concluído" pode virar um evento próprio depois. "Estudar Java 20 vezes" vira o critério genérico "concluir a mesma missão 20 vezes".
-- RN29 — O ranking é semanal e global, ordenado por pontos (padrão), tarefas concluídas, moedas ganhas ou streak atual. Mostra só o nome de exibição e o valor. O critério já é modelado como (período, métrica, escopo), então rankings mensais, por categoria, entre amigos e por grupos entram depois como novos valores.
+- RN29 — O ranking é semanal e global, ordenado por pontos (padrão), tarefas concluídas, moedas ganhas ou streak atual. Mostra só o nome de exibição e o valor. ⚑ A semana é a de quem consulta (segunda a domingo no fuso dela), e cada pessoa entra com o que concluiu nessas datas de calendário. Empates dividem a posição (1, 1, 3). Só aparece quem escolheu aparecer e pontuou; quem se escondeu ainda vê onde estaria. O critério já é modelado como (período, métrica, escopo), então rankings mensais, por categoria, entre amigos e por grupos entram depois como novos valores.
 
 **Acesso**
 - RN30 — Toda consulta é filtrada pelo usuário autenticado. Pedir um recurso de outro usuário retorna 404, sem revelar que ele existe.
@@ -275,10 +275,10 @@ gasmtask/
 │   │   ├── inventory/         # InventoryItem, InventoryService
 │   │   ├── room/              # Room, RoomItem
 │   │   ├── character/         # PlayerCharacter (não Character, por causa de java.lang.Character), CharacterEquipment, CharacterSlot, CharacterStateResolver
-│   │   ├── ranking/           # RankingService, RankingCriteria
-│   │   ├── stats/             # estatísticas e resumo semanal (somente leitura)
-│   │   ├── notification/      # ReminderPlanner, NotificationGateway
-│   │   └── gamestate/         # GameStateService, TimeOfDay, CharacterStateResolver
+│   │   ├── ranking/           # RankingService, RankingRepository (SQL), métrica, período e escopo
+│   │   ├── stats/             # estatísticas e resumo semanal (somente leitura): PeriodTotals, StatsGranularity
+│   │   ├── notification/      # ReminderPlanner, ReminderService (o NotificationGateway entra com o Web Push)
+│   │   └── gamestate/         # GameStateService: junta o que os outros módulos já calculam
 │   ├── src/main/resources/
 │   │   ├── application.yml
 │   │   └── db/migration/      # V1__auth.sql, V2__tasks_planning.sql, … + seeds
@@ -377,13 +377,27 @@ O segundo é o estado que a futura camada de jogo transforma em imagem, via `GET
 {
   "timeOfDay": "NIGHT",
   "coins": 320,
-  "streak": { "current": 12, "longest": 15 },
+  "streak": { "current": 12, "longest": 15, "todayStatus": "PENDING" },
   "totals": { "completedTasks": 154, "achievements": 6 },
-  "inventory": ["plant_small", "bookshelf_wood", "headphones_basic"],
-  "room": { "items": ["plant_small", "bookshelf_wood"] },
-  "character": { "state": "STUDYING", "equipped": { "HEAD": "headphones_basic" } }
+  "inventory": [
+    { "code": "plant_small", "assetKey": "decoration.plant_small.v1" },
+    { "code": "bookshelf_wood", "assetKey": "furniture.bookshelf_wood.v1" },
+    { "code": "headphones_basic", "assetKey": "character.headphones_basic.v1" }
+  ],
+  "room": {
+    "items": [
+      { "code": "plant_small", "assetKey": "decoration.plant_small.v1" },
+      { "code": "bookshelf_wood", "assetKey": "furniture.bookshelf_wood.v1" }
+    ]
+  },
+  "character": {
+    "state": "STUDYING",
+    "equipped": { "HEAD": { "code": "headphones_basic", "assetKey": "character.headphones_basic.v1" } }
+  }
 }
 ```
+
+Cada item vem pelo código estável e pela `assetKey`: a camada visual resolve a chave em sprite, e o domínio continua sem saber o que é um sprite.
 
 ## 8. Fluxo principal do usuário
 
@@ -420,7 +434,7 @@ Esse fluxo funcionando de ponta a ponta é o critério de pronto do MVP.
 | Assets futuros | `assetKey` lógico e opcional (ex.: `furniture.bookshelf.v1`) em itens e conquistas, no lugar de assetUrl/spriteId | A camada visual resolve chave → sprite. URL e engine gráfica são detalhes que mudam. |
 | Frontend | React Router, TanStack Query, CSS Modules com variáveis CSS; sem kit de UI e sem biblioteca de gráficos | O TanStack Query cuida de cache e invalidação (concluir uma tarefa atualiza Hoje, carteira e streak). Variáveis CSS deixam o futuro tema dia/noite barato. Os gráficos do MVP são barras simples. |
 | PWA | vite-plugin-pwa com `injectManifest`; cache só dos arquivos do app, API sempre pela rede | O service worker próprio já fica pronto para push, e cachear resposta autenticada arrisca mostrar dado velho. Instalar no celular exige HTTPS, então o README terá o passo a passo com túnel (cloudflared ou ngrok). |
-| Notificações | No MVP: preferências, cálculo dos lembretes (`ReminderPlanner`) e interface de envio (`NotificationGateway`), com lembrete local enquanto o app está aberto. Web Push (VAPID) fica para a fase seguinte | Push exige chaves VAPID, criptografia do payload e inscrições salvas, e no iPhone só funciona com o app instalado (iOS 16.4+). É a complexidade que o enunciado autoriza adiar. |
+| Notificações | No MVP: preferências, cálculo dos lembretes (`ReminderPlanner`, exposto em `/reminders/upcoming`) e lembrete local enquanto o app está aberto (aviso na tela ou notificação do sistema em segundo plano). Web Push (VAPID) fica para a fase seguinte, junto com a interface de envio (`NotificationGateway`) e o job que a usa: sem o push, ela não teria quem a chamasse | Push exige chaves VAPID, criptografia do payload e inscrições salvas, e no iPhone só funciona com o app instalado (iOS 16.4+). É a complexidade que o enunciado autoriza adiar. |
 | Infra | Sem Redis, Kafka ou filas; jobs com `@Scheduled` | Um processo e um banco dão conta. Como os jobs são idempotentes, escalar horizontalmente depois só exige um lock distribuído (ex.: ShedLock). |
 
 ## Plano de implementação
@@ -428,7 +442,7 @@ Esse fluxo funcionando de ponta a ponta é o critério de pronto do MVP.
 O MVP é construído em cinco fases. Cada uma termina executável e testada:
 
 1. **Fundação** (concluída). Monorepo, Docker Compose com PostgreSQL, esqueleto do Spring Boot, migrations, autenticação completa (cadastro, login, refresh rotativo, logout), perfil, tratamento global de erros e Swagger. No frontend: Vite + PWA, rotas, login, cadastro, barra inferior, tela Hoje inicial e perfil.
-2. **Loop principal.** Missões, plano semanal, dia congelado, tela Hoje, conclusão com recompensas e provas, carteira, streak e fechamento do dia.
-3. **Coleção.** Loja, inventário, quarto, personagem e conquistas.
-4. **Visão.** Ranking, estatísticas, resumo semanal, estrutura de lembretes e game-state.
+2. **Loop principal** (concluída). Missões, plano semanal, dia congelado, tela Hoje, conclusão com recompensas e provas, carteira, streak e fechamento do dia.
+3. **Coleção** (concluída). Loja, inventário, quarto, personagem e conquistas.
+4. **Visão** (concluída). Ranking, estatísticas, resumo semanal, estrutura de lembretes e game-state.
 5. **Entrega.** Testes restantes, usuário de demonstração no perfil `dev` e revisão final da documentação.

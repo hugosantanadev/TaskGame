@@ -327,3 +327,18 @@ Restrições: `CHECK (criterion IN ('TOTAL_COMPLETIONS', 'CATEGORY_COMPLETIONS',
 
 Restrições: `UNIQUE (user_id, achievement_id)`.
 
+## Fase 4 (migrations V5 e V6)
+
+Estatísticas, resumo semanal e game-state só leem tabelas que já existiam. Duas mudanças pequenas:
+
+- **V5:** índice parcial `ix_occurrences_completed_date` em `task_occurrences (occurrence_date, user_id) WHERE status = 'COMPLETED'`, para o ranking semanal, que soma as concluídas de todos os usuários num intervalo de datas.
+- **V6:** preferências de lembrete embutidas em `users` (`@Embeddable ReminderSettings`):
+
+| Coluna | Tipo | Regras |
+|---|---|---|
+| reminder_tasks_enabled | BOOLEAN | obrigatória, padrão `true` |
+| reminder_lead_minutes | INTEGER | obrigatória, padrão 10 |
+| bedtime | TIME | opcional; nula desliga o lembrete de dormir |
+| wake_time | TIME | opcional; nula desliga o lembrete de acordar |
+
+Restrições: `CHECK (reminder_lead_minutes BETWEEN 0 AND 120)`. Os horários são do fuso do usuário.
