@@ -21,13 +21,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 /**
- * Base dos testes de integração: aplicação completa + PostgreSQL real (Testcontainers) + MockMvc
+ * Base dos testes de integração: aplicação completa + PostgreSQL real (embutido, sem Docker) + MockMvc
  * passando pela cadeia de filtros do Spring Security. O contexto é reaproveitado entre as classes.
  * Cada teste cria o próprio usuário com e-mail único, então não há limpeza de banco entre testes.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import({PostgresTestcontainer.class, TestClockConfig.class})
+@Import({EmbeddedPostgresConfig.class, TestClockConfig.class})
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
 

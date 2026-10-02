@@ -10,7 +10,7 @@ App de produtividade gamificada e mobile-first: tarefas da vida real, como estud
 |---|---|
 | Backend | Java 25, Spring Boot 4.1 (Web MVC, Data JPA, Security com OAuth2 Resource Server, Validation, Actuator), Flyway, PostgreSQL 17, springdoc-openapi, Maven |
 | Frontend | React 19, TypeScript, Vite 8, React Router 8, TanStack Query 5, CSS Modules, vite-plugin-pwa (Workbox) |
-| Testes | JUnit, AssertJ, Mockito, MockMvc e Testcontainers com PostgreSQL real |
+| Testes | JUnit, AssertJ, Mockito, MockMvc e PostgreSQL real embutido (sem Docker) |
 | Infra | Docker Compose e Nginx |
 
 ## Rodar com Docker
@@ -35,10 +35,24 @@ As fotos de prova ficam no volume `proofs`, montado em `/app/data` no backend, e
 
 ## Desenvolvimento
 
-Pré-requisitos: JDK 25, Node 22 (ou 20.19+) e Docker, usado pelo banco e pelos testes de integração.
+Pré-requisitos: JDK 25, Node 22 (ou 20.19+) e um PostgreSQL 17 ou mais novo. O Docker é opcional.
+
+O banco pode vir de dois lugares:
+
+- **PostgreSQL instalado na máquina** (sem Docker). Crie o usuário e o banco uma vez, com o `psql` do usuário `postgres`:
+
+  ```sql
+  CREATE USER gasmtask WITH PASSWORD 'gasmtask';
+  CREATE DATABASE gasmtask OWNER gasmtask;
+  ```
+
+  Se o servidor não estiver em `localhost:5432`, defina `DB_URL` no `.env` (por exemplo, `DB_URL=jdbc:postgresql://localhost:5433/gasmtask`).
+- **Docker:** `docker compose up -d db` sobe só o PostgreSQL.
+
+Com o banco no ar:
 
 ```bash
-docker compose up -d db        # só o PostgreSQL
+cp .env.example .env           # e preencha JWT_SECRET (no Windows: copy .env.example .env)
 
 cd backend
 ./mvnw spring-boot:run         # API em http://localhost:8080 (no Windows: mvnw.cmd spring-boot:run)
@@ -50,12 +64,14 @@ npm run dev                    # app em http://localhost:5173, com proxy de /api
 
 O backend lê o `.env` da raiz, o mesmo do Compose, e as migrations do Flyway rodam sozinhas ao subir.
 
+Se a porta 8080 estiver ocupada (por um Apache, por exemplo), defina `SERVER_PORT` no `.env`. O backend sobe nessa porta e o proxy do Vite aponta para ela.
+
 ### Testes
 
 ```bash
 cd backend
 ./mvnw test       # unitários: tokens, dia congelado, recompensas, streak, conquistas, estado do personagem e outras regras puras
-./mvnw verify     # unitários + integração (sobe um PostgreSQL com Testcontainers; precisa do Docker)
+./mvnw verify     # unitários + integração (sobe um PostgreSQL embutido; não precisa de Docker nem de banco instalado)
 
 cd frontend
 npm run lint

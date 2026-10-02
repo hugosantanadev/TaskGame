@@ -19,5 +19,10 @@ public record CreateExtraRequest(
         @NotNull LocalDate date,
         LocalTime time,
         @Min(1) @Max(720) Integer durationMinutes,
-        boolean requiresProof) {
+        Boolean requiresProof) {
+
+    /** Campo opcional no JSON: ausente vale {@code false}. */
+    public CreateExtraRequest {
+        requiresProof = Boolean.TRUE.equals(requiresProof);
+    }
 }

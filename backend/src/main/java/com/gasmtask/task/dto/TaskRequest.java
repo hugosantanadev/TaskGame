@@ -26,7 +26,13 @@ public record TaskRequest(
         @NotNull TaskKind kind,
         @Min(1) @Max(2) Integer points,
         @Min(1) @Max(720) Integer durationMinutes,
-        boolean requiresProof,
+        Boolean requiresProof,
         @NotEmpty @Size(max = 7) List<@Valid @NotNull ScheduleEntry> schedule,
-        boolean startToday) {
+        Boolean startToday) {
+
+    /** Os booleanos são opcionais no JSON: ausentes valem {@code false}. */
+    public TaskRequest {
+        requiresProof = Boolean.TRUE.equals(requiresProof);
+        startToday = Boolean.TRUE.equals(startToday);
+    }
 }
