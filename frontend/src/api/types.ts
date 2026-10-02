@@ -275,3 +275,14 @@ export type GameState = {
   room: { items: GameItem[] }
   character: { state: CharacterState; equipped: Partial<Record<CharacterSlot, GameItem>> }
 }
+
+/** Horários "HH:mm:ss" no fuso do usuário; null desliga aquele lembrete. */
+export type ReminderSettings = { tasksEnabled: boolean; leadMinutes: number; bedtime: string | null; wakeTime: string | null }
+export type ReminderKind = 'TASK' | 'BEDTIME' | 'WAKE_UP'
+export type UpcomingReminder = {
+  kind: ReminderKind
+  notifyAt: string
+  eventAt: string
+  occurrenceId: string | null
+  title: string | null
+}

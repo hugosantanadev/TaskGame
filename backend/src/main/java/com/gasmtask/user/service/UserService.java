@@ -10,8 +10,11 @@ import java.util.UUID;
 
 import com.gasmtask.shared.exception.BusinessException;
 import com.gasmtask.shared.exception.ErrorCode;
+import com.gasmtask.user.domain.ReminderSettings;
 import com.gasmtask.user.domain.User;
 import com.gasmtask.user.domain.UserRegisteredEvent;
+import com.gasmtask.user.dto.ReminderSettingsRequest;
+import com.gasmtask.user.dto.ReminderSettingsResponse;
 import com.gasmtask.user.dto.UpdateProfileRequest;
 import com.gasmtask.user.dto.UserResponse;
 import com.gasmtask.user.mapper.UserMapper;
@@ -82,6 +85,19 @@ public class UserService {
             user.changeRankingVisibility(request.rankingVisible(), now);
         }
         return UserMapper.toResponse(user);
+    }
+
+    @Transactional(readOnly = true)
+    public ReminderSettingsResponse reminderSettings(UUID userId) {
+        return ReminderSettingsResponse.of(load(userId).getReminderSettings());
+    }
+
+    @Transactional
+    public ReminderSettingsResponse updateReminderSettings(UUID userId, ReminderSettingsRequest request) {
+        User user = load(userId);
+        user.changeReminderSettings(ReminderSettings.of(request.tasksEnabled(), request.leadMinutes(),
+                request.bedtime(), request.wakeTime()), clock.instant());
+        return ReminderSettingsResponse.of(user.getReminderSettings());
     }
 
     /** Fuso e data de cadastro: base de "hoje" e da exceção do primeiro dia (RN03). */

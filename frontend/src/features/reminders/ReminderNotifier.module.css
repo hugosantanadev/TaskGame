@@ -1,0 +1,75 @@
+/* Acima da barra de navegação, para não disputar o topo com o aviso de recompensa */
+.region {
+  position: fixed;
+  inset: auto 0 calc(var(--nav-height) + var(--space-3));
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--space-3);
+  pointer-events: none;
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: var(--content-width);
+  padding: var(--space-3) var(--space-2) var(--space-3) var(--space-3);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  pointer-events: auto;
+}
+
+.icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--pen);
+  color: var(--on-pen);
+  font-size: 1.25rem;
+}
+
+/* Dormir usa o céu da noite */
+.notice[data-kind='BEDTIME'] .icon {
+  background: var(--sky-night);
+  color: var(--on-sky-night);
+}
+
+.text {
+  display: grid;
+  flex: 1;
+  gap: 0.125rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-m);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.body {
+  color: var(--pencil);
+  font-size: var(--text-s);
+}
+
+.close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--pencil);
+  font-size: 1.125rem;
+  cursor: pointer;
+}

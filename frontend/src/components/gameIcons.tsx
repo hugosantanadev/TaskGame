@@ -220,3 +220,12 @@ export function ChevronRightIcon(props: IconProps) {
     </Svg>
   )
 }
+
+export function BellIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 1.5H5z" />
+      <path d="M10 20.5a2.2 2.2 0 0 0 4 0" />
+    </Svg>
+  )
+}

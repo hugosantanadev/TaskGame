@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -43,6 +44,9 @@ public class User {
     @Column(name = "ranking_visible", nullable = false)
     private boolean rankingVisible;
 
+    @Embedded
+    private ReminderSettings reminderSettings;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -60,6 +64,7 @@ public class User {
         user.displayName = displayName.strip();
         user.timeZone = zone.getId();
         user.rankingVisible = true;
+        user.reminderSettings = ReminderSettings.defaults();
         user.createdAt = now;
         user.updatedAt = now;
         return user;
@@ -77,6 +82,11 @@ public class User {
 
     public void changeRankingVisibility(boolean visible, Instant now) {
         this.rankingVisible = visible;
+        this.updatedAt = now;
+    }
+
+    public void changeReminderSettings(ReminderSettings settings, Instant now) {
+        this.reminderSettings = settings;
         this.updatedAt = now;
     }
 

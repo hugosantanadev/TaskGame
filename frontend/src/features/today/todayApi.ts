@@ -32,6 +32,7 @@ export function useRefreshPlan() {
     void queryClient.invalidateQueries({ queryKey: ['character'] })
     void queryClient.invalidateQueries({ queryKey: ['stats'] })
     void queryClient.invalidateQueries({ queryKey: ['ranking'] })
+    void queryClient.invalidateQueries({ queryKey: ['reminders'] })
   }
 }
 

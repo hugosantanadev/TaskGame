@@ -222,3 +222,18 @@ Authorization: Bearer {{accessToken}}
 ### Estado consolidado para a futura camada visual: período do dia, moedas, streak, coleção, quarto e personagem
 GET {{host}}/api/v1/me/game-state
 Authorization: Bearer {{accessToken}}
+
+### Preferências de lembrete
+GET {{host}}/api/v1/me/reminder-settings
+Authorization: Bearer {{accessToken}}
+
+### Trocar as preferências (horário nulo desliga aquele lembrete; antecedência de 0 a 120 minutos)
+PUT {{host}}/api/v1/me/reminder-settings
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{"tasksEnabled": true, "leadMinutes": 15, "bedtime": "23:00", "wakeTime": "06:30"}
+
+### Lembretes que saem nas próximas horas (até 48): tarefas pendentes com horário, dormir e acordar
+GET {{host}}/api/v1/reminders/upcoming?hours=24
+Authorization: Bearer {{accessToken}}

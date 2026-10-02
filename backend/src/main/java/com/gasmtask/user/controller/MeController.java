@@ -1,6 +1,8 @@
 package com.gasmtask.user.controller;
 
 import com.gasmtask.shared.security.AuthenticatedUser;
+import com.gasmtask.user.dto.ReminderSettingsRequest;
+import com.gasmtask.user.dto.ReminderSettingsResponse;
 import com.gasmtask.user.dto.UpdateProfileRequest;
 import com.gasmtask.user.dto.UserResponse;
 import com.gasmtask.user.service.UserService;
@@ -12,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,5 +41,18 @@ public class MeController {
     public UserResponse update(@AuthenticationPrincipal AuthenticatedUser user,
                                @Valid @RequestBody UpdateProfileRequest request) {
         return userService.updateProfile(user.id(), request);
+    }
+
+    @GetMapping("/reminder-settings")
+    @Operation(summary = "Preferências de lembrete: tarefas, antecedência, hora de dormir e de acordar")
+    public ReminderSettingsResponse reminderSettings(@AuthenticationPrincipal AuthenticatedUser user) {
+        return userService.reminderSettings(user.id());
+    }
+
+    @PutMapping("/reminder-settings")
+    @Operation(summary = "Substitui as preferências de lembrete (horário nulo desliga aquele lembrete)")
+    public ReminderSettingsResponse updateReminderSettings(@AuthenticationPrincipal AuthenticatedUser user,
+                                                           @Valid @RequestBody ReminderSettingsRequest request) {
+        return userService.updateReminderSettings(user.id(), request);
     }
 }
