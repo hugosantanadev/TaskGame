@@ -31,6 +31,10 @@
   --highlight-yellow: var(--coin);
   --highlight-green: var(--done);
 
+  /* Gráficos: concluído sobre planejado, dois passos do mesmo verde (o marca-texto é claro demais para marca) */
+  --chart-done: #1a7f45;
+  --chart-planned: #72c793;
+
   /* Categorias */
   --cat-study: #2f6bff;
   --cat-reading: #ff4fa3;
@@ -96,6 +100,8 @@
     --coin: #f5cf1d;
     --streak: #ff9a3d;
     --done: #36c977;
+    --chart-done: #36c977;
+    --chart-planned: #235c3e;
 
     --sky-morning: #9c5a14;
     --sky-afternoon: #1f6f9f;

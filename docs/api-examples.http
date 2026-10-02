@@ -202,3 +202,15 @@ Content-Type: application/json
 GET {{host}}/api/v1/achievements
 Authorization: Bearer {{accessToken}}
 
+
+### Estatísticas: totais desde o cadastro (concluídas, perdidas, pontos, moedas, streaks, dias e categorias)
+GET {{host}}/api/v1/stats/overview
+Authorization: Bearer {{accessToken}}
+
+### Planejado × concluído por semana (ou granularity=MONTH), do período mais antigo ao atual
+GET {{host}}/api/v1/stats/history?granularity=WEEK&periods=8
+Authorization: Bearer {{accessToken}}
+
+### Resumo da semana (parcial enquanto ela corre, final depois do domingo); a data é a segunda-feira
+GET {{host}}/api/v1/weeks/{{weekStart}}/summary
+Authorization: Bearer {{accessToken}}

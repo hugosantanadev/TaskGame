@@ -188,3 +188,35 @@ export function CupIcon(props: IconProps) {
     </Svg>
   )
 }
+
+export function MinusIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M6.5 12h11" />
+    </Svg>
+  )
+}
+
+export function CircleIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="5" />
+    </Svg>
+  )
+}
+
+export function ChevronLeftIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m14.5 6-6 6 6 6" />
+    </Svg>
+  )
+}
+
+export function ChevronRightIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m9.5 6 6 6-6 6" />
+    </Svg>
+  )
+}

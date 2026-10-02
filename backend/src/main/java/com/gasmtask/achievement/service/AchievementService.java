@@ -82,6 +82,26 @@ public class AchievementService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public int unlockedCount(UUID userId) {
+        return (int) unlocked.countByUserId(userId);
+    }
+
+    /** Conquistas desbloqueadas no intervalo [from, to), da mais antiga à mais recente. */
+    @Transactional(readOnly = true)
+    public List<UnlockedAchievementResponse> unlockedBetween(UUID userId, Instant from, Instant to) {
+        List<UserAchievement> inRange = unlocked
+                .findByUserIdAndUnlockedAtGreaterThanEqualAndUnlockedAtLessThanOrderByUnlockedAtAsc(userId, from, to);
+        Map<UUID, Achievement> catalog = achievements.findAllById(
+                        inRange.stream().map(UserAchievement::getAchievementId).toList()).stream()
+                .collect(Collectors.toMap(Achievement::getId, Function.identity()));
+        return inRange.stream()
+                .map(done -> catalog.get(done.getAchievementId()))
+                .map(achievement -> new UnlockedAchievementResponse(achievement.getCode(), achievement.getName(),
+                        achievement.getDescription()))
+                .toList();
+    }
+
     private AchievementMetrics metrics(UUID userId, int longestStreak) {
         int total = (int) occurrences.countByUserIdAndStatus(userId, OccurrenceStatus.COMPLETED);
         var byCategory = occurrences.countByCategory(userId, OccurrenceStatus.COMPLETED).stream()

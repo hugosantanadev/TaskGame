@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.UUID;
 
 import com.gasmtask.streak.domain.DailyResult;
+import com.gasmtask.streak.domain.DayStatus;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DailyResultRepository extends JpaRepository<DailyResult, UUID> {
 
     List<DailyResult> findByUserIdAndResultDateBetweenOrderByResultDateAsc(UUID userId, LocalDate from, LocalDate to);
+
+    long countByUserIdAndStatus(UUID userId, DayStatus status);
 }

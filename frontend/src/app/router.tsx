@@ -11,6 +11,7 @@ import { PlaceholderPage } from '../features/placeholder/PlaceholderPage'
 import { WeekPage } from '../features/planning/WeekPage'
 import { CharacterPage } from '../features/profile/CharacterPage'
 import { RoomPage } from '../features/profile/RoomPage'
+import { StatsPage } from '../features/stats/StatsPage'
 import { StorePage } from '../features/store/StorePage'
 import { ProfilePage } from '../features/profile/ProfilePage'
 import { TodayPage } from '../features/today/TodayPage'
@@ -40,15 +41,7 @@ export const router = createBrowserRouter([
               { path: '/missoes/nova', element: <MissionFormPage /> },
               { path: '/missoes/:id', element: <MissionFormPage /> },
               { path: '/extras/nova', element: <ExtraFormPage /> },
-              {
-                path: '/estatisticas',
-                element: (
-                  <PlaceholderPage
-                    title="Estatísticas"
-                    description="Aqui vão aparecer o planejado e o concluído por semana e por mês, pontos, moedas e sua maior sequência."
-                  />
-                ),
-              },
+              { path: '/estatisticas', element: <StatsPage /> },
               { path: '/loja', element: <StorePage /> },
               {
                 path: '/ranking',

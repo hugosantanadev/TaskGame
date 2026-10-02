@@ -48,6 +48,22 @@ public interface TaskOccurrenceRepository extends JpaRepository<TaskOccurrence, 
             """)
     List<Long> countPerTask(@Param("userId") UUID userId, @Param("status") OccurrenceStatus status);
 
+    // ---------------------------------------------------------------- números para as estatísticas
+
+    @Query("select coalesce(sum(o.earnedPoints), 0) from TaskOccurrence o where o.userId = :userId")
+    long sumEarnedPoints(@Param("userId") UUID userId);
+
+    /** Uma linha por (dia, tipo, situação) no intervalo: base do histórico e do resumo semanal. */
+    @Query("""
+            select o.occurrenceDate as date, o.kind as kind, o.status as status, count(o) as total,
+                coalesce(sum(o.earnedPoints), 0) as points, coalesce(sum(o.earnedCoins), 0) as coins
+            from TaskOccurrence o
+            where o.userId = :userId and o.occurrenceDate between :from and :to
+            group by o.occurrenceDate, o.kind, o.status
+            """)
+    List<DailyCount> countByDay(@Param("userId") UUID userId, @Param("from") LocalDate from,
+                                @Param("to") LocalDate to);
+
     /** Semanas já encerradas (antes de {@code before}) em que todas as obrigatórias foram concluídas. */
     @Query(value = """
             SELECT COUNT(*) FROM (

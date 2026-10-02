@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router'
 
 import { asApiError } from '../../api/errors'
 import type { DayPlan, Occurrence, Week } from '../../api/types'
@@ -28,7 +29,9 @@ const WEEKS = [
 export function WeekPage() {
   const user = useCurrentUser()
   const today = todayIso(safeTimeZone(user.timeZone))
-  const [which, setWhich] = useState<WhichWeek>('current')
+  // "Planejar a próxima semana" (resumo semanal) chega aqui com ?semana=proxima
+  const [searchParams] = useSearchParams()
+  const [which, setWhich] = useState<WhichWeek>(searchParams.get('semana') === 'proxima' ? 'next' : 'current')
   const week = useWeek(which)
   const [adding, setAdding] = useState<AddTarget | null>(null)
   const [selected, setSelected] = useState<Occurrence | null>(null)
@@ -74,6 +77,9 @@ export function WeekPage() {
         </ButtonLink>
         <ButtonLink to="/missoes" variant="secondary">
           Minhas missões
+        </ButtonLink>
+        <ButtonLink to="/estatisticas" variant="quiet">
+          Resumo da semana
         </ButtonLink>
       </div>
 

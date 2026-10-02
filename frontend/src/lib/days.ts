@@ -13,6 +13,20 @@ export const WEEK_DAYS: ReadonlyArray<{ id: DayOfWeek; short: string; long: stri
 ]
 
 const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+const MONTH_NAMES = [
+  'janeiro',
+  'fevereiro',
+  'março',
+  'abril',
+  'maio',
+  'junho',
+  'julho',
+  'agosto',
+  'setembro',
+  'outubro',
+  'novembro',
+  'dezembro',
+]
 
 function toUtc(iso: string): Date {
   const [year = 1970, month = 1, day = 1] = iso.split('-').map(Number)
@@ -60,6 +74,23 @@ export function formatDay(iso: string): string {
 export function formatShortDate(iso: string): string {
   const date = toUtc(iso)
   return `${date.getUTCDate()} ${MONTHS[date.getUTCMonth()] ?? ''}`
+}
+
+/** "28/9" */
+export function formatDayMonth(iso: string): string {
+  const date = toUtc(iso)
+  return `${date.getUTCDate()}/${date.getUTCMonth() + 1}`
+}
+
+/** "set" */
+export function formatMonthShort(iso: string): string {
+  return MONTHS[toUtc(iso).getUTCMonth()] ?? ''
+}
+
+/** "setembro de 2026" */
+export function formatMonth(iso: string): string {
+  const date = toUtc(iso)
+  return `${MONTH_NAMES[date.getUTCMonth()] ?? ''} de ${date.getUTCFullYear()}`
 }
 
 export function datesBetween(from: string, to: string): string[] {

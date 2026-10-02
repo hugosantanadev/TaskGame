@@ -196,3 +196,52 @@ export type Achievement = {
   unlockedAt: string | null
   assetKey: string | null
 }
+
+// ---------------------------------------------------------------- Fase 4: estatísticas, resumo semanal, ranking e game-state
+
+/** Planejado × concluído de um período; `completionRate` em % inteira, null quando nada foi planejado. */
+export type Totals = {
+  mandatoryPlanned: number
+  mandatoryDone: number
+  extrasPlanned: number
+  extrasDone: number
+  planned: number
+  done: number
+  missed: number
+  points: number
+  coins: number
+  completionRate: number | null
+}
+
+export type StatsGranularity = 'WEEK' | 'MONTH'
+export type HistoryPeriod = { start: string; end: string; current: boolean; totals: Totals }
+export type StatsHistory = { granularity: StatsGranularity; periods: HistoryPeriod[] }
+
+export type StatsOverview = {
+  completedTasks: number
+  missedTasks: number
+  completionRate: number | null
+  points: number
+  coinsEarned: number
+  coinsSpent: number
+  balance: number
+  currentStreak: number
+  longestStreak: number
+  fulfilledDays: number
+  failedDays: number
+  restDays: number
+  achievementsUnlocked: number
+  completedByCategory: { category: TaskCategory; completed: number }[]
+}
+
+export type SummaryDayStatus = 'FULFILLED' | 'FAILED' | 'REST' | 'PENDING' | 'UPCOMING'
+
+export type WeekSummary = {
+  weekStart: string
+  weekEnd: string
+  finished: boolean
+  totals: Totals
+  fulfilledDays: number
+  days: { date: string; dayOfWeek: DayOfWeek; status: SummaryDayStatus; totals: Totals }[]
+  achievements: UnlockedAchievement[]
+}

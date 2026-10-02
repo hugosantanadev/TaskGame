@@ -21,7 +21,7 @@ function proofForm(photo: File | undefined): FormData | undefined {
   return form
 }
 
-/** Depois de concluir ou mudar o plano, Hoje e Semana precisam ser recarregados. */
+/** Depois de concluir ou mudar o plano, Hoje, Semana e o que depende deles precisam ser recarregados. */
 export function useRefreshPlan() {
   const queryClient = useQueryClient()
   return () => {
@@ -30,6 +30,7 @@ export function useRefreshPlan() {
     void queryClient.invalidateQueries({ queryKey: ['wallet'] })
     void queryClient.invalidateQueries({ queryKey: ['achievements'] })
     void queryClient.invalidateQueries({ queryKey: ['character'] })
+    void queryClient.invalidateQueries({ queryKey: ['stats'] })
   }
 }
 
