@@ -218,3 +218,7 @@ Authorization: Bearer {{accessToken}}
 ### Ranking da semana (metric: POINTS, COMPLETED_TASKS, COINS_EARNED ou STREAK), paginado, com a sua posição em "me"
 GET {{host}}/api/v1/rankings?period=WEEK&metric=POINTS&page=0&size=20
 Authorization: Bearer {{accessToken}}
+
+### Estado consolidado para a futura camada visual: período do dia, moedas, streak, coleção, quarto e personagem
+GET {{host}}/api/v1/me/game-state
+Authorization: Bearer {{accessToken}}

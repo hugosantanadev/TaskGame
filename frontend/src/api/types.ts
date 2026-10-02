@@ -262,3 +262,16 @@ export type Ranking = {
   entries: Page<RankingEntry>
   me: { position: number | null; value: number; visible: boolean }
 }
+
+/** Estado consolidado para a futura camada visual (GET /me/game-state). `assetKey` é resolvida em sprite por ela. */
+export type GameItem = { code: string; assetKey: string | null }
+
+export type GameState = {
+  timeOfDay: Period
+  coins: number
+  streak: { current: number; longest: number; todayStatus: TodayStatus }
+  totals: { completedTasks: number; achievements: number }
+  inventory: GameItem[]
+  room: { items: GameItem[] }
+  character: { state: CharacterState; equipped: Partial<Record<CharacterSlot, GameItem>> }
+}
