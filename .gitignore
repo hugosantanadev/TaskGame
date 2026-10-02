@@ -1,7 +1,0 @@
-.env
-.idea/
-.vscode/
-*.iml
-.DS_Store
-/backend/data/
-/data/

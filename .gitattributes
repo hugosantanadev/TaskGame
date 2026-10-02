@@ -1,6 +1,0 @@
-# Scripts de shell com LF, inclusive quando o repositório é clonado no Windows:
-# o mvnw roda dentro do container Linux no build do backend.
-* text=auto eol=lf
-*.cmd text eol=crlf
-*.png binary
-*.jar binary
