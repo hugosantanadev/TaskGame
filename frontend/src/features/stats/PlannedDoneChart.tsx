@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import type { HistoryPeriod, StatsGranularity } from '../../api/types'
 import { formatDayMonth, formatMonth, formatMonthShort, formatShortDate, plural } from '../../lib/days'
+import { niceStep } from '../../lib/scale'
 import styles from './PlannedDoneChart.module.css'
 
 type Props = {
@@ -9,15 +10,6 @@ type Props = {
   periods: HistoryPeriod[]
   /** Dados do agrupamento anterior enquanto o novo carrega: o gráfico fica, esmaecido. */
   stale?: boolean
-}
-
-const NICE_STEPS = [1, 2, 3, 4, 5, 6, 8, 10]
-
-/** Passo "redondo" do eixo (1, 2, 5, 10, 20…), nunca menor que 1: as contagens são inteiras. */
-function niceStep(raw: number): number {
-  const magnitude = 10 ** Math.floor(Math.log10(raw))
-  const step = NICE_STEPS.find((nice) => nice * magnitude >= raw) ?? 10
-  return Math.max(1, step * magnitude)
 }
 
 function periodTitle(period: HistoryPeriod, granularity: StatsGranularity): string {

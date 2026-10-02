@@ -5,6 +5,7 @@ import { useCurrentUser } from '../../auth/context'
 import { BellIcon, CrossIcon, MoonIcon } from '../../components/gameIcons'
 import { safeTimeZone } from '../../lib/datetime'
 import styles from './ReminderNotifier.module.css'
+import { reminderText } from './reminderText'
 import { useUpcomingReminders } from './remindersApi'
 
 /** Avisos já mostrados nesta aba: recalcular a lista não repete o mesmo lembrete. */
@@ -12,28 +13,6 @@ const shown = new Set<string>()
 
 function keyOf(reminder: UpcomingReminder): string {
   return `${reminder.kind}|${reminder.eventAt}|${reminder.occurrenceId ?? ''}`
-}
-
-function timeIn(zone: string, iso: string): string {
-  return new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: zone }).format(new Date(iso))
-}
-
-function reminderText(reminder: UpcomingReminder, zone: string): { title: string; body: string } {
-  const startsNow = reminder.notifyAt === reminder.eventAt
-  switch (reminder.kind) {
-    case 'TASK':
-      return {
-        title: startsNow ? `Agora: ${reminder.title ?? 'sua tarefa'}` : `Daqui a pouco: ${reminder.title ?? 'sua tarefa'}`,
-        body: `Começa às ${timeIn(zone, reminder.eventAt)}.`,
-      }
-    case 'BEDTIME':
-      return {
-        title: 'Hora de se preparar para dormir',
-        body: `Dormir às ${timeIn(zone, reminder.eventAt)} deixa o dia de amanhã mais fácil.`,
-      }
-    case 'WAKE_UP':
-      return { title: 'Bom dia! Hora de acordar', body: 'As tarefas de hoje estão na tela Hoje.' }
-  }
 }
 
 /** Notificação do sistema, quando a pessoa permitiu; pelo service worker, que funciona também no celular. */

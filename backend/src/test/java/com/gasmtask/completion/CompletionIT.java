@@ -168,4 +168,26 @@ class CompletionIT extends IntegrationTest {
                 .andExpect(status().is(422))
                 .andExpect(jsonPath("$.code").value("NOT_COMPLETABLE_TODAY"));
     }
+
+    @Test
+    void tarefaEFotoDeOutroUsuarioNaoExistem() throws Exception {
+        clock.setTo(monday.atTime(9, 0), SAO_PAULO);
+        String owner = registerUser().accessToken();
+        api.createTask(owner, taskJson("Academia", "MANDATORY", List.of("MONDAY"), null, true));
+        String id = JsonPath.read(api.getJson(owner, "/api/v1/today"), "$.occurrences[0].id");
+        api.completeWithProof(owner, id, PNG, "image/png").andExpect(status().isOk());
+        String intruder = registerUser().accessToken();
+
+        // RN30 e RNF11: para quem não é dono, a tarefa e a foto simplesmente não existem
+        mvc.perform(get("/api/v1/occurrences/{id}/proof", id).header(AUTHORIZATION, bearer(intruder)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("RESOURCE_NOT_FOUND"));
+        mvc.perform(multipart("/api/v1/occurrences/{id}/proof", id)
+                        .file(new MockMultipartFile("proof", "foto.png", "image/png", PNG))
+                        .header(AUTHORIZATION, bearer(intruder)))
+                .andExpect(status().isNotFound());
+        api.complete(intruder, id).andExpect(status().isNotFound());
+        mvc.perform(delete("/api/v1/occurrences/{id}", id).header(AUTHORIZATION, bearer(intruder)))
+                .andExpect(status().isNotFound());
+    }
 }
