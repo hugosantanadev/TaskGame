@@ -124,6 +124,7 @@ export type Today = {
   walletBalance: number
   streak: Streak
   onboarding: boolean
+  rank: RankStatus
 }
 
 export type Reward = { points: number; baseCoins: number; onTimeBonus: number; proofBonus: number; totalCoins: number }
@@ -136,6 +137,7 @@ export type CompletionResult = {
   day: { status: TodayStatus; mandatoryDone: number; mandatoryPlanned: number }
   streak: { current: number; longest: number; increasedNow: boolean }
   unlockedAchievements: UnlockedAchievement[]
+  xp: XpChange
 }
 
 export type ProofAttached = { occurrence: Occurrence; proofBonus: number; walletBalance: number }
@@ -249,8 +251,8 @@ export type WeekSummary = {
 /** Página da API (PageResponse do backend). */
 export type Page<T> = { content: T[]; page: number; size: number; totalElements: number; totalPages: number }
 
-export type RankingMetric = 'POINTS' | 'COMPLETED_TASKS' | 'COINS_EARNED' | 'STREAK'
-export type RankingEntry = { position: number; displayName: string; value: number; you: boolean }
+export type RankingMetric = 'XP' | 'POINTS' | 'COMPLETED_TASKS' | 'COINS_EARNED' | 'STREAK'
+export type RankingEntry = { position: number; displayName: string; value: number; rank: RankRef; you: boolean }
 
 /** `me.position` é onde a pessoa está (ou estaria, se oculta) entre os visíveis; null sem pontuação. */
 export type Ranking = {
@@ -260,7 +262,7 @@ export type Ranking = {
   from: string
   to: string
   entries: Page<RankingEntry>
-  me: { position: number | null; value: number; visible: boolean }
+  me: { position: number | null; value: number; rank: RankRef; visible: boolean }
 }
 
 /** Estado consolidado para a futura camada visual (GET /me/game-state). `assetKey` é resolvida em sprite por ela. */
@@ -270,6 +272,7 @@ export type GameState = {
   timeOfDay: Period
   coins: number
   streak: { current: number; longest: number; todayStatus: TodayStatus }
+  rank: RankStatus
   totals: { completedTasks: number; achievements: number }
   inventory: GameItem[]
   room: { items: GameItem[] }
@@ -285,4 +288,34 @@ export type UpcomingReminder = {
   eventAt: string
   occurrenceId: string | null
   title: string | null
+}
+
+// ---------------------------------------------------------------- Elo ranqueado
+
+export type RankTier = 'IRON' | 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM' | 'DIAMOND' | 'MASTER' | 'LEGEND'
+
+/** `division` vai de 1 a 3; null em Lenda. */
+export type RankRef = { tier: RankTier; division: number | null }
+
+/** Elo atual e a barra até o próximo degrau (`nextRankXp` null em Lenda). */
+export type RankStatus = RankRef & { xp: number; rankStartXp: number; nextRankXp: number | null }
+
+export type XpChange = {
+  gained: number
+  status: RankStatus
+  promoted: boolean
+  demoted: boolean
+  unlockedItems: StoreItem[]
+}
+
+export type XpReason = 'TASK_COMPLETED' | 'DAY_FULFILLED' | 'TASK_MISSED' | 'BACKFILL'
+
+export type Progression = {
+  status: RankStatus
+  peakXp: number
+  peakRank: RankRef
+  ladder: { rank: RankRef; minXp: number }[]
+  /** `item.owned` diz se a roupa do elo já foi desbloqueada. */
+  rewards: { tier: RankTier; item: StoreItem }[]
+  recent: { amount: number; reason: XpReason; title: string | null; eventDate: string | null; createdAt: string }[]
 }

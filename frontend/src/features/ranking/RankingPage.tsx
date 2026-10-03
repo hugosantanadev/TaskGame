@@ -5,12 +5,15 @@ import { asApiError } from '../../api/errors'
 import type { Ranking, RankingMetric } from '../../api/types'
 import { Button } from '../../components/Button'
 import { PageTitle } from '../../components/PageTitle'
+import { RankBadge } from '../../components/RankBadge'
 import { ToggleGroup } from '../../components/ToggleGroup'
 import { formatShortDate, plural } from '../../lib/days'
+import { rankProgress } from '../../lib/rank'
 import styles from './RankingPage.module.css'
-import { useRanking } from './rankingApi'
+import { useMyRank, useRanking } from './rankingApi'
 
 const METRICS = [
+  { value: 'XP', label: 'Elo' },
   { value: 'POINTS', label: 'Pontos' },
   { value: 'COMPLETED_TASKS', label: 'Tarefas' },
   { value: 'COINS_EARNED', label: 'Moedas' },
@@ -18,6 +21,7 @@ const METRICS = [
 ] as const
 
 const UNITS: Record<RankingMetric, [string, string]> = {
+  XP: ['XP', 'XP'],
   POINTS: ['ponto', 'pontos'],
   COMPLETED_TASKS: ['tarefa', 'tarefas'],
   COINS_EARNED: ['moeda', 'moedas'],
@@ -30,7 +34,7 @@ function valueOf(metric: RankingMetric, value: number): string {
 }
 
 export function RankingPage() {
-  const [metric, setMetric] = useState<RankingMetric>('POINTS')
+  const [metric, setMetric] = useState<RankingMetric>('XP')
   const ranking = useRanking(metric)
   const first = ranking.data?.pages[0]
   const entries = ranking.data?.pages.flatMap((page) => page.entries.content) ?? []
@@ -43,7 +47,9 @@ export function RankingPage() {
         <h1 className={styles.heading}>Ranking</h1>
         {first && (
           <p className={styles.range}>
-            Semana de {formatShortDate(first.from)} a {formatShortDate(first.to)}
+            {first.metric === 'XP'
+              ? 'Pelo XP de cada um: sobe com as tarefas, desce com as obrigatórias perdidas'
+              : `Semana de ${formatShortDate(first.from)} a ${formatShortDate(first.to)}`}
           </p>
         )}
       </div>
@@ -78,9 +84,12 @@ export function RankingPage() {
                     <span className="visually-hidden">Posição </span>
                     {entry.position}
                   </span>
-                  <span className={styles.name}>
-                    <span className={styles.nameText}>{entry.displayName}</span>
-                    {entry.you && <span className={styles.youTag}>você</span>}
+                  <span className={styles.who}>
+                    <span className={styles.name}>
+                      <span className={styles.nameText}>{entry.displayName}</span>
+                      {entry.you && <span className={styles.youTag}>você</span>}
+                    </span>
+                    <RankBadge rank={entry.rank} size="s" />
                   </span>
                   <span className={styles.value}>{valueOf(first.metric, entry.value)}</span>
                 </li>
@@ -103,11 +112,14 @@ function MyPosition({ ranking }: { ranking: Ranking }) {
   const { me, metric } = ranking
   return (
     <section className={styles.me} aria-label="Sua posição">
+      <MyRank />
       {me.position === null ? (
         <p className={styles.meText}>
           {metric === 'STREAK'
             ? 'Cumpra todas as obrigatórias de um dia para começar uma sequência e entrar no ranking.'
-            : 'Conclua tarefas nesta semana para entrar no ranking.'}
+            : metric === 'XP'
+              ? 'Conclua tarefas para ganhar XP e entrar no ranking.'
+              : 'Conclua tarefas nesta semana para entrar no ranking.'}
         </p>
       ) : (
         <p className={styles.meText}>
@@ -123,5 +135,23 @@ function MyPosition({ ranking }: { ranking: Ranking }) {
         </p>
       )}
     </section>
+  )
+}
+
+/** Seu elo, a barra até o próximo degrau e o atalho para a escada e as recompensas. */
+function MyRank() {
+  const rank = useMyRank()
+  if (!rank.data) return null
+  const { status } = rank.data
+  return (
+    <Link to="/ranking/elo" className={styles.myRank}>
+      <RankBadge rank={status} />
+      <span className={styles.myRankBar} aria-hidden="true">
+        <span style={{ width: `${rankProgress(status) * 100}%` }} />
+      </span>
+      <span className={styles.myRankXp}>
+        {status.nextRankXp === null ? `${status.xp} XP` : `${status.xp} / ${status.nextRankXp} XP`}
+      </span>
+    </Link>
   )
 }

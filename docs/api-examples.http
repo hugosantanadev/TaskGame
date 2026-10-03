@@ -215,7 +215,7 @@ Authorization: Bearer {{accessToken}}
 GET {{host}}/api/v1/weeks/{{weekStart}}/summary
 Authorization: Bearer {{accessToken}}
 
-### Ranking da semana (metric: POINTS, COMPLETED_TASKS, COINS_EARNED ou STREAK), paginado, com a sua posição em "me"
+### Ranking por elo (metric=XP, padrão) ou da semana (POINTS, COMPLETED_TASKS, COINS_EARNED, STREAK), com a sua posição em "me"
 GET {{host}}/api/v1/rankings?period=WEEK&metric=POINTS&page=0&size=20
 Authorization: Bearer {{accessToken}}
 
@@ -236,4 +236,8 @@ Content-Type: application/json
 
 ### Lembretes que saem nas próximas horas (até 48): tarefas pendentes com horário, dormir e acordar
 GET {{host}}/api/v1/reminders/upcoming?hours=24
+Authorization: Bearer {{accessToken}}
+
+### Elo: XP atual, maior elo, escada, roupas de cada elo e últimas mudanças de XP
+GET {{host}}/api/v1/me/rank
 Authorization: Bearer {{accessToken}}

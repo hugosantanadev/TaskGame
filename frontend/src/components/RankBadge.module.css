@@ -1,0 +1,80 @@
+.badge {
+  --shield: 1.75rem;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  font-weight: 800;
+}
+
+.badge[data-size='s'] {
+  --shield: 1.25rem;
+
+  gap: var(--space-1);
+  font-size: var(--text-s);
+}
+
+.badge[data-size='l'] {
+  --shield: 4.5rem;
+
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+}
+
+/* Escudo: a forma é a mesma em todos os elos, só a cor muda; o contorno de tinta mantém o estilo do app */
+.shield {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--shield);
+  height: calc(var(--shield) * 1.15);
+  background: var(--ink);
+  clip-path: polygon(50% 0, 100% 16%, 100% 62%, 50% 100%, 0 62%, 0 16%);
+}
+
+.shield::before {
+  content: '';
+  position: absolute;
+  inset: max(2px, calc(var(--shield) * 0.08));
+  background: var(--tier);
+  clip-path: inherit;
+}
+
+/* Lenda brilha: o escudo ganha um degradê de fogo */
+.shield[data-tier='LEGEND']::before {
+  background: linear-gradient(160deg, var(--coin), var(--tier-legend) 70%);
+}
+
+.pips,
+.star {
+  position: relative;
+  display: flex;
+  gap: calc(var(--shield) * 0.06);
+  margin-top: calc(var(--shield) * -0.08);
+}
+
+.pip {
+  width: calc(var(--shield) * 0.14);
+  height: calc(var(--shield) * 0.14);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--on-tier) 35%, transparent);
+}
+
+.pip[data-on] {
+  background: var(--on-tier);
+}
+
+.star {
+  color: var(--on-tier);
+  font-size: calc(var(--shield) * 0.45);
+  line-height: 1;
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -2,6 +2,7 @@ package com.gasmtask.ranking.dto;
 
 import java.time.LocalDate;
 
+import com.gasmtask.progression.dto.RankResponse;
 import com.gasmtask.ranking.domain.RankingMetric;
 import com.gasmtask.ranking.domain.RankingPeriod;
 import com.gasmtask.ranking.domain.RankingScope;
@@ -22,13 +23,14 @@ public record RankingResponse(
         PageResponse<Entry> entries,
         Me me) {
 
-    public record Entry(int position, String displayName, int value, boolean you) {
+    /** @param rank o elo da pessoa (pelo XP atual), em qualquer métrica */
+    public record Entry(int position, String displayName, int value, RankResponse rank, boolean you) {
     }
 
     /**
      * @param position onde a pessoa está (ou estaria, se estiver oculta) entre os visíveis; nulo sem pontuação
      * @param visible  escolheu aparecer no ranking (perfil)
      */
-    public record Me(Integer position, int value, boolean visible) {
+    public record Me(Integer position, int value, RankResponse rank, boolean visible) {
     }
 }

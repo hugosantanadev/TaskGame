@@ -17,21 +17,33 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 /**
- * Consultas do ranking. É uma leitura que cruza usuários, ocorrências e streaks, então fica em SQL direto,
- * sem entidade própria. Todas partem do mesmo placar ({@code scores}): um valor por usuário na métrica pedida.
+ * Consultas do ranking. É uma leitura que cruza usuários, ocorrências, streaks e XP, então fica em SQL direto,
+ * sem entidade própria. Todas partem do mesmo placar ({@code scores}): um valor por usuário na métrica pedida,
+ * mais o XP de cada um, que define o elo mostrado ao lado do nome.
  * Só aparece quem escolheu aparecer e pontuou; empates dividem a posição (1, 1, 3).
  */
 @Repository
 public class RankingRepository {
 
+    /** Elo: o XP atual de cada um. */
+    private static final String XP_SCORES = """
+            WITH scores AS (
+                SELECT u.id AS user_id, u.display_name, u.ranking_visible,
+                    COALESCE(p.xp, 0) AS value, COALESCE(p.xp, 0) AS xp
+                FROM users u
+                LEFT JOIN player_progress p ON p.user_id = u.id
+            )""";
+
     /** Métricas da semana: somam as ocorrências concluídas no intervalo de datas. */
     private static final String PERIOD_SCORES = """
             WITH scores AS (
-                SELECT u.id AS user_id, u.display_name, u.ranking_visible, CAST(%s AS integer) AS value
+                SELECT u.id AS user_id, u.display_name, u.ranking_visible, CAST(%s AS integer) AS value,
+                    COALESCE(p.xp, 0) AS xp
                 FROM users u
+                LEFT JOIN player_progress p ON p.user_id = u.id
                 LEFT JOIN task_occurrences o
                     ON o.user_id = u.id AND o.status = 'COMPLETED' AND o.occurrence_date BETWEEN :from AND :to
-                GROUP BY u.id, u.display_name, u.ranking_visible
+                GROUP BY u.id, u.display_name, u.ranking_visible, p.xp
             )""";
 
     /**
@@ -44,9 +56,11 @@ public class RankingRepository {
                     s.current_streak + CASE
                         WHEN (s.last_closed_date IS NULL OR d.today > s.last_closed_date)
                             AND t.planned > 0 AND t.done = t.planned THEN 1
-                        ELSE 0 END AS value
+                        ELSE 0 END AS value,
+                    COALESCE(p.xp, 0) AS xp
                 FROM users u
                 JOIN streaks s ON s.user_id = u.id
+                LEFT JOIN player_progress p ON p.user_id = u.id
                 CROSS JOIN LATERAL (SELECT CAST(CAST(:now AS timestamptz) AT TIME ZONE u.time_zone AS date) AS today) d
                 CROSS JOIN LATERAL (
                     SELECT count(*) AS planned, count(*) FILTER (WHERE o.status = 'COMPLETED') AS done
@@ -57,7 +71,7 @@ public class RankingRepository {
 
     private static final String RANKED = """
             , ranked AS (
-                SELECT user_id, display_name, value, RANK() OVER (ORDER BY value DESC) AS position
+                SELECT user_id, display_name, value, xp, RANK() OVER (ORDER BY value DESC) AS position
                 FROM scores
                 WHERE ranking_visible AND value > 0
             )
@@ -72,14 +86,14 @@ public class RankingRepository {
     public List<RankedRow> page(RankingMetric metric, LocalDate from, LocalDate to, Instant now, UUID me,
                                 int limit, long offset) {
         String sql = ranked(metric) + """
-                SELECT position, display_name, value, user_id = :me AS you
+                SELECT position, display_name, value, xp, user_id = :me AS you
                 FROM ranked
                 ORDER BY position, display_name, user_id
                 LIMIT :limit OFFSET :offset
                 """;
         return jdbc.query(sql, params(from, to, now, me).addValue("limit", limit).addValue("offset", offset),
                 (rs, row) -> new RankedRow(rs.getInt("position"), rs.getString("display_name"), rs.getInt("value"),
-                        rs.getBoolean("you")));
+                        rs.getInt("xp"), rs.getBoolean("you")));
     }
 
     public long count(RankingMetric metric, LocalDate from, LocalDate to, Instant now) {
@@ -91,18 +105,20 @@ public class RankingRepository {
     /** O placar de quem consulta, apareça ou não na lista: a posição é onde estaria entre os visíveis. */
     public Optional<MyScore> mine(RankingMetric metric, LocalDate from, LocalDate to, Instant now, UUID me) {
         String sql = ranked(metric) + """
-                SELECT s.value, s.ranking_visible,
+                SELECT s.value, s.xp, s.ranking_visible,
                     (SELECT count(*) FROM ranked r WHERE r.value > s.value AND r.user_id <> s.user_id) + 1 AS position
                 FROM scores s
                 WHERE s.user_id = :me
                 """;
         return jdbc.query(sql, params(from, to, now, me),
-                (rs, row) -> new MyScore(rs.getInt("value"), rs.getBoolean("ranking_visible"), rs.getInt("position")))
+                (rs, row) -> new MyScore(rs.getInt("value"), rs.getInt("xp"), rs.getBoolean("ranking_visible"),
+                        rs.getInt("position")))
                 .stream().findFirst();
     }
 
     private static String ranked(RankingMetric metric) {
         String scores = switch (metric) {
+            case XP -> XP_SCORES;
             case POINTS -> PERIOD_SCORES.formatted("COALESCE(SUM(o.earned_points), 0)");
             case COMPLETED_TASKS -> PERIOD_SCORES.formatted("COUNT(o.id)");
             case COINS_EARNED -> PERIOD_SCORES.formatted("COALESCE(SUM(o.earned_coins), 0)");
@@ -119,10 +135,11 @@ public class RankingRepository {
                 .addValue("me", me);
     }
 
-    public record RankedRow(int position, String displayName, int value, boolean you) {
+    /** @param xp XP atual da pessoa, para mostrar o elo dela em qualquer métrica */
+    public record RankedRow(int position, String displayName, int value, int xp, boolean you) {
     }
 
     /** @param position onde estaria entre os visíveis (1 + quantos têm valor maior) */
-    public record MyScore(int value, boolean visible, int position) {
+    public record MyScore(int value, int xp, boolean visible, int position) {
     }
 }

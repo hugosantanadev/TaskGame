@@ -14,6 +14,7 @@ import com.gasmtask.planning.domain.TaskOccurrence;
 import com.gasmtask.planning.mapper.OccurrenceMapper;
 import com.gasmtask.planning.repository.TaskOccurrenceRepository;
 import com.gasmtask.planning.service.PlanningService;
+import com.gasmtask.progression.service.ProgressionService;
 import com.gasmtask.shared.time.TimeOfDay;
 import com.gasmtask.shared.time.UserCalendar;
 import com.gasmtask.streak.dto.StreakResponse;
@@ -39,10 +40,11 @@ public class TodayService {
     private final UserService users;
     private final UserCalendar calendar;
     private final OccurrenceMapper mapper;
+    private final ProgressionService progression;
 
     public TodayService(DayClosingService closing, PlanningService planning, TaskOccurrenceRepository occurrences,
                         StreakService streaks, WalletService wallet, RewardPolicy rewards, UserService users,
-                        UserCalendar calendar, OccurrenceMapper mapper) {
+                        UserCalendar calendar, OccurrenceMapper mapper, ProgressionService progression) {
         this.closing = closing;
         this.planning = planning;
         this.occurrences = occurrences;
@@ -52,6 +54,7 @@ public class TodayService {
         this.users = users;
         this.calendar = calendar;
         this.mapper = mapper;
+        this.progression = progression;
     }
 
     @Transactional
@@ -75,7 +78,8 @@ public class TodayService {
                 ProgressResponse.of(progress),
                 wallet.balanceOf(userId),
                 StreakResponse.of(streaks.view(userId, today, progress)),
-                onboarding);
+                onboarding,
+                progression.status(userId));
     }
 
     /**

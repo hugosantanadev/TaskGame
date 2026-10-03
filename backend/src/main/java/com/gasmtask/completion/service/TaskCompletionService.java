@@ -20,6 +20,8 @@ import com.gasmtask.planning.domain.DayProgress;
 import com.gasmtask.planning.domain.TaskOccurrence;
 import com.gasmtask.planning.mapper.OccurrenceMapper;
 import com.gasmtask.planning.repository.TaskOccurrenceRepository;
+import com.gasmtask.progression.service.ProgressionService;
+import com.gasmtask.progression.service.ProgressionService.XpChange;
 import com.gasmtask.shared.exception.BusinessException;
 import com.gasmtask.shared.exception.ErrorCode;
 import com.gasmtask.shared.storage.FileStorage;
@@ -54,11 +56,13 @@ public class TaskCompletionService {
     private final UserCalendar calendar;
     private final OccurrenceMapper mapper;
     private final AchievementService achievements;
+    private final ProgressionService progression;
 
     public TaskCompletionService(TaskOccurrenceRepository occurrences, ProofRepository proofs, FileStorage storage,
                                  WalletService wallet, StreakService streaks, DayClosingService closing,
                                  RewardPolicy rewards, UserService users, UserCalendar calendar,
-                                 OccurrenceMapper mapper, AchievementService achievements) {
+                                 OccurrenceMapper mapper, AchievementService achievements,
+                                 ProgressionService progression) {
         this.occurrences = occurrences;
         this.proofs = proofs;
         this.storage = storage;
@@ -70,6 +74,7 @@ public class TaskCompletionService {
         this.calendar = calendar;
         this.mapper = mapper;
         this.achievements = achievements;
+        this.progression = progression;
     }
 
     @Transactional
@@ -109,15 +114,20 @@ public class TaskCompletionService {
         // A ocorrência concluída é a mesma instância que está na lista de hoje
         DayProgress progress = DayProgress.of(todays);
         StreakView streak = streaks.view(userId, today, progress);
+        boolean dayFulfilledNow = progress.fulfilled() && !wasFulfilled;
+        XpChange xp = progression.awardTask(userId, occurrence.getId(), reward.points());
+        if (dayFulfilledNow) {
+            xp = xp.then(progression.awardDayFulfilled(userId, today));
+        }
         return new CompletionResponse(
                 mapper.toResponse(occurrence, today, false),
                 onTime,
                 RewardResponse.of(reward),
                 wallet.balanceOf(userId),
                 new CompletionResponse.Day(streak.todayStatus(), progress.mandatoryDone(), progress.mandatoryPlanned()),
-                new CompletionResponse.StreakChange(streak.current(), streak.longest(),
-                        progress.fulfilled() && !wasFulfilled),
-                achievements.evaluate(userId, streak.longest()));
+                new CompletionResponse.StreakChange(streak.current(), streak.longest(), dayFulfilledNow),
+                achievements.evaluate(userId, streak.longest()),
+                xp.toResponse());
     }
 
     /** RN20: a prova pode vir depois da conclusão, até o fim do mesmo dia; o bônus é pago uma vez. */

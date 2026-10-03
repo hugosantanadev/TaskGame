@@ -3,6 +3,7 @@ package com.gasmtask.completion.dto;
 import java.util.List;
 
 import com.gasmtask.achievement.dto.UnlockedAchievementResponse;
+import com.gasmtask.progression.dto.XpChangeResponse;
 import com.gasmtask.planning.dto.OccurrenceResponse;
 import com.gasmtask.streak.domain.TodayStatus;
 
@@ -17,7 +18,8 @@ public record CompletionResponse(
         int walletBalance,
         Day day,
         StreakChange streak,
-        List<UnlockedAchievementResponse> unlockedAchievements) {
+        List<UnlockedAchievementResponse> unlockedAchievements,
+        XpChangeResponse xp) {
 
     public record Day(TodayStatus status, int mandatoryDone, int mandatoryPlanned) {
     }

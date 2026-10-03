@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import com.gasmtask.progression.domain.RankLadder;
+import com.gasmtask.progression.dto.RankResponse;
 import com.gasmtask.ranking.domain.RankingMetric;
 import com.gasmtask.ranking.domain.RankingPeriod;
 import com.gasmtask.ranking.domain.RankingScope;
@@ -55,13 +57,15 @@ public class RankingService {
 
         List<RankingResponse.Entry> entries = repository
                 .page(metric, from, to, now, userId, safeSize, (long) safePage * safeSize).stream()
-                .map(row -> new RankingResponse.Entry(row.position(), row.displayName(), row.value(), row.you()))
+                .map(row -> new RankingResponse.Entry(row.position(), row.displayName(), row.value(),
+                        RankResponse.of(RankLadder.rankOf(row.xp())), row.you()))
                 .toList();
         long total = repository.count(metric, from, to, now);
-        MyScore mine = repository.mine(metric, from, to, now, userId).orElse(new MyScore(0, false, 0));
+        MyScore mine = repository.mine(metric, from, to, now, userId).orElse(new MyScore(0, 0, false, 0));
 
         return new RankingResponse(period, metric, scope, from, to,
                 new PageResponse<>(entries, safePage, safeSize, total, (int) Math.ceilDiv(total, safeSize)),
-                new RankingResponse.Me(mine.value() > 0 ? mine.position() : null, mine.value(), mine.visible()));
+                new RankingResponse.Me(mine.value() > 0 ? mine.position() : null, mine.value(),
+                        RankResponse.of(RankLadder.rankOf(mine.xp())), mine.visible()));
     }
 }

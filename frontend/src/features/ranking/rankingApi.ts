@@ -1,7 +1,7 @@
-import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
+import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query'
 
 import { apiRequest } from '../../api/client'
-import type { Ranking, RankingMetric } from '../../api/types'
+import type { Progression, Ranking, RankingMetric } from '../../api/types'
 
 const PAGE_SIZE = 20
 
@@ -14,5 +14,13 @@ export function useRanking(metric: RankingMetric) {
     initialPageParam: 0,
     getNextPageParam: (last) => (last.entries.page + 1 < last.entries.totalPages ? last.entries.page + 1 : undefined),
     placeholderData: keepPreviousData,
+  })
+}
+
+/** O elo por inteiro: status, escada, roupas de cada elo e as últimas mudanças de XP. */
+export function useMyRank() {
+  return useQuery({
+    queryKey: ['rank'],
+    queryFn: ({ signal }) => apiRequest<Progression>('/me/rank', { signal }),
   })
 }

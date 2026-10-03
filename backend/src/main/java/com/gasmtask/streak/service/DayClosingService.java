@@ -13,6 +13,7 @@ import com.gasmtask.planning.domain.DayProgress;
 import com.gasmtask.planning.domain.TaskOccurrence;
 import com.gasmtask.planning.repository.TaskOccurrenceRepository;
 import com.gasmtask.planning.repository.WeeklyPlanRepository;
+import com.gasmtask.progression.service.ProgressionService;
 import com.gasmtask.shared.time.UserCalendar;
 import com.gasmtask.streak.domain.DailyResult;
 import com.gasmtask.streak.domain.DayStatus;
@@ -27,8 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Virada do dia (RN16, RN22): as pendentes de cada dia passado viram perdidas, o dia fecha como cumprido,
- * falha ou descanso e o streak é atualizado. Roda no job periódico e, como garantia, antes das telas que
+ * Virada do dia (RN16, RN22): as pendentes de cada dia passado viram perdidas (as obrigatórias custam XP),
+ * o dia fecha como cumprido, falha ou descanso e o streak é atualizado. Roda no job periódico e, como garantia, antes das telas que
  * mostram o streak. Os dias fecham em ordem e uma vez só; o lock na linha do streak serializa as execuções
  * do mesmo usuário.
  */
@@ -42,10 +43,12 @@ public class DayClosingService {
     private final UserService users;
     private final UserCalendar calendar;
     private final AchievementService achievements;
+    private final ProgressionService progression;
 
     public DayClosingService(StreakRepository streaks, DailyResultRepository dailyResults,
                              TaskOccurrenceRepository occurrences, WeeklyPlanRepository plans, UserService users,
-                             UserCalendar calendar, AchievementService achievements) {
+                             UserCalendar calendar, AchievementService achievements,
+                             ProgressionService progression) {
         this.streaks = streaks;
         this.dailyResults = dailyResults;
         this.occurrences = occurrences;
@@ -53,6 +56,7 @@ public class DayClosingService {
         this.users = users;
         this.calendar = calendar;
         this.achievements = achievements;
+        this.progression = progression;
     }
 
     @Transactional
@@ -72,7 +76,12 @@ public class DayClosingService {
         Instant now = calendar.now();
         for (LocalDate date = first; !date.isAfter(yesterday); date = date.plusDays(1)) {
             List<TaskOccurrence> day = byDate.getOrDefault(date, List.of());
+            // Obrigatória que passou do dia sem ser concluída custa XP (elo ranqueado); extra perdida, não
+            List<TaskOccurrence> missedMandatory = day.stream()
+                    .filter(occurrence -> occurrence.isPending() && occurrence.isMandatory())
+                    .toList();
             day.forEach(TaskOccurrence::markMissed);
+            missedMandatory.forEach(occurrence -> progression.penalizeMissed(userId, occurrence.getId()));
             DayProgress progress = DayProgress.of(day);
             DayStatus status = StreakRules.statusOf(progress.mandatoryPlanned(), progress.mandatoryDone());
             streak.close(date, status);

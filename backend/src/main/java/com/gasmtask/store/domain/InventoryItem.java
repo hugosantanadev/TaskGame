@@ -47,4 +47,11 @@ public class InventoryItem {
         owned.acquiredAt = now;
         return owned;
     }
+
+    /** Recebido sem compra (recompensa de elo): entra na coleção com preço pago zero. */
+    public static InventoryItem grant(UUID userId, StoreItem item, Instant now) {
+        InventoryItem owned = acquire(userId, item, now);
+        owned.pricePaid = 0;
+        return owned;
+    }
 }

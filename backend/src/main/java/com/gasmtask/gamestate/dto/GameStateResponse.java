@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.gasmtask.character.domain.CharacterSlot;
 import com.gasmtask.character.domain.CharacterState;
+import com.gasmtask.progression.dto.RankStatusResponse;
 import com.gasmtask.shared.time.TimeOfDay;
 import com.gasmtask.streak.domain.TodayStatus;
 
@@ -20,6 +21,7 @@ public record GameStateResponse(
         TimeOfDay timeOfDay,
         int coins,
         StreakState streak,
+        RankStatusResponse rank,
         Totals totals,
         List<Item> inventory,
         RoomState room,

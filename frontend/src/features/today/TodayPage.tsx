@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
 
 import { asApiError } from '../../api/errors'
 import type { Occurrence, Period, Today } from '../../api/types'
@@ -6,6 +7,10 @@ import { useCurrentUser } from '../../auth/context'
 import { Button, ButtonLink } from '../../components/Button'
 import { CoinIcon, FlameIcon, PlusIcon, StarIcon } from '../../components/gameIcons'
 import { PageTitle } from '../../components/PageTitle'
+import { RankBadge } from '../../components/RankBadge'
+import { readSeenRank, writeSeenRank } from '../../game/rankMemory'
+import { publishReward } from '../../game/rewardFeedback'
+import { sameRank } from '../../lib/rank'
 import { DAY_PERIODS, describeDay, hourIn, safeTimeZone, timeOfDay } from '../../lib/datetime'
 import { formatTime, minutesOf, plural } from '../../lib/days'
 import { useNow } from '../../lib/useNow'
@@ -34,6 +39,15 @@ export function TodayPage() {
   const data = today.data
   // Mostra no painel a versão mais nova da tarefa (depois de concluir, a lista é recarregada)
   const current = selected && data ? (data.occurrences.find((o) => o.id === selected.id) ?? selected) : selected
+  const rank = data?.rank
+
+  // Elo que mudou sem uma conclusão no meio (caiu na virada do dia): avisa uma vez
+  useEffect(() => {
+    if (!rank) return
+    const seen = readSeenRank(user.id)
+    writeSeenRank(user.id, rank)
+    if (seen && !sameRank(seen, rank)) publishReward({ kind: 'rank', from: seen, to: rank })
+  }, [rank, user.id])
 
   return (
     <div className={styles.page} data-period={period}>
@@ -58,6 +72,11 @@ export function TodayPage() {
         </h1>
         {data && (
           <ul className={styles.chips} aria-label="Seu placar">
+            <li className={styles.rankChip}>
+              <Link to="/ranking/elo" className={styles.rankLink} aria-label={`Seu elo: ver elos e recompensas`}>
+                <RankBadge rank={data.rank} size="s" />
+              </Link>
+            </li>
             <li className={styles.streakChip}>
               <FlameIcon /> {plural(data.streak.current, 'dia', 'dias')}
               <span className="visually-hidden"> de sequência</span>

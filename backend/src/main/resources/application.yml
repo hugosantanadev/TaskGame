@@ -70,3 +70,6 @@ app:
     enabled: true                   # fecha os dias de todos os usuários (pendentes viram perdidas)
     interval: PT10M
     initial-delay: PT1M
+  progression:                      # elo ranqueado: além dos pontos de cada tarefa concluída
+    day-fulfilled-bonus: 10         # XP extra no dia em que todas as obrigatórias são concluídas
+    missed-mandatory-penalty: 5     # XP perdido por obrigatória que passou do dia sem ser concluída

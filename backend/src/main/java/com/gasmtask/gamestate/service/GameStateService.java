@@ -12,6 +12,7 @@ import com.gasmtask.economy.service.WalletService;
 import com.gasmtask.gamestate.dto.GameStateResponse;
 import com.gasmtask.planning.domain.OccurrenceStatus;
 import com.gasmtask.planning.repository.TaskOccurrenceRepository;
+import com.gasmtask.progression.service.ProgressionService;
 import com.gasmtask.shared.time.TimeOfDay;
 import com.gasmtask.shared.time.UserCalendar;
 import com.gasmtask.store.dto.InventoryItemResponse;
@@ -38,10 +39,12 @@ public class GameStateService {
     private final TaskOccurrenceRepository occurrences;
     private final UserService users;
     private final UserCalendar calendar;
+    private final ProgressionService progression;
 
     public GameStateService(StreakService streaks, WalletService wallet, InventoryService inventory,
                             CharacterService characters, AchievementService achievements,
-                            TaskOccurrenceRepository occurrences, UserService users, UserCalendar calendar) {
+                            TaskOccurrenceRepository occurrences, UserService users, UserCalendar calendar,
+                            ProgressionService progression) {
         this.streaks = streaks;
         this.wallet = wallet;
         this.inventory = inventory;
@@ -50,6 +53,7 @@ public class GameStateService {
         this.occurrences = occurrences;
         this.users = users;
         this.calendar = calendar;
+        this.progression = progression;
     }
 
     @Transactional
@@ -67,6 +71,7 @@ public class GameStateService {
                 timeOfDay,
                 wallet.balanceOf(userId),
                 new GameStateResponse.StreakState(streak.current(), streak.longest(), streak.todayStatus()),
+                progression.status(userId),
                 new GameStateResponse.Totals(
                         (int) occurrences.countByUserIdAndStatus(userId, OccurrenceStatus.COMPLETED),
                         achievements.unlockedCount(userId)),

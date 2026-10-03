@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { apiRequest } from '../../api/client'
 import type { CompletionResult, Occurrence, ProofAttached, Today } from '../../api/types'
+import { useCurrentUser } from '../../auth/context'
+import { writeSeenRank } from '../../game/rankMemory'
 import { publishReward } from '../../game/rewardFeedback'
 
 export const todayKey = ['today'] as const
@@ -33,15 +35,19 @@ export function useRefreshPlan() {
     void queryClient.invalidateQueries({ queryKey: ['stats'] })
     void queryClient.invalidateQueries({ queryKey: ['ranking'] })
     void queryClient.invalidateQueries({ queryKey: ['reminders'] })
+    void queryClient.invalidateQueries({ queryKey: ['rank'] })
   }
 }
 
 export function useCompleteOccurrence() {
   const refresh = useRefreshPlan()
+  const user = useCurrentUser()
   return useMutation({
     mutationFn: ({ occurrence, photo }: { occurrence: Occurrence; photo?: File }) =>
       apiRequest<CompletionResult>(`/occurrences/${occurrence.id}/complete`, { method: 'POST', body: proofForm(photo) }),
     onSuccess: (result, { occurrence }) => {
+      // A promoção já aparece no aviso da conclusão: o elo novo fica como "visto"
+      writeSeenRank(user.id, result.xp.status)
       publishReward({ kind: 'completed', title: occurrence.title, result })
       refresh()
     },

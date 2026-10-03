@@ -45,6 +45,17 @@
   --cat-home: #ffb000;
   --cat-other: #8a94a8;
 
+  /* Elos: cada um tem a sua cor, sempre acompanhada do nome */
+  --tier-iron: #6b7385;
+  --tier-bronze: #b4693a;
+  --tier-silver: #8e9bb0;
+  --tier-gold: #d9a300;
+  --tier-platinum: #1fa89b;
+  --tier-diamond: #5b5cf0;
+  --tier-master: #d0306b;
+  --tier-legend: #ff6a00;
+  --on-tier: #ffffff;
+
   /* Céu do dia */
   --sky-morning: #ffc56b;
   --sky-afternoon: #6fd0ff;

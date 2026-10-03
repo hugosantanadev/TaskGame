@@ -28,10 +28,10 @@ public class RankingController {
     }
 
     @GetMapping
-    @Operation(summary = "Ranking da semana por pontos, tarefas concluídas, moedas ganhas ou sequência, com a sua posição")
+    @Operation(summary = "Ranking por elo (XP, padrão) ou da semana por pontos, tarefas, moedas ou sequência, com a sua posição")
     public RankingResponse ranking(@AuthenticationPrincipal AuthenticatedUser user,
                                    @RequestParam(defaultValue = "WEEK") RankingPeriod period,
-                                   @RequestParam(defaultValue = "POINTS") RankingMetric metric,
+                                   @RequestParam(defaultValue = "XP") RankingMetric metric,
                                    @RequestParam(defaultValue = "GLOBAL") RankingScope scope,
                                    @RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = "20") int size) {

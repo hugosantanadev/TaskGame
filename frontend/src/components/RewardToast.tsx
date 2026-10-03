@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 
 import { onReward, type RewardEvent } from '../game/rewardFeedback'
 import { listJoin, plural } from '../lib/days'
-import { CoinIcon, CrossIcon, FlameIcon, StarIcon, TrophyIcon } from './gameIcons'
+import { compareRanks, rankLabel } from '../lib/rank'
+import { CoinIcon, CrossIcon, FlameIcon, ShirtIcon, StarIcon, TrophyIcon } from './gameIcons'
+import { RankBadge } from './RankBadge'
 import styles from './RewardToast.module.css'
 
 /** Aviso de recompensa: mostra o que a conclusão rendeu, parte por parte, e se a sequência subiu. */
@@ -24,6 +26,7 @@ export function RewardToast() {
           <div className={styles.text}>
             {event.kind === 'completed' && <Completed event={event} />}
             {event.kind === 'proof' && <ProofSent event={event} />}
+            {event.kind === 'rank' && <RankChanged event={event} />}
             {event.kind === 'purchase' && (
               <>
                 <p className={styles.title}>Comprado: {event.title}</p>
@@ -41,7 +44,7 @@ export function RewardToast() {
 }
 
 function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' }> }) {
-  const { reward, streak } = event.result
+  const { reward, streak, xp } = event.result
   const parts = [`${reward.baseCoins} da tarefa`]
   if (reward.onTimeBonus > 0) parts.push(`${reward.onTimeBonus} pelo horário`)
   if (reward.proofBonus > 0) parts.push(`${reward.proofBonus} pela foto`)
@@ -55,8 +58,19 @@ function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' 
         <span className={styles.coins}>
           <CoinIcon /> +{plural(reward.totalCoins, 'moeda', 'moedas')}
         </span>
+        {xp.gained > 0 && <span className={styles.xp}>+{xp.gained} XP</span>}
       </p>
       {parts.length > 1 && <p className={styles.detail}>Moedas: {listJoin(parts)}.</p>}
+      {xp.promoted && (
+        <p className={styles.rankUp}>
+          Subiu para <RankBadge rank={xp.status} size="s" />
+        </p>
+      )}
+      {xp.unlockedItems.map((item) => (
+        <p key={item.code} className={styles.achievement}>
+          <ShirtIcon /> Roupa de elo: {item.name}
+        </p>
+      ))}
       {streak.increasedNow && (
         <p className={styles.streak}>
           <FlameIcon /> Dia cumprido. Sequência de {plural(streak.current, 'dia', 'dias')}.
@@ -67,6 +81,19 @@ function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' 
           <TrophyIcon /> Conquista: {achievement.name}
         </p>
       ))}
+    </>
+  )
+}
+
+function RankChanged({ event }: { event: Extract<RewardEvent, { kind: 'rank' }> }) {
+  const up = compareRanks(event.to, event.from) > 0
+  return (
+    <>
+      <p className={styles.title}>{up ? 'Você subiu de elo!' : `Você caiu para ${rankLabel(event.to)}`}</p>
+      <p className={styles.rankUp}>
+        <RankBadge rank={event.to} size="s" />
+      </p>
+      {!up && <p className={styles.detail}>Obrigatórias perdidas custam XP. Cumpra o dia de hoje para voltar a subir.</p>}
     </>
   )
 }

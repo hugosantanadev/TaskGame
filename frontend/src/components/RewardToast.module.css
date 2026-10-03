@@ -118,3 +118,22 @@
   color: var(--coin);
   font-weight: 700;
 }
+
+/* XP: a moeda do elo, na cor da caneta */
+.xp {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem var(--space-2);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.rankUp {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+}

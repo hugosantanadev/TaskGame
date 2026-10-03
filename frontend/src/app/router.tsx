@@ -9,6 +9,7 @@ import { MissionFormPage } from '../features/missions/MissionFormPage'
 import { MissionsPage } from '../features/missions/MissionsPage'
 import { WeekPage } from '../features/planning/WeekPage'
 import { RankingPage } from '../features/ranking/RankingPage'
+import { RankPage } from '../features/ranking/RankPage'
 import { CharacterPage } from '../features/profile/CharacterPage'
 import { RoomPage } from '../features/profile/RoomPage'
 import { StatsPage } from '../features/stats/StatsPage'
@@ -44,6 +45,7 @@ export const router = createBrowserRouter([
               { path: '/estatisticas', element: <StatsPage /> },
               { path: '/loja', element: <StorePage /> },
               { path: '/ranking', element: <RankingPage /> },
+              { path: '/ranking/elo', element: <RankPage /> },
               { path: '/perfil', element: <ProfilePage /> },
               { path: '/perfil/conquistas', element: <AchievementsPage /> },
               { path: '/perfil/quarto', element: <RoomPage /> },

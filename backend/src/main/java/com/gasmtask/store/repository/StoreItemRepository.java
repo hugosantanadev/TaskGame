@@ -1,5 +1,6 @@
 package com.gasmtask.store.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,4 +14,6 @@ public interface StoreItemRepository extends JpaRepository<StoreItem, UUID> {
     List<StoreItem> findByAvailableTrueOrderBySortOrderAsc();
 
     List<StoreItem> findByAvailableTrueAndCategoryOrderBySortOrderAsc(StoreItemCategory category);
+
+    List<StoreItem> findByCodeIn(Collection<String> codes);
 }

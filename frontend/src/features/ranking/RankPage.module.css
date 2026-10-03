@@ -1,0 +1,199 @@
+.page {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.back {
+  justify-self: start;
+  padding: 0;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.note {
+  color: var(--pencil);
+  font-size: var(--text-s);
+}
+
+.failure {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-s);
+  background: var(--danger-paper);
+  color: var(--danger);
+}
+
+.section {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-l);
+  font-weight: 800;
+}
+
+/* O elo atual em destaque, como uma ficha de personagem */
+.hero {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-l);
+  background: var(--paper-raised);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.bar {
+  width: 100%;
+  height: 0.875rem;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: var(--pen);
+}
+
+.heroText {
+  color: var(--pencil);
+}
+
+.heroText strong {
+  color: var(--ink);
+}
+
+.rewards,
+.ladder,
+.events {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reward {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px dashed var(--pencil);
+  border-radius: var(--radius-m);
+  background: var(--paper);
+  color: var(--pencil);
+}
+
+.reward[data-owned] {
+  border: 2px solid var(--ink);
+  background: var(--paper-raised);
+  color: var(--ink);
+}
+
+.rewardIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--rule);
+  font-size: 1.25rem;
+}
+
+.reward[data-owned] .rewardIcon {
+  background: var(--coin);
+  color: var(--coin-ink);
+}
+
+.rewardText {
+  display: grid;
+}
+
+.rewardName {
+  font-weight: 700;
+}
+
+.rewardTier {
+  font-size: var(--text-s);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 2.5rem;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-s);
+}
+
+.step[data-current] {
+  border: 2px solid var(--pen);
+  background: color-mix(in srgb, var(--pen) 8%, var(--paper-raised));
+}
+
+.stepXp {
+  margin-left: auto;
+  color: var(--pencil);
+  font-size: var(--text-s);
+  font-variant-numeric: tabular-nums;
+}
+
+.youTag {
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  background: var(--pen);
+  color: var(--on-pen);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.event {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.eventText {
+  display: grid;
+  min-width: 0;
+}
+
+.eventReason {
+  font-weight: 700;
+}
+
+.eventMeta {
+  overflow: hidden;
+  color: var(--pencil);
+  font-size: var(--text-s);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eventAmount {
+  flex: none;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.eventAmount[data-negative] {
+  color: var(--danger);
+}
