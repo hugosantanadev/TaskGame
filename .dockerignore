@@ -1,0 +1,10 @@
+# Contexto do Dockerfile da raiz: só o código-fonte entra na imagem
+**/node_modules
+**/dist
+**/target
+**/.env
+.git
+.idea
+.vscode
+data
+backend/data

@@ -26,8 +26,12 @@ spring:
       max-request-size: 6MB
 
 server:
-  port: ${SERVER_PORT:8080}          # fora do Docker, troque no .env se a 8080 estiver ocupada
-  forward-headers-strategy: native   # atrás do Nginx
+  # SERVER_PORT no .env (fora do Docker); PORT é o que serviços como Railway e Render informam
+  port: ${SERVER_PORT:${PORT:8080}}
+  forward-headers-strategy: native   # atrás do Nginx ou do proxy HTTPS do serviço de hospedagem
+  compression:                       # o PWA servido pela própria API (Dockerfile da raiz) vai comprimido
+    enabled: true
+    mime-types: text/html,text/css,application/javascript,application/json,application/manifest+json,image/svg+xml
 
 management:
   endpoints:

@@ -39,7 +39,9 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health/**").permitAll()
                         .requestMatchers(API_DOCS).permitAll()
                         .requestMatchers("/error").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/**", "/actuator/**").authenticated()
+                        // O resto é o PWA (index.html, assets, service worker), servido quando vem na imagem
+                        .anyRequest().permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .bearerTokenResolver(bearerTokenResolver())
                         .jwt(jwt -> jwt
