@@ -45,6 +45,12 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
 - RF24 — Endpoint com o estado de jogo consolidado, para a futura camada visual.
 - RF25 — Instalação como PWA.
 
+**Modo jogo (depois do MVP)**
+- RF26 — Elo ranqueado: XP que sobe com as tarefas e desce com as obrigatórias perdidas, elos com divisões e uma roupa exclusiva por elo.
+- RF27 — Atributos de RPG: cada categoria de tarefa treina um atributo do personagem, com nível próprio.
+- RF28 — Desafios diários: três metas sorteadas por dia, valendo XP e moedas.
+- RF29 — Protetor de sequência: item comprado com moedas que salva um dia de falha.
+
 ## 2. Requisitos não funcionais
 
 - RNF01 — Mobile-first: layout pensado para 360–430 px, alvos de toque de pelo menos 44 px, barra de navegação inferior, contraste AA e rótulos acessíveis. Em telas grandes, o app vira uma coluna central.
@@ -146,6 +152,12 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
 **Acesso**
 - RN30 — Toda consulta é filtrada pelo usuário autenticado. Pedir um recurso de outro usuário retorna 404, sem revelar que ele existe.
 
+**Modo jogo**
+- RN31 ⚑ — **Elo ranqueado.** O XP sobe com os pontos de cada tarefa concluída e com +10 no dia cumprido, e desce 5 a cada obrigatória perdida na virada do dia. Nunca fica abaixo de zero. A escada tem 22 degraus: Ferro, Bronze, Prata, Ouro, Platina, Diamante e Mestre, cada um com divisões 1 a 3, e Lenda no topo, a partir de 7.000 XP. O elo é derivado do XP atual, então sobe e desce. Cada elo a partir do Bronze entrega uma roupa exclusiva, que não está à venda; ela vale pelo maior XP já alcançado, então cair de elo não tira a roupa. Por padrão, o ranking ordena pelo XP. Sem temporadas no MVP: o elo é permanente.
+- RN32 — **Atributos.** Estudo treina Inteligência, Exercício treina Força, Leitura treina Sabedoria, Espiritualidade treina Espírito, Sono treina Vitalidade, Projeto treina Criatividade, e Casa e Outros treinam Disciplina. O XP de um atributo é a soma dos pontos das tarefas concluídas dessas categorias. Cada nível pede 25 XP a mais que o anterior. Treino só soma, porque quem sobe e desce é o elo.
+- RN33 ⚑ — **Desafios diários.** No primeiro acesso do dia, sorteiam-se três entre os desafios que o plano do dia permite cumprir e que ainda não foram cumpridos. O sorteio é fixo por pessoa e por dia e fica gravado. O catálogo: Madrugador (2 tarefas antes do meio-dia, só sorteado antes das 10h), Pontual (2 no horário), Registro (1 com foto), Milha extra (1 extra), Variedade (3 categorias), Dia completo e Maratona (4 tarefas). O progresso vem das tarefas do dia. Cada desafio cumprido paga +10 XP e +3 moedas uma vez; o que não foi cumprido expira com o dia.
+- RN34 ⚑ — **Protetor de sequência.** Custa 40 moedas, e dá para guardar até 2. Na virada do dia, uma falha com protetor guardado consome um e fecha como dia protegido (FROZEN): a sequência não zera nem sobe. O protetor salva a sequência, não o XP, então a obrigatória perdida ainda custa XP.
+
 ## 4. Entidades e relacionamentos
 
 Dois termos precisam ficar claros. Uma **missão** é o que você quer fazer ("Estudar Java, 5× por semana, 08:00"). Uma **ocorrência** é uma instância datada dela ("Estudar Java, seg 28/09, 08:00"). É a ocorrência que é concluída, perdida e recompensada.
@@ -162,7 +174,10 @@ Dois termos precisam ficar claros. Uma **missão** é o que você quer fazer ("E
 | Wallet | Saldo de moedas | 1:1 User |
 | CoinTransaction | Extrato imutável: valor (+/−), motivo (TASK_REWARD, ON_TIME_BONUS, PROOF_BONUS, PURCHASE), referência | N:1 User; aponta para TaskOccurrence ou InventoryItem |
 | Streak | Streak atual, maior streak, último dia cumprido | 1:1 User |
-| DailyResult | Fechamento de um dia: obrigatórias planejadas e concluídas, extras, pontos, moedas, status (FULFILLED, FAILED, REST) e streak ao fim do dia | N:1 User, único por data |
+| DailyResult | Fechamento de um dia: obrigatórias planejadas e concluídas, extras, pontos, moedas, status (FULFILLED, FAILED, REST, FROZEN) e streak ao fim do dia | N:1 User, único por data |
+| PlayerProgress | XP atual (define o elo) e maior XP já alcançado (define as roupas de elo ganhas) | 1:1 User |
+| XpEvent | Extrato imutável de XP: valor (+/−), motivo (TASK_COMPLETED, DAY_FULFILLED, TASK_MISSED, CHALLENGE_COMPLETED, BACKFILL) e referência | N:1 User; aponta para TaskOccurrence, dia ou DailyChallenge |
+| DailyChallenge | Desafio sorteado para um dia: código, meta, recompensa (XP e moedas) e quando foi cumprido | N:1 User, único por (dia, código) |
 | Achievement | Catálogo: código, nome, critério, limiar, categoria opcional, `assetKey` opcional | Seed |
 | UserAchievement | Desbloqueio e data | N:1 User, N:1 Achievement |
 | StoreItem | Catálogo: código estável, nome, descrição, categoria (FURNITURE, DECORATION, CHARACTER), slot, preço, disponibilidade, `assetKey` opcional | Seed |
@@ -176,6 +191,7 @@ Há algumas diferenças em relação à lista de entidades do enunciado:
 - **TaskCompletion** foi absorvida pela TaskOccurrence. A relação seria 1:1 e sempre lida junto.
 - **Reward** não virou tabela. A regra fica na RewardPolicy (configurável) e cada recompensa paga é registrada como CoinTransaction.
 - **Entidades novas**: TaskOccurrence (sem ela não existe "planejado × concluído" nem "perdida"), Wallet, Streak, DailyResult (histórico do streak e base das estatísticas diárias) e RefreshToken (logout real).
+- **Modo jogo:** o Streak ganhou os protetores guardados; as roupas de elo são StoreItems fora da loja (`available = false`), entregues no inventário com preço pago zero; os atributos não têm tabela, porque saem das ocorrências concluídas.
 - **Room e Character** nascem finos de propósito. São as raízes que a camada visual vai enriquecer com posição, camada e aparência base, por meio de migrations que só adicionam colunas.
 
 ```mermaid
@@ -184,8 +200,11 @@ erDiagram
     USER ||--o{ WEEKLY_PLAN : "planeja"
     USER ||--|| WALLET : "tem"
     USER ||--|| STREAK : "tem"
+    USER ||--|| PLAYER_PROGRESS : "tem XP"
     USER ||--o{ DAILY_RESULT : "fecha"
     USER ||--o{ COIN_TRANSACTION : "movimenta"
+    USER ||--o{ XP_EVENT : "ganha e perde"
+    USER ||--o{ DAILY_CHALLENGE : "recebe"
     USER ||--o{ REFRESH_TOKEN : "autentica"
     USER ||--o{ USER_ACHIEVEMENT : "desbloqueia"
     USER ||--o{ INVENTORY_ITEM : "possui"
@@ -196,6 +215,9 @@ erDiagram
     WEEKLY_PLAN ||--o{ TASK_OCCURRENCE : "agrupa"
     TASK_OCCURRENCE ||--o| PROOF : "comprovada por"
     TASK_OCCURRENCE ||--o{ COIN_TRANSACTION : "recompensa"
+    TASK_OCCURRENCE ||--o{ XP_EVENT : "rende ou custa"
+    DAILY_CHALLENGE ||--o| XP_EVENT : "paga"
+    DAILY_CHALLENGE ||--o| COIN_TRANSACTION : "paga"
     ACHIEVEMENT ||--o{ USER_ACHIEVEMENT : "concede"
     STORE_ITEM ||--o{ INVENTORY_ITEM : "origina"
     INVENTORY_ITEM ||--o| COIN_TRANSACTION : "pago por"
@@ -272,9 +294,11 @@ gasmtask/
 │   │   ├── streak/            # Streak, DailyResult, StreakService, DayClosingJob
 │   │   ├── achievement/       # Achievement, AchievementService, critérios (strategy)
 │   │   ├── store/             # StoreItem, InventoryItem, StoreService, InventoryService
-│   │   ├── inventory/         # InventoryItem, InventoryService
 │   │   ├── room/              # Room, RoomItem
-│   │   ├── character/         # PlayerCharacter (não Character, por causa de java.lang.Character), CharacterEquipment, CharacterSlot, CharacterStateResolver
+│   │   ├── character/         # PlayerCharacter (não Character, por causa de java.lang.Character), CharacterEquipment, CharacterSlot, CharacterStateResolver, Attribute e AttributeService
+│   │   ├── progression/       # XP e elo: PlayerProgress, XpEvent, RankLadder, ProgressionService
+│   │   ├── challenge/         # desafios diários: ChallengeType, ChallengePicker, ChallengeService
+│   │   ├── demo/              # DemoDataSeeder (perfil dev)
 │   │   ├── ranking/           # RankingService, RankingRepository (SQL), métrica, período e escopo
 │   │   ├── stats/             # estatísticas e resumo semanal (somente leitura): PeriodTotals, StatsGranularity
 │   │   ├── notification/      # ReminderPlanner, ReminderService (o NotificationGateway entra com o Web Push)
@@ -339,7 +363,9 @@ Todas as rotas ficam sob `/api/v1`, trocam JSON e exigem `Authorization: Bearer 
 | POST | `/occurrences/{id}/complete` | Concluir (multipart, `proof` opcional); devolve a recompensa detalhada |
 | POST | `/occurrences/{id}/proof` | Anexar prova depois, no mesmo dia |
 | GET | `/occurrences/{id}/proof` | Imagem da prova (só o dono) |
-| GET | `/streak` | Streak atual, maior streak e status de hoje |
+| GET | `/streak` | Streak atual, maior streak, status de hoje e protetores guardados |
+| POST | `/streak/freezes` | Compra um protetor de sequência |
+| GET | `/me/rank` | Elo, maior elo, escada, roupas de cada elo e últimas mudanças de XP |
 | GET | `/achievements` | Conquistas com progresso e data de desbloqueio |
 | GET | `/wallet` | Saldo e totais ganhos e gastos |
 | GET | `/wallet/transactions` | Extrato paginado |
@@ -350,7 +376,7 @@ Todas as rotas ficam sob `/api/v1`, trocam JSON e exigem `Authorization: Bearer 
 | PUT · DELETE | `/room/items/{inventoryItemId}` | Colocar ou retirar item do quarto |
 | GET | `/character` | Slots equipados e estado derivado |
 | PUT · DELETE | `/character/slots/{slot}` | Equipar ou desequipar |
-| GET | `/rankings?period=WEEK&metric=POINTS` | Ranking paginado + posição do usuário |
+| GET | `/rankings?metric=XP` | Ranking paginado por elo (padrão) ou da semana (`POINTS`, `COMPLETED_TASKS`, `COINS_EARNED`, `STREAK`), com a posição do usuário |
 | GET | `/stats/overview` | Totais e streaks |
 | GET | `/stats/history?granularity=WEEK&periods=8` | Planejado × concluído por semana ou mês |
 | GET | `/weeks/{weekStart}/summary` | Resumo semanal |
@@ -435,6 +461,9 @@ Esse fluxo funcionando de ponta a ponta é o critério de pronto do MVP.
 | Frontend | React Router, TanStack Query, CSS Modules com variáveis CSS; sem kit de UI e sem biblioteca de gráficos | O TanStack Query cuida de cache e invalidação (concluir uma tarefa atualiza Hoje, carteira e streak). Variáveis CSS deixam o futuro tema dia/noite barato. Os gráficos do MVP são barras simples. |
 | PWA | vite-plugin-pwa com `injectManifest`; cache só dos arquivos do app, API sempre pela rede | O service worker próprio já fica pronto para push, e cachear resposta autenticada arrisca mostrar dado velho. Instalar no celular exige HTTPS, então o README terá o passo a passo com túnel (cloudflared ou ngrok). |
 | Notificações | No MVP: preferências, cálculo dos lembretes (`ReminderPlanner`, exposto em `/reminders/upcoming`) e lembrete local enquanto o app está aberto (aviso na tela ou notificação do sistema em segundo plano). Web Push (VAPID) fica para a fase seguinte, junto com a interface de envio (`NotificationGateway`) e o job que a usa: sem o push, ela não teria quem a chamasse | Push exige chaves VAPID, criptografia do payload e inscrições salvas, e no iPhone só funciona com o app instalado (iOS 16.4+). É a complexidade que o enunciado autoriza adiar. |
+| XP e elo | Extrato de XP (como o de moedas) + linha de progresso travada a cada mudança; o elo é derivado do XP, as roupas do maior XP | Auditável e idempotente: restrições únicas impedem render ou cobrar XP duas vezes pela mesma tarefa, dia ou desafio. Derivar o elo permite trocar a escada sem migrar dados. |
+| Desafios | Sorteio determinístico (semente por pessoa e dia) entre os elegíveis, gravado no primeiro acesso; progresso sempre recalculado | Gravar evita que o sorteio mude quando o plano muda durante o dia; recalcular o progresso evita guardar um contador que poderia divergir das tarefas. |
+| Publicação | Dockerfile na raiz com uma imagem única: o Spring Boot serve o PWA (cache longo em `/assets`, revalidação no resto, `index.html` para as rotas do app) | Qualquer serviço de contêiner (Railway, Render, Fly.io) roda um processo só, no mesmo endereço, sem Nginx; o Compose continua com Nginx para rodar local. |
 | Infra | Sem Redis, Kafka ou filas; jobs com `@Scheduled` | Um processo e um banco dão conta. Como os jobs são idempotentes, escalar horizontalmente depois só exige um lock distribuído (ex.: ShedLock). |
 
 ## Plano de implementação
@@ -445,4 +474,6 @@ O MVP é construído em cinco fases. Cada uma termina executável e testada:
 2. **Loop principal** (concluída). Missões, plano semanal, dia congelado, tela Hoje, conclusão com recompensas e provas, carteira, streak e fechamento do dia.
 3. **Coleção** (concluída). Loja, inventário, quarto, personagem e conquistas.
 4. **Visão** (concluída). Ranking, estatísticas, resumo semanal, estrutura de lembretes e game-state.
-5. **Entrega.** Testes restantes, usuário de demonstração no perfil `dev` e revisão final da documentação.
+5. **Entrega** (concluída). Testes restantes, usuário de demonstração no perfil `dev`, imagem única para publicar e revisão final da documentação.
+
+Depois do MVP veio o **modo jogo** (RF26 a RF29, RN31 a RN34): elo ranqueado, atributos, desafios diários e protetor de sequência.

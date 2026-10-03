@@ -10,8 +10,11 @@ erDiagram
     USER ||--o{ WEEKLY_PLAN : "planeja"
     USER ||--|| WALLET : "tem"
     USER ||--|| STREAK : "tem"
+    USER ||--|| PLAYER_PROGRESS : "tem XP"
     USER ||--o{ DAILY_RESULT : "fecha"
     USER ||--o{ COIN_TRANSACTION : "movimenta"
+    USER ||--o{ XP_EVENT : "ganha e perde"
+    USER ||--o{ DAILY_CHALLENGE : "recebe"
     USER ||--o{ REFRESH_TOKEN : "autentica"
     USER ||--o{ USER_ACHIEVEMENT : "desbloqueia"
     USER ||--o{ INVENTORY_ITEM : "possui"
@@ -22,6 +25,9 @@ erDiagram
     WEEKLY_PLAN ||--o{ TASK_OCCURRENCE : "agrupa"
     TASK_OCCURRENCE ||--o| PROOF : "comprovada por"
     TASK_OCCURRENCE ||--o{ COIN_TRANSACTION : "recompensa"
+    TASK_OCCURRENCE ||--o{ XP_EVENT : "rende ou custa"
+    DAILY_CHALLENGE ||--o| XP_EVENT : "paga"
+    DAILY_CHALLENGE ||--o| COIN_TRANSACTION : "paga"
     ACHIEVEMENT ||--o{ USER_ACHIEVEMENT : "concede"
     STORE_ITEM ||--o{ INVENTORY_ITEM : "origina"
     INVENTORY_ITEM ||--o| COIN_TRANSACTION : "pago por"
@@ -342,3 +348,58 @@ Estatísticas, resumo semanal e game-state só leem tabelas que já existiam. Du
 | wake_time | TIME | opcional; nula desliga o lembrete de acordar |
 
 Restrições: `CHECK (reminder_lead_minutes BETWEEN 0 AND 120)`. Os horários são do fuso do usuário.
+
+## Modo jogo (migrations V7, V8 e V9)
+
+### player_progress (V7)
+
+| Coluna | Tipo | Regras |
+|---|---|---|
+| user_id | UUID | PK, FK → users (on delete cascade) |
+| xp | INTEGER | obrigatória; define o elo |
+| peak_xp | INTEGER | obrigatória; maior XP já alcançado, define as roupas de elo ganhas |
+| updated_at | TIMESTAMPTZ | obrigatória |
+| version | BIGINT | obrigatória |
+
+Restrições: `CHECK (xp >= 0 AND peak_xp >= xp)`. A V7 calcula o XP inicial de quem já usava o app a partir do histórico (pontos das concluídas + 10 por dia cumprido − 5 por obrigatória perdida) e lança esse saldo como BACKFILL.
+
+### xp_events (V7, V8)
+
+| Coluna | Tipo | Regras |
+|---|---|---|
+| id | UUID | PK |
+| user_id | UUID | obrigatória, FK → users (on delete cascade) |
+| amount | INTEGER | obrigatória, diferente de zero |
+| reason | VARCHAR(20) | obrigatória |
+| occurrence_id | UUID | FK → task_occurrences (on delete set null) |
+| event_date | DATE | só no bônus de dia cumprido |
+| challenge_id | UUID | FK → daily_challenges (on delete set null) |
+| created_at | TIMESTAMPTZ | obrigatória |
+
+Restrições: `CHECK (reason IN ('TASK_COMPLETED', 'DAY_FULFILLED', 'TASK_MISSED', 'BACKFILL', 'CHALLENGE_COMPLETED'))`; `CHECK ((reason = 'DAY_FULFILLED') = (event_date IS NOT NULL))`. Índices únicos parciais: (occurrence_id, reason), (user_id, event_date, reason) e (challenge_id), para cada tarefa, dia ou desafio render XP uma vez só.
+
+### Roupas de elo (V7)
+
+Sete itens novos em `store_items`, um por elo do Bronze à Lenda, com `available = false` (fora da loja) e preço zero. A restrição de preço passou a ser `CHECK (price > 0 OR NOT available)`. Quando entregues, entram em `inventory_items` com `price_paid = 0`.
+
+### daily_challenges (V8)
+
+| Coluna | Tipo | Regras |
+|---|---|---|
+| id | UUID | PK |
+| user_id | UUID | obrigatória, FK → users (on delete cascade) |
+| challenge_date | DATE | obrigatória |
+| code | VARCHAR(20) | obrigatória |
+| target | INTEGER | obrigatória |
+| xp_reward | INTEGER | obrigatória |
+| coin_reward | INTEGER | obrigatória |
+| completed_at | TIMESTAMPTZ | opcional |
+| created_at | TIMESTAMPTZ | obrigatória |
+
+Restrições: `UNIQUE (user_id, challenge_date, code)`; `CHECK (code IN ('EARLY_BIRD', 'ON_TIME', 'PHOTO', 'EXTRA_MILE', 'VARIETY', 'FULL_DAY', 'MARATHON'))`; `CHECK (target > 0 AND xp_reward >= 0 AND coin_reward >= 0)`. A V8 também acrescenta `challenge_id` em `coin_transactions` (motivo CHALLENGE_REWARD, único por desafio).
+
+### Protetor de sequência (V9)
+
+- `streaks` ganha `freezes` (INTEGER, obrigatória, `CHECK (freezes >= 0)`) e `last_frozen_date` (DATE, opcional).
+- `daily_results.status` aceita FROZEN: falha salva por um protetor.
+- `coin_transactions.reason` aceita STREAK_FREEZE, que, como PURCHASE, é sempre negativo: `CHECK ((reason IN ('PURCHASE', 'STREAK_FREEZE')) = (amount < 0))`.
