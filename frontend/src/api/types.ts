@@ -125,6 +125,19 @@ export type Today = {
   streak: Streak
   onboarding: boolean
   rank: RankStatus
+  challenges: DailyChallenge[]
+}
+
+export type ChallengeCode = 'EARLY_BIRD' | 'ON_TIME' | 'PHOTO' | 'EXTRA_MILE' | 'VARIETY' | 'FULL_DAY' | 'MARATHON'
+
+/** Desafio do dia; `progress` vai até `target`. */
+export type DailyChallenge = {
+  code: ChallengeCode
+  target: number
+  progress: number
+  completed: boolean
+  xpReward: number
+  coinReward: number
 }
 
 export type Reward = { points: number; baseCoins: number; onTimeBonus: number; proofBonus: number; totalCoins: number }
@@ -139,9 +152,15 @@ export type CompletionResult = {
   unlockedAchievements: UnlockedAchievement[]
   xp: XpChange
   attribute: { gained: number; leveledUp: boolean; status: AttributeStatus }
+  completedChallenges: DailyChallenge[]
 }
 
-export type ProofAttached = { occurrence: Occurrence; proofBonus: number; walletBalance: number }
+export type ProofAttached = {
+  occurrence: Occurrence
+  proofBonus: number
+  walletBalance: number
+  completedChallenges: DailyChallenge[]
+}
 
 export type ExtraInput = {
   title: string
@@ -329,7 +348,7 @@ export type XpChange = {
   unlockedItems: StoreItem[]
 }
 
-export type XpReason = 'TASK_COMPLETED' | 'DAY_FULFILLED' | 'TASK_MISSED' | 'BACKFILL'
+export type XpReason = 'TASK_COMPLETED' | 'DAY_FULFILLED' | 'TASK_MISSED' | 'BACKFILL' | 'CHALLENGE_COMPLETED'
 
 export type Progression = {
   status: RankStatus

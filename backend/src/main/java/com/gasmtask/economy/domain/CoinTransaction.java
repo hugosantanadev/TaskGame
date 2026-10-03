@@ -40,6 +40,9 @@ public class CoinTransaction {
     @Column(name = "store_item_id", updatable = false)
     private UUID storeItemId;
 
+    @Column(name = "challenge_id", updatable = false)
+    private UUID challengeId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -54,6 +57,21 @@ public class CoinTransaction {
         transaction.storeItemId = storeItemId;
         transaction.reason = CoinTransactionReason.PURCHASE;
         transaction.amount = -price;
+        transaction.createdAt = now;
+        return transaction;
+    }
+
+    /** Recompensa de um desafio diário cumprido. */
+    public static CoinTransaction challengeReward(UUID userId, UUID challengeId, int amount, Instant now) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Recompensa precisa ser positiva");
+        }
+        CoinTransaction transaction = new CoinTransaction();
+        transaction.id = UUID.randomUUID();
+        transaction.userId = userId;
+        transaction.challengeId = challengeId;
+        transaction.reason = CoinTransactionReason.CHALLENGE_REWARD;
+        transaction.amount = amount;
         transaction.createdAt = now;
         return transaction;
     }

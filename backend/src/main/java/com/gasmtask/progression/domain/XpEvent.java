@@ -44,11 +44,14 @@ public class XpEvent {
     @Column(name = "event_date", updatable = false)
     private LocalDate eventDate;
 
+    @Column(name = "challenge_id", updatable = false)
+    private UUID challengeId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     public static XpEvent of(UUID userId, int amount, XpReason reason, UUID occurrenceId, LocalDate eventDate,
-                             Instant now) {
+                             UUID challengeId, Instant now) {
         if (amount == 0) {
             throw new IllegalArgumentException("Evento de XP precisa mudar alguma coisa");
         }
@@ -59,6 +62,7 @@ public class XpEvent {
         event.reason = reason;
         event.occurrenceId = occurrenceId;
         event.eventDate = eventDate;
+        event.challengeId = challengeId;
         event.createdAt = now;
         return event;
     }

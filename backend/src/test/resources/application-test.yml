@@ -10,3 +10,8 @@ app:
     dir: ${java.io.tmpdir}/gasmtask-test-storage
   day-closing:
     enabled: false                  # nos testes, o fechamento roda sob demanda, com relógio controlado
+  challenges:
+    # Desafios não pagam nada nos testes, para não mexer nas contas de XP e moedas dos outros cenários.
+    # O ChallengeIT liga as recompensas para testar o pagamento.
+    xp-reward: 0
+    coin-reward: 0

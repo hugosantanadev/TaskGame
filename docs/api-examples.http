@@ -241,3 +241,7 @@ Authorization: Bearer {{accessToken}}
 ### Elo: XP atual, maior elo, escada, roupas de cada elo e últimas mudanças de XP
 GET {{host}}/api/v1/me/rank
 Authorization: Bearer {{accessToken}}
+
+### Desafios do dia: vêm na tela Hoje (campo "challenges"); a conclusão diz quais foram cumpridos ("completedChallenges")
+GET {{host}}/api/v1/today
+Authorization: Bearer {{accessToken}}

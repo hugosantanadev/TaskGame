@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 
+import type { DailyChallenge } from '../api/types'
 import { onReward, type RewardEvent } from '../game/rewardFeedback'
 import { listJoin, plural } from '../lib/days'
 import { ATTRIBUTE_LABELS } from '../lib/attributes'
+import { challengeName } from '../lib/challenges'
 import { compareRanks, rankLabel } from '../lib/rank'
 import { CoinIcon, CrossIcon, FlameIcon, ShirtIcon, StarIcon, TrophyIcon } from './gameIcons'
 import { RankBadge } from './RankBadge'
@@ -88,6 +90,7 @@ function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' 
           <FlameIcon /> Dia cumprido. Sequência de {plural(streak.current, 'dia', 'dias')}.
         </p>
       )}
+      <ChallengeLines challenges={event.result.completedChallenges} />
       {event.result.unlockedAchievements.map((achievement) => (
         <p key={achievement.code} className={styles.achievement}>
           <TrophyIcon /> Conquista: {achievement.name}
@@ -95,6 +98,15 @@ function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' 
       ))}
     </>
   )
+}
+
+function ChallengeLines({ challenges }: { challenges: DailyChallenge[] }) {
+  return challenges.map((challenge) => (
+    <p key={challenge.code} className={styles.achievement}>
+      <StarIcon /> Desafio cumprido: {challengeName(challenge.code)} (+{challenge.xpReward} XP
+      {challenge.coinReward > 0 ? `, +${plural(challenge.coinReward, 'moeda', 'moedas')}` : ''})
+    </p>
+  ))
 }
 
 function RankChanged({ event }: { event: Extract<RewardEvent, { kind: 'rank' }> }) {
@@ -121,6 +133,7 @@ function ProofSent({ event }: { event: Extract<RewardEvent, { kind: 'proof' }> }
           </span>
         </p>
       )}
+      <ChallengeLines challenges={event.result.completedChallenges} />
     </>
   )
 }

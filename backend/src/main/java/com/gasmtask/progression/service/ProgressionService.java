@@ -68,7 +68,7 @@ public class ProgressionService {
         if (events.existsByOccurrenceIdAndReason(occurrenceId, XpReason.TASK_COMPLETED)) {
             return XpChange.none(currentXp(userId));
         }
-        return apply(userId, XpReason.TASK_COMPLETED, points, occurrenceId, null);
+        return apply(userId, XpReason.TASK_COMPLETED, points, occurrenceId, null, null);
     }
 
     /** Bônus do dia cumprido. Uma vez por dia. */
@@ -77,7 +77,7 @@ public class ProgressionService {
         if (events.existsByUserIdAndEventDateAndReason(userId, date, XpReason.DAY_FULFILLED)) {
             return XpChange.none(currentXp(userId));
         }
-        return apply(userId, XpReason.DAY_FULFILLED, properties.dayFulfilledBonus(), null, date);
+        return apply(userId, XpReason.DAY_FULFILLED, properties.dayFulfilledBonus(), null, date, null);
     }
 
     /** Perda por obrigatória que passou do dia sem ser concluída. Uma vez por tarefa. */
@@ -86,7 +86,16 @@ public class ProgressionService {
         if (events.existsByOccurrenceIdAndReason(occurrenceId, XpReason.TASK_MISSED)) {
             return XpChange.none(currentXp(userId));
         }
-        return apply(userId, XpReason.TASK_MISSED, -properties.missedMandatoryPenalty(), occurrenceId, null);
+        return apply(userId, XpReason.TASK_MISSED, -properties.missedMandatoryPenalty(), occurrenceId, null, null);
+    }
+
+    /** XP de um desafio diário cumprido. Uma vez por desafio. */
+    @Transactional
+    public XpChange awardChallenge(UUID userId, UUID challengeId, int xp) {
+        if (events.existsByChallengeId(challengeId)) {
+            return XpChange.none(currentXp(userId));
+        }
+        return apply(userId, XpReason.CHALLENGE_COMPLETED, xp, null, null, challengeId);
     }
 
     @Transactional(readOnly = true)
@@ -129,12 +138,13 @@ public class ProgressionService {
                         .toList());
     }
 
-    private XpChange apply(UUID userId, XpReason reason, int amount, UUID occurrenceId, LocalDate date) {
+    private XpChange apply(UUID userId, XpReason reason, int amount, UUID occurrenceId, LocalDate date,
+                           UUID challengeId) {
         PlayerProgress current = lock(userId);
         Rank before = current.rank();
         int applied = current.apply(amount, calendar.now());
         if (applied != 0) {
-            events.save(XpEvent.of(userId, applied, reason, occurrenceId, date, calendar.now()));
+            events.save(XpEvent.of(userId, applied, reason, occurrenceId, date, challengeId, calendar.now()));
         }
         return new XpChange(applied, current.getXp(), before, current.rank(), syncRewards(userId, current));
     }

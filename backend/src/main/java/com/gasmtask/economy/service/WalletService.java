@@ -51,6 +51,21 @@ public class WalletService {
         return true;
     }
 
+    /** Paga um desafio diário cumprido, uma vez só (restrição única no banco). */
+    @Transactional
+    public boolean creditChallenge(UUID userId, UUID challengeId, int amount) {
+        if (amount <= 0 || transactions.existsByChallengeId(challengeId)) {
+            return false;
+        }
+        Instant now = calendar.now();
+        transactions.save(CoinTransaction.challengeReward(userId, challengeId, amount, now));
+        if (wallets.credit(userId, amount, now) == 0) {
+            wallets.saveAndFlush(Wallet.open(userId, now));
+            wallets.credit(userId, amount, now);
+        }
+        return true;
+    }
+
     /** Debita uma compra e lança no extrato. Sem saldo, lança INSUFFICIENT_COINS e a transação inteira volta. */
     @Transactional
     public void debitPurchase(UUID userId, UUID storeItemId, int price) {

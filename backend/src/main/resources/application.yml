@@ -73,3 +73,7 @@ app:
   progression:                      # elo ranqueado: além dos pontos de cada tarefa concluída
     day-fulfilled-bonus: 10         # XP extra no dia em que todas as obrigatórias são concluídas
     missed-mandatory-penalty: 5     # XP perdido por obrigatória que passou do dia sem ser concluída
+  challenges:                       # desafios diários
+    per-day: 3
+    xp-reward: 10
+    coin-reward: 3

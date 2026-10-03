@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 import com.gasmtask.achievement.service.AchievementService;
+import com.gasmtask.challenge.service.ChallengeService;
+import com.gasmtask.challenge.service.ChallengeService.ChallengeResult;
 import com.gasmtask.character.service.AttributeService;
 import com.gasmtask.completion.domain.Proof;
 import com.gasmtask.completion.dto.CompletionResponse;
@@ -59,12 +61,14 @@ public class TaskCompletionService {
     private final AchievementService achievements;
     private final ProgressionService progression;
     private final AttributeService attributes;
+    private final ChallengeService challenges;
 
     public TaskCompletionService(TaskOccurrenceRepository occurrences, ProofRepository proofs, FileStorage storage,
                                  WalletService wallet, StreakService streaks, DayClosingService closing,
                                  RewardPolicy rewards, UserService users, UserCalendar calendar,
                                  OccurrenceMapper mapper, AchievementService achievements,
-                                 ProgressionService progression, AttributeService attributes) {
+                                 ProgressionService progression, AttributeService attributes,
+                                 ChallengeService challenges) {
         this.occurrences = occurrences;
         this.proofs = proofs;
         this.storage = storage;
@@ -78,12 +82,15 @@ public class TaskCompletionService {
         this.achievements = achievements;
         this.progression = progression;
         this.attributes = attributes;
+        this.challenges = challenges;
     }
 
     @Transactional
     public CompletionResponse complete(UUID userId, UUID occurrenceId, MultipartFile proofFile) {
         // O dia anterior precisa estar fechado antes de calcular o streak de hoje
         closing.closePendingDays(userId);
+        // Os desafios de hoje são sorteados antes, para que esta conclusão já conte para eles
+        challenges.ensureToday(userId);
         UserTimeInfo info = users.timeInfo(userId);
         ZonedDateTime now = calendar.now(info.zone());
         LocalDate today = now.toLocalDate();
@@ -122,6 +129,10 @@ public class TaskCompletionService {
         if (dayFulfilledNow) {
             xp = xp.then(progression.awardDayFulfilled(userId, today));
         }
+        ChallengeResult challenge = challenges.evaluate(userId);
+        if (challenge.xp().isPresent()) {
+            xp = xp.then(challenge.xp().get());
+        }
         return new CompletionResponse(
                 mapper.toResponse(occurrence, today, false),
                 onTime,
@@ -131,7 +142,8 @@ public class TaskCompletionService {
                 new CompletionResponse.StreakChange(streak.current(), streak.longest(), dayFulfilledNow),
                 achievements.evaluate(userId, streak.longest()),
                 xp.toResponse(),
-                attributes.gainFrom(userId, occurrence.getCategory(), reward.points()));
+                attributes.gainFrom(userId, occurrence.getCategory(), reward.points()),
+                challenge.completed());
     }
 
     /** RN20: a prova pode vir depois da conclusão, até o fim do mesmo dia; o bônus é pago uma vez. */
@@ -161,8 +173,10 @@ public class TaskCompletionService {
         if (paid) {
             occurrence.addEarnedCoins(rewards.proofBonus());
         }
+        // A foto pode cumprir o desafio "Registro"
+        ChallengeResult challenge = challenges.evaluate(userId);
         return new ProofAttachedResponse(mapper.toResponse(occurrence, today, false),
-                paid ? rewards.proofBonus() : 0, wallet.balanceOf(userId));
+                paid ? rewards.proofBonus() : 0, wallet.balanceOf(userId), challenge.completed());
     }
 
     @Transactional(readOnly = true)

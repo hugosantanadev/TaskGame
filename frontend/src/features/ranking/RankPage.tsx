@@ -16,6 +16,7 @@ const REASONS: Record<XpReason, string> = {
   DAY_FULFILLED: 'Dia cumprido',
   TASK_MISSED: 'Obrigatória perdida',
   BACKFILL: 'XP do seu histórico',
+  CHALLENGE_COMPLETED: 'Desafio do dia',
 }
 
 /** Elos e recompensas: onde você está, a escada inteira, as roupas de cada elo e o extrato de XP. */

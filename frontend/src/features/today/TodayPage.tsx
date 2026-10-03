@@ -14,6 +14,7 @@ import { sameRank } from '../../lib/rank'
 import { DAY_PERIODS, describeDay, hourIn, safeTimeZone, timeOfDay } from '../../lib/datetime'
 import { formatTime, minutesOf, plural } from '../../lib/days'
 import { useNow } from '../../lib/useNow'
+import { ChallengesPanel } from './ChallengesPanel'
 import { CompleteSheet } from './CompleteSheet'
 import { DayTabs } from './DayTabs'
 import { OccurrenceRow } from './OccurrenceRow'
@@ -175,6 +176,8 @@ function DayContent({ data, period, onSelect }: { data: Today; period: Period; o
           </div>
         )}
       </section>
+
+      <ChallengesPanel challenges={data.challenges} />
 
       <div className={styles.actions}>
         <ButtonLink to="/missoes/nova">

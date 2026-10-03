@@ -16,5 +16,7 @@ public interface XpEventRepository extends JpaRepository<XpEvent, UUID> {
 
     boolean existsByUserIdAndEventDateAndReason(UUID userId, LocalDate eventDate, XpReason reason);
 
+    boolean existsByChallengeId(UUID challengeId);
+
     List<XpEvent> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
 }

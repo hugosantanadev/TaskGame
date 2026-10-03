@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import com.gasmtask.challenge.dto.DailyChallengeResponse;
 import com.gasmtask.planning.dto.OccurrenceResponse;
 import com.gasmtask.progression.dto.RankStatusResponse;
 import com.gasmtask.shared.time.TimeOfDay;
@@ -24,5 +25,6 @@ public record TodayResponse(
         int walletBalance,
         StreakResponse streak,
         boolean onboarding,
-        RankStatusResponse rank) {
+        RankStatusResponse rank,
+        List<DailyChallengeResponse> challenges) {
 }

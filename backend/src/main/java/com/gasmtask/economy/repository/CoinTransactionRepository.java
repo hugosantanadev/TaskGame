@@ -13,5 +13,7 @@ public interface CoinTransactionRepository extends JpaRepository<CoinTransaction
 
     boolean existsByOccurrenceIdAndReason(UUID occurrenceId, CoinTransactionReason reason);
 
+    boolean existsByChallengeId(UUID challengeId);
+
     Page<CoinTransaction> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
 }
