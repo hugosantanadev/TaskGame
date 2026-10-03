@@ -6,8 +6,11 @@ import com.gasmtask.character.domain.CharacterSlot;
 import com.gasmtask.character.domain.CharacterState;
 import com.gasmtask.store.dto.InventoryItemResponse;
 
-/** @param slots os três slots, sempre presentes; {@code item} nulo é slot vazio */
-public record CharacterResponse(CharacterState state, List<Slot> slots) {
+/**
+ * @param slots      os três slots, sempre presentes; {@code item} nulo é slot vazio
+ * @param attributes a ficha: um nível por atributo, treinado pelas tarefas concluídas
+ */
+public record CharacterResponse(CharacterState state, List<Slot> slots, List<AttributeResponse> attributes) {
 
     public record Slot(CharacterSlot slot, InventoryItemResponse item) {
     }

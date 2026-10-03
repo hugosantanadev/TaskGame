@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.gasmtask.achievement.service.AchievementService;
 import com.gasmtask.character.domain.CharacterSlot;
+import com.gasmtask.character.service.AttributeService;
 import com.gasmtask.character.service.CharacterService;
 import com.gasmtask.economy.service.WalletService;
 import com.gasmtask.gamestate.dto.GameStateResponse;
@@ -40,11 +41,12 @@ public class GameStateService {
     private final UserService users;
     private final UserCalendar calendar;
     private final ProgressionService progression;
+    private final AttributeService attributes;
 
     public GameStateService(StreakService streaks, WalletService wallet, InventoryService inventory,
                             CharacterService characters, AchievementService achievements,
                             TaskOccurrenceRepository occurrences, UserService users, UserCalendar calendar,
-                            ProgressionService progression) {
+                            ProgressionService progression, AttributeService attributes) {
         this.streaks = streaks;
         this.wallet = wallet;
         this.inventory = inventory;
@@ -54,6 +56,7 @@ public class GameStateService {
         this.users = users;
         this.calendar = calendar;
         this.progression = progression;
+        this.attributes = attributes;
     }
 
     @Transactional
@@ -80,7 +83,8 @@ public class GameStateService {
                         .filter(InventoryItemResponse::inRoom)
                         .map(GameStateService::itemOf)
                         .toList()),
-                new GameStateResponse.CharacterLook(characters.view(userId).state(), equipped));
+                new GameStateResponse.CharacterLook(characters.view(userId).state(), equipped,
+                        attributes.levels(userId)));
     }
 
     private static GameStateResponse.Item itemOf(InventoryItemResponse owned) {

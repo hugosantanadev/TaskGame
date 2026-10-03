@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.gasmtask.achievement.service.AchievementService;
+import com.gasmtask.character.service.AttributeService;
 import com.gasmtask.completion.domain.Proof;
 import com.gasmtask.completion.dto.CompletionResponse;
 import com.gasmtask.completion.dto.ProofAttachedResponse;
@@ -57,12 +58,13 @@ public class TaskCompletionService {
     private final OccurrenceMapper mapper;
     private final AchievementService achievements;
     private final ProgressionService progression;
+    private final AttributeService attributes;
 
     public TaskCompletionService(TaskOccurrenceRepository occurrences, ProofRepository proofs, FileStorage storage,
                                  WalletService wallet, StreakService streaks, DayClosingService closing,
                                  RewardPolicy rewards, UserService users, UserCalendar calendar,
                                  OccurrenceMapper mapper, AchievementService achievements,
-                                 ProgressionService progression) {
+                                 ProgressionService progression, AttributeService attributes) {
         this.occurrences = occurrences;
         this.proofs = proofs;
         this.storage = storage;
@@ -75,6 +77,7 @@ public class TaskCompletionService {
         this.mapper = mapper;
         this.achievements = achievements;
         this.progression = progression;
+        this.attributes = attributes;
     }
 
     @Transactional
@@ -127,7 +130,8 @@ public class TaskCompletionService {
                 new CompletionResponse.Day(streak.todayStatus(), progress.mandatoryDone(), progress.mandatoryPlanned()),
                 new CompletionResponse.StreakChange(streak.current(), streak.longest(), dayFulfilledNow),
                 achievements.evaluate(userId, streak.longest()),
-                xp.toResponse());
+                xp.toResponse(),
+                attributes.gainFrom(userId, occurrence.getCategory(), reward.points()));
     }
 
     /** RN20: a prova pode vir depois da conclusão, até o fim do mesmo dia; o bônus é pago uma vez. */

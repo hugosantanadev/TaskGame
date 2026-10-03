@@ -50,6 +50,14 @@ public interface TaskOccurrenceRepository extends JpaRepository<TaskOccurrence, 
 
     // ---------------------------------------------------------------- números para as estatísticas
 
+    /** Pontos das concluídas por categoria: o treino de cada atributo do personagem. */
+    @Query("""
+            select o.category as category, coalesce(sum(o.earnedPoints), 0) as points from TaskOccurrence o
+            where o.userId = :userId and o.status = com.gasmtask.planning.domain.OccurrenceStatus.COMPLETED
+            group by o.category
+            """)
+    List<CategoryPoints> sumPointsByCategory(@Param("userId") UUID userId);
+
     @Query("select coalesce(sum(o.earnedPoints), 0) from TaskOccurrence o where o.userId = :userId")
     long sumEarnedPoints(@Param("userId") UUID userId);
 

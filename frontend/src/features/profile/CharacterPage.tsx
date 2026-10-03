@@ -1,8 +1,11 @@
-import type { CharacterState } from '../../api/types'
+import type { CSSProperties } from 'react'
+
+import type { AttributeStatus, CharacterState } from '../../api/types'
 import { asApiError } from '../../api/errors'
 import { Button, ButtonLink } from '../../components/Button'
 import { BookIcon, CupIcon, LaptopIcon, MoonIcon, PencilIcon } from '../../components/gameIcons'
 import { PageTitle } from '../../components/PageTitle'
+import { ATTRIBUTE_LABELS, attributeColor, levelProgress, trainedBy } from '../../lib/attributes'
 import { SLOT_LABEL, STATE_LABEL } from '../../lib/collection'
 import { ItemSticker } from '../store/ItemSticker'
 import { useCharacter, useUnequip } from '../store/storeApi'
@@ -48,6 +51,19 @@ export function CharacterPage() {
               <p className={styles.note}>Muda sozinho com a tarefa em andamento: estudo, projeto, leitura ou sono.</p>
             </div>
           </section>
+          <section className={styles.sheet} aria-labelledby="ficha">
+            <h2 id="ficha" className={styles.sheetTitle}>
+              Ficha
+            </h2>
+            <p className={styles.note}>Cada categoria de tarefa treina um atributo. Treino só soma.</p>
+            <ul className={styles.attributes}>
+              {character.data.attributes.map((status) => (
+                <li key={status.attribute}>
+                  <AttributeRow status={status} />
+                </li>
+              ))}
+            </ul>
+          </section>
           <ul className={styles.list} aria-label="O que está vestindo">
             {character.data.slots.map(({ slot, item }) => (
               <li key={slot}>
@@ -71,6 +87,29 @@ export function CharacterPage() {
       <ButtonLink to="/loja?visao=colecao" variant="secondary" block>
         Escolher na minha coleção
       </ButtonLink>
+    </div>
+  )
+}
+
+function AttributeRow({ status }: { status: AttributeStatus }) {
+  const name = ATTRIBUTE_LABELS[status.attribute]
+  return (
+    <div className={styles.attribute} style={{ '--attribute': attributeColor(status) } as CSSProperties}>
+      <span className={styles.attributeName}>{name}</span>
+      <span className={styles.attributeLevel}>Nv {status.level}</span>
+      <span
+        className={styles.attributeBar}
+        role="progressbar"
+        aria-label={`${name}: nível ${status.level}`}
+        aria-valuemin={status.levelStartXp}
+        aria-valuemax={status.nextLevelXp}
+        aria-valuenow={status.xp}
+      >
+        <span style={{ width: `${levelProgress(status) * 100}%` }} />
+      </span>
+      <span className={styles.attributeMeta}>
+        {trainedBy(status)} · {status.xp}/{status.nextLevelXp} XP
+      </span>
     </div>
   )
 }

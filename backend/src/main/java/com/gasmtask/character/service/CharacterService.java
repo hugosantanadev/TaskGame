@@ -38,10 +38,11 @@ public class CharacterService {
     private final UserService users;
     private final UserCalendar calendar;
     private final StoreMapper mapper;
+    private final AttributeService attributes;
 
     public CharacterService(PlayerCharacterRepository characters, CharacterEquipmentRepository equipment,
                             InventoryItemRepository inventory, TaskOccurrenceRepository occurrences, UserService users,
-                            UserCalendar calendar, StoreMapper mapper) {
+                            UserCalendar calendar, StoreMapper mapper, AttributeService attributes) {
         this.characters = characters;
         this.equipment = equipment;
         this.inventory = inventory;
@@ -49,6 +50,7 @@ public class CharacterService {
         this.users = users;
         this.calendar = calendar;
         this.mapper = mapper;
+        this.attributes = attributes;
     }
 
     @Transactional
@@ -63,7 +65,7 @@ public class CharacterService {
                 .map(slot -> new CharacterResponse.Slot(slot, bySlot.containsKey(slot)
                         ? mapper.toResponse(bySlot.get(slot).getInventoryItem(), false, slot)
                         : null))
-                .toList());
+                .toList(), attributes.attributes(userId));
     }
 
     @Transactional

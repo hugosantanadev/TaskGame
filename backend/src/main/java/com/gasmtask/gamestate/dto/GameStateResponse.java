@@ -3,6 +3,7 @@ package com.gasmtask.gamestate.dto;
 import java.util.List;
 import java.util.Map;
 
+import com.gasmtask.character.domain.Attribute;
 import com.gasmtask.character.domain.CharacterSlot;
 import com.gasmtask.character.domain.CharacterState;
 import com.gasmtask.progression.dto.RankStatusResponse;
@@ -40,7 +41,11 @@ public record GameStateResponse(
     public record RoomState(List<Item> items) {
     }
 
-    /** @param equipped só os slots ocupados */
-    public record CharacterLook(CharacterState state, Map<CharacterSlot, Item> equipped) {
+    /**
+     * @param equipped   só os slots ocupados
+     * @param attributes nível de cada atributo (Força, Inteligência...)
+     */
+    public record CharacterLook(CharacterState state, Map<CharacterSlot, Item> equipped,
+                                Map<Attribute, Integer> attributes) {
     }
 }

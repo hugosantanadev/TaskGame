@@ -138,6 +138,7 @@ export type CompletionResult = {
   streak: { current: number; longest: number; increasedNow: boolean }
   unlockedAchievements: UnlockedAchievement[]
   xp: XpChange
+  attribute: { gained: number; leveledUp: boolean; status: AttributeStatus }
 }
 
 export type ProofAttached = { occurrence: Occurrence; proofBonus: number; walletBalance: number }
@@ -182,7 +183,23 @@ export type InventoryItem = {
 
 export type PurchaseResult = { inventoryItem: InventoryItem; walletBalance: number }
 export type Room = { items: InventoryItem[] }
-export type CharacterView = { state: CharacterState; slots: { slot: CharacterSlot; item: InventoryItem | null }[] }
+export type CharacterView = {
+  state: CharacterState
+  slots: { slot: CharacterSlot; item: InventoryItem | null }[]
+  attributes: AttributeStatus[]
+}
+
+export type Attribute = 'INTELLIGENCE' | 'STRENGTH' | 'WISDOM' | 'SPIRIT' | 'VITALITY' | 'CREATIVITY' | 'DISCIPLINE'
+
+/** Um atributo na ficha: a barra vai de `levelStartXp` a `nextLevelXp`. */
+export type AttributeStatus = {
+  attribute: Attribute
+  xp: number
+  level: number
+  levelStartXp: number
+  nextLevelXp: number
+  categories: TaskCategory[]
+}
 export type Wallet = { balance: number; totalEarned: number; totalSpent: number }
 export type UnlockedAchievement = { code: string; name: string; description: string }
 
@@ -276,7 +293,11 @@ export type GameState = {
   totals: { completedTasks: number; achievements: number }
   inventory: GameItem[]
   room: { items: GameItem[] }
-  character: { state: CharacterState; equipped: Partial<Record<CharacterSlot, GameItem>> }
+  character: {
+    state: CharacterState
+    equipped: Partial<Record<CharacterSlot, GameItem>>
+    attributes: Record<Attribute, number>
+  }
 }
 
 /** Horários "HH:mm:ss" no fuso do usuário; null desliga aquele lembrete. */

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { onReward, type RewardEvent } from '../game/rewardFeedback'
 import { listJoin, plural } from '../lib/days'
+import { ATTRIBUTE_LABELS } from '../lib/attributes'
 import { compareRanks, rankLabel } from '../lib/rank'
 import { CoinIcon, CrossIcon, FlameIcon, ShirtIcon, StarIcon, TrophyIcon } from './gameIcons'
 import { RankBadge } from './RankBadge'
@@ -44,7 +45,8 @@ export function RewardToast() {
 }
 
 function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' }> }) {
-  const { reward, streak, xp } = event.result
+  const { reward, streak, xp, attribute } = event.result
+  const attributeName = ATTRIBUTE_LABELS[attribute.status.attribute]
   const parts = [`${reward.baseCoins} da tarefa`]
   if (reward.onTimeBonus > 0) parts.push(`${reward.onTimeBonus} pelo horário`)
   if (reward.proofBonus > 0) parts.push(`${reward.proofBonus} pela foto`)
@@ -59,7 +61,17 @@ function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' 
           <CoinIcon /> +{plural(reward.totalCoins, 'moeda', 'moedas')}
         </span>
         {xp.gained > 0 && <span className={styles.xp}>+{xp.gained} XP</span>}
+        {attribute.gained > 0 && (
+          <span className={styles.xp}>
+            {attributeName} +{attribute.gained}
+          </span>
+        )}
       </p>
+      {attribute.leveledUp && (
+        <p className={styles.rankUp}>
+          {attributeName} subiu para o nível {attribute.status.level}!
+        </p>
+      )}
       {parts.length > 1 && <p className={styles.detail}>Moedas: {listJoin(parts)}.</p>}
       {xp.promoted && (
         <p className={styles.rankUp}>
