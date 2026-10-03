@@ -175,6 +175,12 @@
   color: var(--danger);
 }
 
+.day[data-status='FROZEN'] .dayMark {
+  border-color: var(--ink);
+  background: var(--streak);
+  color: var(--streak-ink);
+}
+
 .day[data-status='PENDING'] .dayMark {
   border-color: var(--pen);
   color: var(--pen);

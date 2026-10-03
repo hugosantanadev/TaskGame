@@ -202,3 +202,40 @@
   grid-template-columns: 1fr;
   gap: var(--space-3);
 }
+
+/* Protetor de sequência: destaque no topo da loja, com o laranja da sequência */
+.freeze {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-4);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-l);
+  background: color-mix(in srgb, var(--streak) 14%, var(--paper-raised));
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.freezeIcon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--streak);
+  color: var(--streak-ink);
+  font-size: 1.5rem;
+}
+
+.freezeText {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.freezeBuy {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}

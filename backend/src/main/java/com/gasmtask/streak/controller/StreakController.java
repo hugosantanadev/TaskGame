@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,5 +28,11 @@ public class StreakController {
     @Operation(summary = "Streak atual, maior streak e situação de hoje")
     public StreakResponse current(@AuthenticationPrincipal AuthenticatedUser user) {
         return streakService.current(user.id());
+    }
+
+    @PostMapping("/freezes")
+    @Operation(summary = "Compra um protetor de sequência com moedas (salva um dia de falha na virada do dia)")
+    public StreakResponse buyFreeze(@AuthenticationPrincipal AuthenticatedUser user) {
+        return streakService.buyFreeze(user.id());
     }
 }

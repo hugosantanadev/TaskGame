@@ -84,8 +84,8 @@ public class DayClosingService {
             missedMandatory.forEach(occurrence -> progression.penalizeMissed(userId, occurrence.getId()));
             DayProgress progress = DayProgress.of(day);
             DayStatus status = StreakRules.statusOf(progress.mandatoryPlanned(), progress.mandatoryDone());
-            streak.close(date, status);
-            dailyResults.save(DailyResult.of(userId, date, status, progress, streak.getCurrentStreak(), now));
+            DayStatus closed = streak.close(date, status);
+            dailyResults.save(DailyResult.of(userId, date, closed, progress, streak.getCurrentStreak(), now));
         }
 
         // Semanas que terminaram (até o último domingo fechado) ficam marcadas como encerradas

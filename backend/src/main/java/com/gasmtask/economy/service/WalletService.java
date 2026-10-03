@@ -66,6 +66,16 @@ public class WalletService {
         return true;
     }
 
+    /** Debita um protetor de sequência. Sem saldo, lança INSUFFICIENT_COINS e nada muda. */
+    @Transactional
+    public void debitStreakFreeze(UUID userId, int price) {
+        Instant now = calendar.now();
+        if (wallets.debit(userId, price, now) == 0) {
+            throw new BusinessException(ErrorCode.INSUFFICIENT_COINS);
+        }
+        transactions.save(CoinTransaction.streakFreeze(userId, price, now));
+    }
+
     /** Debita uma compra e lança no extrato. Sem saldo, lança INSUFFICIENT_COINS e a transação inteira volta. */
     @Transactional
     public void debitPurchase(UUID userId, UUID storeItemId, int price) {

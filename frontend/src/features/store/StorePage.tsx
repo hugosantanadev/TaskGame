@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router'
 import { asApiError } from '../../api/errors'
 import type { InventoryItem, StoreItem, StoreItemCategory } from '../../api/types'
 import { Button, ButtonLink } from '../../components/Button'
-import { CheckIcon, CoinIcon } from '../../components/gameIcons'
+import { CheckIcon, CoinIcon, ShieldIcon } from '../../components/gameIcons'
 import { PageTitle } from '../../components/PageTitle'
 import { Sheet } from '../../components/Sheet'
 import { ToggleGroup } from '../../components/ToggleGroup'
@@ -19,6 +19,8 @@ import {
   usePlaceItem,
   usePurchase,
   useRemoveItem,
+  useBuyFreeze,
+  useStreak,
   useUnequip,
   useWallet,
 } from './storeApi'
@@ -73,6 +75,7 @@ function Catalog({ balance }: { balance: number }) {
 
   return (
     <>
+      <FreezeCard balance={balance} />
       <p className={styles.note}>Moedas vêm das tarefas concluídas. Cada item é único: depois de comprado, é seu para sempre.</p>
       <ToggleGroup label="Categoria" value={filter} options={FILTERS} onChange={setFilter} />
       {catalog.isPending && <p className={styles.note}>Carregando a loja…</p>}
@@ -92,6 +95,54 @@ function Catalog({ balance }: { balance: number }) {
         {buying && <PurchaseConfirm key={buying.id} item={buying} balance={balance} onDone={() => setBuying(null)} />}
       </Sheet>
     </>
+  )
+}
+
+/** Protetor de sequência: o único item que se gasta. Fica guardado e é usado sozinho num dia de falha. */
+function FreezeCard({ balance }: { balance: number }) {
+  const streak = useStreak()
+  const buy = useBuyFreeze()
+  if (!streak.data) return null
+  const { freezes, maxFreezes, freezePrice } = streak.data
+  const full = freezes >= maxFreezes
+  const missing = freezePrice - balance
+
+  return (
+    <section className={styles.freeze} aria-labelledby="freeze-title">
+      <span className={styles.freezeIcon} aria-hidden="true">
+        <ShieldIcon />
+      </span>
+      <div className={styles.freezeText}>
+        <h2 id="freeze-title" className={styles.name}>
+          Protetor de sequência
+        </h2>
+        <p className={styles.description}>
+          Salva sua sequência num dia em que faltar uma obrigatória. É usado sozinho, na virada do dia.
+        </p>
+        <p className={styles.kind}>
+          Você tem {freezes} de {maxFreezes}
+        </p>
+        {buy.error && (
+          <p className={styles.error} role="alert">
+            {asApiError(buy.error).message}
+          </p>
+        )}
+      </div>
+      <div className={styles.freezeBuy}>
+        <span className={styles.price}>
+          <CoinIcon /> {freezePrice}
+          <span className="visually-hidden"> moedas</span>
+        </span>
+        <Button
+          variant="secondary"
+          disabled={full || missing > 0 || buy.isPending}
+          onClick={() => buy.mutate()}
+          aria-label={`Comprar protetor de sequência por ${freezePrice} moedas`}
+        >
+          {full ? 'Cheio' : missing > 0 ? `Faltam ${missing}` : 'Comprar'}
+        </Button>
+      </div>
+    </section>
   )
 }
 

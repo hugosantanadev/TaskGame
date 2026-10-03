@@ -11,6 +11,7 @@ import {
   CircleIcon,
   CrossIcon,
   MinusIcon,
+  ShieldIcon,
   TrophyIcon,
 } from '../../components/gameIcons'
 import { PageTitle } from '../../components/PageTitle'
@@ -45,6 +46,7 @@ const DAY_STATUS: Record<SummaryDayStatus, { label: string; icon: ReactNode }> =
   FULFILLED: { label: 'cumprido', icon: <CheckIcon /> },
   FAILED: { label: 'falhou', icon: <CrossIcon /> },
   REST: { label: 'descanso', icon: <MinusIcon /> },
+  FROZEN: { label: 'protegido pelo protetor de sequência', icon: <ShieldIcon /> },
   PENDING: { label: 'em andamento', icon: <CircleIcon /> },
   UPCOMING: { label: 'ainda não chegou', icon: null },
 }
@@ -265,7 +267,9 @@ function OverviewBody({ overview }: { overview: StatsOverview }) {
         <Tile
           label="Dias cumpridos"
           value={overview.fulfilledDays}
-          detail={`${plural(overview.failedDays, 'falha', 'falhas')}, ${overview.restDays} de descanso`}
+          detail={`${plural(overview.failedDays, 'falha', 'falhas')}, ${overview.restDays} de descanso${
+            overview.frozenDays > 0 ? `, ${overview.frozenDays} protegidos` : ''
+          }`}
         />
       </dl>
 

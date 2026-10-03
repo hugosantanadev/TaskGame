@@ -34,6 +34,7 @@ public enum ErrorCode {
     ITEM_NOT_AVAILABLE(HttpStatus.UNPROCESSABLE_CONTENT, "Esse item não está à venda."),
     ITEM_NOT_FOR_ROOM(HttpStatus.UNPROCESSABLE_CONTENT, "Esse item é do personagem, não do quarto."),
     ITEM_NOT_FOR_SLOT(HttpStatus.UNPROCESSABLE_CONTENT, "Esse item não serve nesse lugar do personagem."),
+    FREEZE_LIMIT_REACHED(HttpStatus.UNPROCESSABLE_CONTENT, "Você já guardou o máximo de protetores de sequência."),
     CONCURRENT_MODIFICATION(HttpStatus.CONFLICT, "Os dados mudaram enquanto você editava. Tente de novo."),
     PAYLOAD_TOO_LARGE(HttpStatus.CONTENT_TOO_LARGE, "O arquivo enviado é grande demais."),
     UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Formato de conteúdo não suportado."),

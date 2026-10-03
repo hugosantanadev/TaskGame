@@ -36,6 +36,7 @@ export function useRefreshPlan() {
     void queryClient.invalidateQueries({ queryKey: ['ranking'] })
     void queryClient.invalidateQueries({ queryKey: ['reminders'] })
     void queryClient.invalidateQueries({ queryKey: ['rank'] })
+    void queryClient.invalidateQueries({ queryKey: ['streak'] })
   }
 }
 

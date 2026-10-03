@@ -229,3 +229,12 @@ export function BellIcon(props: IconProps) {
     </Svg>
   )
 }
+
+export function ShieldIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 3.5 5.5 6v5.5c0 4 2.8 7.4 6.5 9 3.7-1.6 6.5-5 6.5-9V6z" />
+      <path d="m9 12 2 2 4-4" />
+    </Svg>
+  )
+}

@@ -33,7 +33,7 @@ export function RewardToast() {
             {event.kind === 'purchase' && (
               <>
                 <p className={styles.title}>Comprado: {event.title}</p>
-                <p className={styles.detail}>Já está na sua coleção. Saldo: {plural(event.balance, 'moeda', 'moedas')}.</p>
+                <p className={styles.detail}>{event.detail ?? 'Já está na sua coleção.'} Saldo: {plural(event.balance, 'moeda', 'moedas')}.</p>
               </>
             )}
           </div>

@@ -10,6 +10,7 @@ import com.gasmtask.task.domain.TaskCategory;
  * @param completionRate concluídas sobre concluídas + perdidas (as pendentes ainda não contam), em porcentagem
  *                       inteira; nulo enquanto nenhuma tarefa foi decidida
  * @param fulfilledDays  dias já fechados como cumpridos (o de hoje entra só depois da virada)
+ * @param frozenDays     dias de falha salvos pelo protetor de sequência
  */
 public record StatsOverviewResponse(
         int completedTasks,
@@ -24,6 +25,7 @@ public record StatsOverviewResponse(
         int fulfilledDays,
         int failedDays,
         int restDays,
+        int frozenDays,
         int achievementsUnlocked,
         List<CategoryTotal> completedByCategory) {
 

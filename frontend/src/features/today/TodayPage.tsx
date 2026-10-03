@@ -5,14 +5,14 @@ import { asApiError } from '../../api/errors'
 import type { Occurrence, Period, Today } from '../../api/types'
 import { useCurrentUser } from '../../auth/context'
 import { Button, ButtonLink } from '../../components/Button'
-import { CoinIcon, FlameIcon, PlusIcon, StarIcon } from '../../components/gameIcons'
+import { CoinIcon, FlameIcon, PlusIcon, ShieldIcon, StarIcon } from '../../components/gameIcons'
 import { PageTitle } from '../../components/PageTitle'
 import { RankBadge } from '../../components/RankBadge'
 import { readSeenRank, writeSeenRank } from '../../game/rankMemory'
 import { publishReward } from '../../game/rewardFeedback'
 import { sameRank } from '../../lib/rank'
 import { DAY_PERIODS, describeDay, hourIn, safeTimeZone, timeOfDay } from '../../lib/datetime'
-import { formatTime, minutesOf, plural } from '../../lib/days'
+import { addDays, formatTime, minutesOf, plural } from '../../lib/days'
 import { useNow } from '../../lib/useNow'
 import { ChallengesPanel } from './ChallengesPanel'
 import { CompleteSheet } from './CompleteSheet'
@@ -81,6 +81,15 @@ export function TodayPage() {
             <li className={styles.streakChip}>
               <FlameIcon /> {plural(data.streak.current, 'dia', 'dias')}
               <span className="visually-hidden"> de sequência</span>
+              {data.streak.freezes > 0 && (
+                <span className={styles.shields}>
+                  <ShieldIcon aria-hidden="true" /> {data.streak.freezes}
+                  <span className="visually-hidden">
+                    {' '}
+                    {data.streak.freezes === 1 ? 'protetor guardado' : 'protetores guardados'}
+                  </span>
+                </span>
+              )}
             </li>
             <li className={styles.coinChip}>
               <CoinIcon /> {data.walletBalance}
@@ -90,6 +99,11 @@ export function TodayPage() {
               <StarIcon /> {plural(data.progress.points, 'ponto', 'pontos')} hoje
             </li>
           </ul>
+        )}
+        {data && data.streak.lastFrozenDate === addDays(data.date, -1) && (
+          <p className={styles.frozenNote}>
+            <ShieldIcon aria-hidden="true" /> Seu protetor salvou a sequência ontem.
+          </p>
         )}
       </header>
 

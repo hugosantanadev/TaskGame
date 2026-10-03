@@ -77,3 +77,6 @@ app:
     per-day: 3
     xp-reward: 10
     coin-reward: 3
+  streak:                           # protetor de sequência: salva um dia de falha na virada do dia
+    freeze-price: 40
+    max-freezes: 2

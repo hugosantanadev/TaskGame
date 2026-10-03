@@ -45,6 +45,14 @@ public class Streak {
     @Column(name = "tracking_start_date", nullable = false, updatable = false)
     private LocalDate trackingStartDate;
 
+    /** Protetores de sequência guardados. */
+    @Column(nullable = false)
+    private int freezes;
+
+    /** Último dia salvo por um protetor. */
+    @Column(name = "last_frozen_date")
+    private LocalDate lastFrozenDate;
+
     @Version
     private Long version;
 
@@ -60,10 +68,18 @@ public class Streak {
         return lastClosedDate == null ? trackingStartDate : lastClosedDate.plusDays(1);
     }
 
-    /** Fecha um dia. Os dias fecham em ordem, um de cada vez. */
-    public void close(LocalDate date, DayStatus status) {
+    /**
+     * Fecha um dia, em ordem, um de cada vez, e devolve como ele fechou de fato: uma falha com protetor
+     * guardado consome o protetor e vira dia protegido, que mantém a sequência.
+     */
+    public DayStatus close(LocalDate date, DayStatus status) {
         if (!date.equals(firstOpenDate())) {
             throw new IllegalStateException("Os dias fecham em ordem: esperado " + firstOpenDate() + ", recebido " + date);
+        }
+        if (status == DayStatus.FAILED && freezes > 0) {
+            freezes--;
+            lastFrozenDate = date;
+            status = DayStatus.FROZEN;
         }
         currentStreak = StreakRules.next(currentStreak, status);
         if (status == DayStatus.FULFILLED) {
@@ -71,6 +87,15 @@ public class Streak {
         }
         longestStreak = Math.max(longestStreak, currentStreak);
         lastClosedDate = date;
+        return status;
+    }
+
+    /** Guarda mais um protetor, até o máximo. */
+    public void addFreeze(int max) {
+        if (freezes >= max) {
+            throw new IllegalStateException("Já tem o máximo de protetores: " + max);
+        }
+        freezes++;
     }
 
     public StreakView view(LocalDate today, DayProgress todayProgress) {
@@ -81,6 +106,6 @@ public class Streak {
                 ? TodayStatus.REST
                 : fulfilledToday ? TodayStatus.FULFILLED : TodayStatus.PENDING;
         return new StreakView(current, Math.max(longestStreak, current), status,
-                fulfilledToday ? today : lastFulfilledDate);
+                fulfilledToday ? today : lastFulfilledDate, freezes, lastFrozenDate);
     }
 }

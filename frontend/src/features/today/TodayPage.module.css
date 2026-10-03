@@ -92,6 +92,23 @@
   color: var(--streak-ink);
 }
 
+.shields {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  margin-left: var(--space-1);
+  padding-left: var(--space-2);
+  border-left: 2px solid currentColor;
+}
+
+.frozenNote {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-s);
+  font-weight: 700;
+}
+
 .rankChip {
   background: var(--paper-raised);
   color: var(--ink);

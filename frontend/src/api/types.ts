@@ -113,7 +113,17 @@ export type Progress = {
   fulfilled: boolean
 }
 
-export type Streak = { current: number; longest: number; todayStatus: TodayStatus; lastFulfilledDate: string | null }
+/** `freezes`: protetores de sequência guardados (até `maxFreezes`); `lastFrozenDate`: último dia salvo por um. */
+export type Streak = {
+  current: number
+  longest: number
+  todayStatus: TodayStatus
+  lastFulfilledDate: string | null
+  freezes: number
+  maxFreezes: number
+  freezePrice: number
+  lastFrozenDate: string | null
+}
 
 export type Today = {
   date: string
@@ -268,11 +278,12 @@ export type StatsOverview = {
   fulfilledDays: number
   failedDays: number
   restDays: number
+  frozenDays: number
   achievementsUnlocked: number
   completedByCategory: { category: TaskCategory; completed: number }[]
 }
 
-export type SummaryDayStatus = 'FULFILLED' | 'FAILED' | 'REST' | 'PENDING' | 'UPCOMING'
+export type SummaryDayStatus = 'FULFILLED' | 'FAILED' | 'REST' | 'FROZEN' | 'PENDING' | 'UPCOMING'
 
 export type WeekSummary = {
   weekStart: string

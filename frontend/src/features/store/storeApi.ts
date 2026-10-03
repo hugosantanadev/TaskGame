@@ -9,6 +9,7 @@ import type {
   Room,
   StoreItem,
   StoreItemCategory,
+  Streak,
   Wallet,
 } from '../../api/types'
 import { publishReward } from '../../game/rewardFeedback'
@@ -87,5 +88,33 @@ export function useUnequip() {
   return useMutation({
     mutationFn: (slot: CharacterSlot) => apiRequest<CharacterView>(`/character/slots/${slot}`, { method: 'DELETE' }),
     onSuccess: refresh,
+  })
+}
+
+export function useStreak() {
+  return useQuery({ queryKey: ['streak'], queryFn: ({ signal }) => apiRequest<Streak>('/streak', { signal }) })
+}
+
+/** Compra um protetor de sequência; o aviso de compra mostra o saldo novo. */
+export function useBuyFreeze() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => apiRequest<Streak>('/streak/freezes', { method: 'POST' }),
+    onSuccess: async (streak) => {
+      queryClient.setQueryData(['streak'], streak)
+      void queryClient.invalidateQueries({ queryKey: ['today'] })
+      void queryClient.invalidateQueries({ queryKey: ['stats'] })
+      const wallet = await queryClient.fetchQuery({
+        queryKey: ['wallet'],
+        queryFn: () => apiRequest<Wallet>('/wallet'),
+        staleTime: 0,
+      })
+      publishReward({
+        kind: 'purchase',
+        title: 'Protetor de sequência',
+        balance: wallet.balance,
+        detail: `Guardado: você tem ${streak.freezes} de ${streak.maxFreezes}.`,
+      })
+    },
   })
 }

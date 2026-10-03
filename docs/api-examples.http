@@ -245,3 +245,7 @@ Authorization: Bearer {{accessToken}}
 ### Desafios do dia: vêm na tela Hoje (campo "challenges"); a conclusão diz quais foram cumpridos ("completedChallenges")
 GET {{host}}/api/v1/today
 Authorization: Bearer {{accessToken}}
+
+### Comprar um protetor de sequência (40 moedas, guarda até 2; salva um dia de falha na virada do dia)
+POST {{host}}/api/v1/streak/freezes
+Authorization: Bearer {{accessToken}}

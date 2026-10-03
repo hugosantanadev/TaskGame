@@ -61,6 +61,20 @@ public class CoinTransaction {
         return transaction;
     }
 
+    /** Compra de um protetor de sequência: valor negativo, sem item da loja. */
+    public static CoinTransaction streakFreeze(UUID userId, int price, Instant now) {
+        if (price <= 0) {
+            throw new IllegalArgumentException("Preço precisa ser positivo");
+        }
+        CoinTransaction transaction = new CoinTransaction();
+        transaction.id = UUID.randomUUID();
+        transaction.userId = userId;
+        transaction.reason = CoinTransactionReason.STREAK_FREEZE;
+        transaction.amount = -price;
+        transaction.createdAt = now;
+        return transaction;
+    }
+
     /** Recompensa de um desafio diário cumprido. */
     public static CoinTransaction challengeReward(UUID userId, UUID challengeId, int amount, Instant now) {
         if (amount <= 0) {

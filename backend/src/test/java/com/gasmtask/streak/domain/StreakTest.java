@@ -74,4 +74,30 @@ class StreakTest {
         assertThat(streak.view(START, REST).todayStatus()).isEqualTo(TodayStatus.REST);
         assertThat(streak.view(START, REST).current()).isZero();
     }
+
+    @Test
+    void protetorTransformaFalhaEmDiaProtegidoEMantemASequencia() {
+        Streak streak = Streak.start(UUID.randomUUID(), START);
+        streak.close(START, DayStatus.FULFILLED);
+        streak.addFreeze(2);
+
+        DayStatus saved = streak.close(START.plusDays(1), DayStatus.FAILED);
+        assertThat(saved).isEqualTo(DayStatus.FROZEN);
+        assertThat(streak.getCurrentStreak()).isEqualTo(1);
+        assertThat(streak.getFreezes()).isZero();
+        assertThat(streak.getLastFrozenDate()).isEqualTo(START.plusDays(1));
+
+        // Sem protetor, a próxima falha zera
+        assertThat(streak.close(START.plusDays(2), DayStatus.FAILED)).isEqualTo(DayStatus.FAILED);
+        assertThat(streak.getCurrentStreak()).isZero();
+    }
+
+    @Test
+    void protetoresTemLimite() {
+        Streak streak = Streak.start(UUID.randomUUID(), START);
+        streak.addFreeze(2);
+        streak.addFreeze(2);
+
+        assertThatThrownBy(() -> streak.addFreeze(2)).isInstanceOf(IllegalStateException.class);
+    }
 }

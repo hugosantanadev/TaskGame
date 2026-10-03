@@ -7,7 +7,8 @@ import type { CompletionResult, ProofAttached, RankRef } from '../api/types'
 export type RewardEvent =
   | { kind: 'completed'; title: string; result: CompletionResult }
   | { kind: 'proof'; title: string; result: ProofAttached }
-  | { kind: 'purchase'; title: string; balance: number }
+  /** `detail` troca a frase padrão ("Já está na sua coleção."), para compras que não viram item. */
+  | { kind: 'purchase'; title: string; balance: number; detail?: string }
   /** O elo mudou fora de uma conclusão (ex.: caiu na virada do dia por obrigatórias perdidas). */
   | { kind: 'rank'; from: RankRef; to: RankRef }
 

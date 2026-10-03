@@ -94,6 +94,7 @@ public class StatsService {
                 days.get(DayStatus.FULFILLED),
                 days.get(DayStatus.FAILED),
                 days.get(DayStatus.REST),
+                days.get(DayStatus.FROZEN),
                 achievements.unlockedCount(userId),
                 byCategory);
     }
@@ -125,13 +126,16 @@ public class StatsService {
         LocalDate today = calendar.today(zone);
         LocalDate weekEnd = weekStart.plusDays(6);
         Map<LocalDate, PeriodTotals> byDate = totalsBy(userId, weekStart, weekEnd, Function.identity());
+        Map<LocalDate, DayStatus> closed = streaks.closedStatuses(userId, weekStart, weekEnd);
 
         List<WeekSummaryResponse.Day> days = new ArrayList<>();
         PeriodTotals week = PeriodTotals.EMPTY;
         int fulfilledDays = 0;
         for (LocalDate date = weekStart; !date.isAfter(weekEnd); date = date.plusDays(1)) {
             PeriodTotals day = byDate.getOrDefault(date, PeriodTotals.EMPTY);
-            SummaryDayStatus status = SummaryDayStatus.of(date, today, day.mandatoryPlanned(), day.mandatoryDone());
+            SummaryDayStatus status = closed.get(date) == DayStatus.FROZEN
+                    ? SummaryDayStatus.FROZEN
+                    : SummaryDayStatus.of(date, today, day.mandatoryPlanned(), day.mandatoryDone());
             days.add(new WeekSummaryResponse.Day(date, date.getDayOfWeek(), status, TotalsResponse.of(day)));
             week = week.plus(day);
             fulfilledDays += status == SummaryDayStatus.FULFILLED ? 1 : 0;

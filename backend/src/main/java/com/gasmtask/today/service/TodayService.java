@@ -81,7 +81,7 @@ public class TodayService {
                 nextOf(list, now.toLocalTime()).map(TaskOccurrence::getId).orElse(null),
                 ProgressResponse.of(progress),
                 wallet.balanceOf(userId),
-                StreakResponse.of(streaks.view(userId, today, progress)),
+                streaks.responseOf(streaks.view(userId, today, progress)),
                 onboarding,
                 progression.status(userId),
                 challenges.today(userId));

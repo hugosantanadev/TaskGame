@@ -17,7 +17,7 @@ public final class StreakRules {
         return switch (closedDay) {
             case FULFILLED -> current + 1;
             case FAILED -> 0;
-            case REST -> current;
+            case REST, FROZEN -> current;
         };
     }
 }
