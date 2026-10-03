@@ -1,0 +1,7 @@
+# Perfil de desenvolvimento e demonstração: ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+# Na primeira subida, cria a conta demo com seis semanas de histórico (DemoDataSeeder).
+# Não use este perfil num servidor aberto: a senha da demo é pública.
+app:
+  demo:
+    email: demo@gasmtask.app
+    password: demo1234
