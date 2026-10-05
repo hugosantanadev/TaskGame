@@ -3,7 +3,7 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--space-1);
   padding: var(--space-1);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-sunk);
 }
@@ -21,7 +21,7 @@
 
 /* Aba atual: bloco de tinta, como a opção marcada num menu de jogo */
 .active {
-  background: var(--ink);
+  background: var(--inverse);
   box-shadow: inset 0 -3px 0 var(--pen);
-  color: #ffffff;
+  color: var(--on-inverse);
 }

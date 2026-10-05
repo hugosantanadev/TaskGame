@@ -12,8 +12,8 @@
   margin: 0 auto;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-m);
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--inverse);
+  color: var(--on-inverse);
 }
 
 .text {

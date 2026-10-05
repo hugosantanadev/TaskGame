@@ -11,11 +11,13 @@ import { ToggleGroup } from '../../components/ToggleGroup'
 import { PixelIcon } from '../../game/pixel/PixelSprite'
 import { itemKind, SLOT_LABEL } from '../../lib/collection'
 import { plural } from '../../lib/days'
+import { EquipmentList } from './EquipmentList'
 import { ItemSticker } from './ItemSticker'
 import styles from './StorePage.module.css'
 import {
   useCatalog,
   useEquip,
+  useEquipment,
   useInventory,
   usePlaceItem,
   usePurchase,
@@ -26,29 +28,32 @@ import {
   useWallet,
 } from './storeApi'
 
-type Filter = 'ALL' | StoreItemCategory
+type Filter = 'ALL' | Exclude<StoreItemCategory, 'EQUIPMENT'>
+type View = 'upgrades' | 'store' | 'collection'
 
-const VIEWS = [
-  { value: 'store', label: 'Loja' },
-  { value: 'collection', label: 'Minha coleção' },
-] as const
+/** As três visões da Loja: melhorar o quarto (o que dá bônus), comprar estilo e ver o que já é seu. */
+const VIEWS: ReadonlyArray<{ value: View; label: string; param: string | null; title: string }> = [
+  { value: 'upgrades', label: 'Melhorias', param: null, title: 'Melhorias do quarto' },
+  { value: 'store', label: 'Itens', param: 'itens', title: 'Loja' },
+  { value: 'collection', label: 'Coleção', param: 'colecao', title: 'Minha coleção' },
+]
 
 const FILTERS: ReadonlyArray<{ value: Filter; label: string }> = [
   { value: 'ALL', label: 'Tudo' },
-  { value: 'FURNITURE', label: 'Móveis' },
   { value: 'DECORATION', label: 'Decoração' },
-  { value: 'CHARACTER', label: 'Personagem' },
+  { value: 'FURNITURE', label: 'Móveis' },
+  { value: 'CHARACTER', label: 'Roupas' },
 ]
 
 export function StorePage() {
   const [params, setParams] = useSearchParams()
-  const view = params.get('visao') === 'colecao' ? 'collection' : 'store'
+  const view = VIEWS.find((option) => option.param === params.get('visao'))?.value ?? 'upgrades'
   const wallet = useWallet()
   const balance = wallet.data?.balance ?? 0
 
   return (
     <div className={styles.page}>
-      <PageTitle title={view === 'store' ? 'Loja' : 'Minha coleção'} />
+      <PageTitle title={VIEWS.find((option) => option.value === view)?.title ?? 'Loja'} />
       <div className={styles.top}>
         <h1 className={styles.heading}>Loja</h1>
         {wallet.data && (
@@ -62,9 +67,14 @@ export function StorePage() {
         label="O que ver"
         value={view}
         options={VIEWS}
-        onChange={(next) => setParams(next === 'collection' ? { visao: 'colecao' } : {})}
+        onChange={(next) => {
+          const param = VIEWS.find((option) => option.value === next)?.param
+          setParams(param ? { visao: param } : {})
+        }}
       />
-      {view === 'store' ? <Catalog balance={balance} /> : <Collection />}
+      {view === 'upgrades' && <EquipmentList balance={balance} />}
+      {view === 'store' && <Catalog balance={balance} />}
+      {view === 'collection' && <Collection />}
     </div>
   )
 }
@@ -86,7 +96,7 @@ function Catalog({ balance }: { balance: number }) {
         </p>
       )}
       <ul className={styles.grid}>
-        {catalog.data?.map((item) => (
+        {catalog.data?.filter((item) => item.category !== 'EQUIPMENT').map((item) => (
           <li key={item.id}>
             <StoreItemCard item={item} balance={balance} onBuy={() => setBuying(item)} />
           </li>
@@ -240,6 +250,7 @@ function Collection() {
 }
 
 function CollectionItem({ owned }: { owned: InventoryItem }) {
+  const equipment = useEquipment()
   const place = usePlaceItem()
   const remove = useRemoveItem()
   const equip = useEquip()
@@ -247,11 +258,16 @@ function CollectionItem({ owned }: { owned: InventoryItem }) {
   const busy = place.isPending || remove.isPending || equip.isPending || unequip.isPending
   const error = place.error ?? remove.error ?? equip.error ?? unequip.error
   const { item } = owned
-  const where = owned.inRoom
-    ? 'No quarto'
-    : owned.equippedSlot
-      ? `Vestido: ${SLOT_LABEL[owned.equippedSlot].toLowerCase()}`
-      : 'Guardado'
+  const currentTier = item.track ? equipment.data?.find((status) => status.track === item.track)?.tier : undefined
+  const where = item.track
+    ? currentTier !== undefined && item.tier !== null && item.tier < currentTier
+      ? 'Substituída por uma melhor'
+      : 'No quarto'
+    : owned.inRoom
+      ? 'No quarto'
+      : owned.equippedSlot
+        ? `Vestido: ${SLOT_LABEL[owned.equippedSlot].toLowerCase()}`
+        : 'Guardado'
 
   return (
     <article className={styles.ownedCard}>
@@ -267,7 +283,7 @@ function CollectionItem({ owned }: { owned: InventoryItem }) {
           </p>
         )}
       </div>
-      {item.slot === null ? (
+      {item.track ? null : item.slot === null ? (
         <Button
           variant={owned.inRoom ? 'secondary' : 'primary'}
           disabled={busy}

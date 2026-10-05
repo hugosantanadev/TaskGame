@@ -14,8 +14,10 @@ import { Sheet } from '../../components/Sheet'
 import { Avatar } from '../../game/pixel/Avatar'
 import { wornCodes } from '../../game/pixel/items'
 import { PixelIcon } from '../../game/pixel/PixelSprite'
+import { ToggleGroup } from '../../components/ToggleGroup'
 import { formatLongDate, safeTimeZone, timeZoneOptions } from '../../lib/datetime'
 import { formatTime } from '../../lib/days'
+import { useTheme, type ThemeChoice } from '../../lib/theme'
 import { isMasterTitle, titleLabel } from '../../lib/titles'
 import { useMyRank } from '../ranking/rankingApi'
 import { useReminderSettings, useUpdateReminderSettings } from '../reminders/remindersApi'
@@ -55,6 +57,13 @@ export function ProfilePage() {
           Jogador
         </h2>
         <ProfileForm profile={profile} />
+      </section>
+
+      <section className={styles.section} aria-labelledby="profile-appearance">
+        <h2 id="profile-appearance" className={styles.sectionTitle}>
+          Aparência
+        </h2>
+        <AppearanceSection />
       </section>
 
       <section className={styles.section} aria-labelledby="profile-reminders">
@@ -207,6 +216,24 @@ function changesBetween(profile: User, draft: Required<ProfileChanges>): Profile
   if (draft.timeZone !== profile.timeZone) changes.timeZone = draft.timeZone
   if (draft.rankingVisible !== profile.rankingVisible) changes.rankingVisible = draft.rankingVisible
   return changes
+}
+
+// ------------------------------------------------------------------ aparência
+
+const THEMES: ReadonlyArray<{ value: ThemeChoice; label: string }> = [
+  { value: 'auto', label: 'Automático' },
+  { value: 'light', label: 'Claro' },
+  { value: 'dark', label: 'Escuro' },
+]
+
+function AppearanceSection() {
+  const [theme, setTheme] = useTheme()
+  return (
+    <>
+      <ToggleGroup label="Tema" value={theme} options={THEMES} onChange={setTheme} />
+      <p className={styles.hint}>No automático, o app segue o modo claro ou escuro do celular. Vale para este aparelho.</p>
+    </>
+  )
 }
 
 // ------------------------------------------------------------------ lembretes

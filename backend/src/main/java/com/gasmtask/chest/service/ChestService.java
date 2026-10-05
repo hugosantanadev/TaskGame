@@ -17,6 +17,7 @@ import com.gasmtask.progression.service.ProgressionService.XpChange;
 import com.gasmtask.shared.exception.BusinessException;
 import com.gasmtask.shared.exception.ErrorCode;
 import com.gasmtask.shared.time.UserCalendar;
+import com.gasmtask.store.domain.StoreItemCategory;
 import com.gasmtask.store.dto.StoreItemResponse;
 import com.gasmtask.store.service.InventoryService;
 import com.gasmtask.store.service.StoreService;
@@ -127,6 +128,7 @@ public class ChestService {
     private String pickItem(UUID userId, LocalDate weekStart, ChestTier tier) {
         List<StoreItemResponse> candidates = store.catalog(userId, null).stream()
                 .filter(item -> !item.owned() && item.price() <= tier.maxItemPrice())
+                .filter(item -> item.category() != StoreItemCategory.EQUIPMENT) // melhoria segue a ordem da trilha
                 .toList();
         if (candidates.isEmpty()) {
             return null;

@@ -27,9 +27,17 @@ class RewardPolicyTest {
 
     @Test
     void obrigatoriaNoHorarioEComProvaRendeCincoMoedas() {
-        Reward reward = policy.rewardFor(5, policy.baseCoinsFor(TaskKind.MANDATORY), true, true);
+        Reward reward = policy.rewardFor(5, policy.baseCoinsFor(TaskKind.MANDATORY), true, true, 0);
 
-        assertThat(reward).isEqualTo(new Reward(5, 3, 1, 1));
+        assertThat(reward).isEqualTo(new Reward(5, 3, 1, 1, 0));
+        assertThat(reward.totalCoins()).isEqualTo(5);
+    }
+
+    @Test
+    void melhoriaDoQuartoSomaAsMoedasDaCategoria() {
+        Reward reward = policy.rewardFor(5, policy.baseCoinsFor(TaskKind.MANDATORY), false, false, 2);
+
+        assertThat(reward.equipmentBonus()).isEqualTo(2);
         assertThat(reward.totalCoins()).isEqualTo(5);
     }
 

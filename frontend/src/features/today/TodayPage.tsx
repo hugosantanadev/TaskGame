@@ -23,7 +23,7 @@ import { ChallengesPanel } from './ChallengesPanel'
 import { CompleteSheet } from './CompleteSheet'
 import { DayTabs } from './DayTabs'
 import { OccurrenceRow } from './OccurrenceRow'
-import { TodayHero } from './TodayHero'
+import { RoomHero } from './RoomHero'
 import styles from './TodayPage.module.css'
 import { useToday } from './todayApi'
 
@@ -60,10 +60,11 @@ export function TodayPage() {
   return (
     <div className={styles.page}>
       <PageTitle title="Hoje" />
-      <TodayHero
+      <RoomHero
         period={period}
         greeting={`${GREETINGS[period]}, ${firstName}.`}
-        day={day}
+        dateLabel={`Hoje, ${day.weekday}, ${day.day} de ${day.month} de ${day.year}`}
+        dateShort={`${day.weekday}, ${day.day} de ${day.month}`}
         wearing={wornCodes(character.data)}
         state={character.data?.state ?? 'IDLE'}
         title={character.data?.activeTitle ?? user.activeTitle}

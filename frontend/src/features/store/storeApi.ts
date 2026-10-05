@@ -4,6 +4,7 @@ import { apiRequest } from '../../api/client'
 import type {
   CharacterSlot,
   CharacterView,
+  EquipmentStatus,
   InventoryItem,
   PurchaseResult,
   Room,
@@ -34,6 +35,11 @@ export function useRoom() {
   return useQuery({ queryKey: ['room'], queryFn: ({ signal }) => apiRequest<Room>('/room', { signal }) })
 }
 
+/** Melhorias do quarto: degrau de cada trilha, o próximo à venda e o bônus. */
+export function useEquipment() {
+  return useQuery({ queryKey: ['equipment'], queryFn: ({ signal }) => apiRequest<EquipmentStatus[]>('/equipment', { signal }) })
+}
+
 export function useCharacter() {
   return useQuery({ queryKey: ['character'], queryFn: ({ signal }) => apiRequest<CharacterView>('/character', { signal }) })
 }
@@ -42,7 +48,7 @@ export function useCharacter() {
 function useRefreshCollection() {
   const queryClient = useQueryClient()
   return () => {
-    for (const key of ['store', 'inventory', 'room', 'character', 'wallet', 'today']) {
+    for (const key of ['store', 'inventory', 'room', 'character', 'wallet', 'today', 'equipment']) {
       void queryClient.invalidateQueries({ queryKey: [key] })
     }
   }

@@ -10,7 +10,7 @@
   gap: var(--space-4);
   align-items: center;
   padding: var(--space-4);
-  border: var(--px) solid var(--ink);
+  border: var(--px) solid var(--line);
   border-radius: var(--radius-l);
   background: var(--pen-soft);
   box-shadow: var(--shadow-step);
@@ -22,7 +22,7 @@
   width: 5.5rem;
   height: 6.25rem;
   padding-bottom: 0.25rem;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: linear-gradient(#8fe4ff 0 78%, #38b764 78% 82%, #257179 82%);
 }
@@ -49,7 +49,7 @@
   gap: var(--space-1);
   width: fit-content;
   padding: 0 var(--space-2);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--paper);
   font-family: var(--font-display);
@@ -59,6 +59,7 @@
 
 .playerTitle[data-master] {
   background: var(--coin);
+  color: var(--on-bright);
 }
 
 .playerMeta {
@@ -71,7 +72,7 @@
 
 .plan {
   padding: 0 var(--space-2);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--paper);
   font-size: var(--text-xs);
@@ -82,6 +83,7 @@
 
 .plan[data-plan='PRO'] {
   background: var(--coin);
+  color: var(--on-bright);
 }
 
 .planNote {
@@ -130,7 +132,7 @@
   width: 2.75rem;
   height: 1.5rem;
   margin: 0;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--paper-sunk);
   cursor: pointer;
@@ -212,7 +214,7 @@
   justify-items: center;
   gap: var(--space-2);
   padding: var(--space-4) var(--space-1);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
   color: var(--ink);
@@ -220,7 +222,7 @@
   font-weight: 700;
   text-align: center;
   text-decoration: none;
-  box-shadow: 3px 3px 0 var(--ink);
+  box-shadow: 3px 3px 0 var(--line);
 }
 
 .collectionLink svg {

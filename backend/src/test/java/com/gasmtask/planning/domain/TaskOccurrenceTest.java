@@ -48,18 +48,18 @@ class TaskOccurrenceTest {
     void concluiUmaVezSo() {
         TaskOccurrence occurrence = occurrence(TaskKind.MANDATORY, SUNDAY_NIGHT);
 
-        occurrence.complete(SUNDAY_NIGHT.plusSeconds(36_000), true, new Reward(5, 3, 1, 0));
+        occurrence.complete(SUNDAY_NIGHT.plusSeconds(36_000), true, new Reward(5, 3, 1, 0, 0));
 
         assertThat(occurrence.isCompleted()).isTrue();
         assertThat(occurrence.getEarnedCoins()).isEqualTo(4);
-        assertThatThrownBy(() -> occurrence.complete(SUNDAY_NIGHT, true, new Reward(5, 3, 1, 0)))
+        assertThatThrownBy(() -> occurrence.complete(SUNDAY_NIGHT, true, new Reward(5, 3, 1, 0, 0)))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
     void perdidaSoAfetaPendente() {
         TaskOccurrence done = occurrence(TaskKind.MANDATORY, SUNDAY_NIGHT);
-        done.complete(SUNDAY_NIGHT, false, new Reward(5, 3, 0, 0));
+        done.complete(SUNDAY_NIGHT, false, new Reward(5, 3, 0, 0, 0));
 
         done.markMissed();
 
@@ -78,10 +78,10 @@ class TaskOccurrenceTest {
         TaskOccurrence mandatory = occurrence(TaskKind.MANDATORY, SUNDAY_NIGHT);
         TaskOccurrence extra = TaskOccurrence.extra(userId, plan, "Arrumar a mesa", TaskCategory.HOME, 2, 1, MONDAY,
                 null, null, false, SUNDAY_NIGHT);
-        extra.complete(SUNDAY_NIGHT, false, new Reward(2, 1, 0, 0));
+        extra.complete(SUNDAY_NIGHT, false, new Reward(2, 1, 0, 0, 0));
 
         DayProgress before = DayProgress.of(List.of(mandatory, extra));
-        mandatory.complete(SUNDAY_NIGHT, true, new Reward(5, 3, 1, 0));
+        mandatory.complete(SUNDAY_NIGHT, true, new Reward(5, 3, 1, 0, 0));
         DayProgress after = DayProgress.of(List.of(mandatory, extra));
 
         assertThat(before.fulfilled()).isFalse();

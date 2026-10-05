@@ -62,6 +62,7 @@ function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' 
   const parts = [`${reward.baseCoins} da tarefa`]
   if (reward.onTimeBonus > 0) parts.push(`${reward.onTimeBonus} pelo horário`)
   if (reward.proofBonus > 0) parts.push(`${reward.proofBonus} pela foto`)
+  if (reward.equipmentBonus > 0) parts.push(`${reward.equipmentBonus} das melhorias do quarto`)
   return (
     <>
       <p className={styles.title}>Feito: {event.title}</p>

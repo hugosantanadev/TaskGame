@@ -42,7 +42,7 @@
   display: grid;
   gap: var(--space-1);
   padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-left: 8px solid var(--cat);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
@@ -51,7 +51,7 @@
 }
 
 a.card:hover {
-  border-color: var(--ink);
+  border-color: var(--line);
   border-left-color: var(--cat);
 }
 

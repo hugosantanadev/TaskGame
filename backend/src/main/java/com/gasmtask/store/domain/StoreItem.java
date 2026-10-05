@@ -57,6 +57,13 @@ public class StoreItem {
     @Column(name = "sort_order", nullable = false)
     private int sortOrder;
 
+    /** Só em melhorias: a trilha e o degrau (1 a 3). */
+    @Enumerated(EnumType.STRING)
+    @Column(length = 12)
+    private EquipmentTrack track;
+
+    private Integer tier;
+
     /** O catálogo nasce na migration; esta fábrica serve a testes. */
     public static StoreItem of(String code, String name, StoreItemCategory category, CharacterSlot slot, int price) {
         if ((category == StoreItemCategory.CHARACTER) != (slot != null)) {
@@ -72,6 +79,21 @@ public class StoreItem {
         item.price = price;
         item.available = true;
         return item;
+    }
+
+    /** Melhoria do quarto, para testes: degrau {@code tier} da trilha. */
+    public static StoreItem equipment(String code, String name, EquipmentTrack track, int tier, int price) {
+        if (tier < 1 || tier > EquipmentTrack.MAX_TIER) {
+            throw new IllegalArgumentException("Degrau fora da trilha: " + tier);
+        }
+        StoreItem item = of(code, name, StoreItemCategory.EQUIPMENT, null, price);
+        item.track = track;
+        item.tier = tier;
+        return item;
+    }
+
+    public boolean isEquipment() {
+        return category == StoreItemCategory.EQUIPMENT;
     }
 
     public boolean isRoomItem() {

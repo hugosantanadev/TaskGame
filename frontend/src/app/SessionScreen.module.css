@@ -24,7 +24,7 @@
 .dots span {
   width: 10px;
   height: 10px;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   background: var(--paper-sunk);
 }
 
@@ -45,6 +45,7 @@
 @keyframes loading-step {
   0% {
     background: var(--coin);
+    color: var(--on-bright);
   }
   33% {
     background: var(--paper-sunk);

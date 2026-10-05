@@ -24,6 +24,18 @@
   --danger: #b13e53;
   --danger-paper: #fde8ec;
 
+  /* Contorno de pixel (bordas e sombras em degrau), separado do texto: no escuro, o texto clareia e o contorno não */
+  --line: #1a1c2c;
+  /* Bloco invertido (aba marcada, faixa de estado) e texto sobre cores vivas (moeda, feito, XP, sequência) */
+  --inverse: #1a1c2c;
+  --on-inverse: #ffffff;
+  --on-bright: #1a1c2c;
+  /* Fundos suaves das plaquinhas */
+  --coin-soft: #fff1cf;
+  --streak-soft: #ffe1d4;
+  --silver-soft: #e3e9f2;
+  --bronze-soft: #f2c7a5;
+
   /* Recompensas */
   --coin: #ffcd75;
   --coin-ink: #4a2c00;
@@ -96,7 +108,73 @@
   --radius-m: 4px;
   --radius-l: 6px;
   --px: 3px; /* espessura do contorno de pixel */
-  --shadow-step: 4px 4px 0 var(--ink);
+  --shadow-step: 4px 4px 0 var(--line);
   --nav-height: 4.25rem;
   --content-width: 34rem;
+}
+
+/*
+ * Modo noturno: segue o sistema (automático) ou a escolha feita no perfil (data-theme no <html>). As cores vivas
+ * dos destaques continuam as mesmas; o papel escurece, o texto clareia e o contorno fica quase preto.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --paper: #151726;
+    --paper-raised: #1f2236;
+    --paper-sunk: #12131f;
+    --dot: #23273d;
+    --rule: #333c57;
+    --margin-line: #6b3e4f;
+    --ink: #eef1f6;
+    --pencil: #9fb2c8;
+    --pen: #5574f2;
+    --pen-strong: #9bb0ff;
+    --pen-soft: #273260;
+    --on-pen: #ffffff;
+    --danger: #ff7a8f;
+    --danger-paper: #3a1d27;
+    --line: #07080f;
+    --inverse: #eef1f6;
+    --on-inverse: #151726;
+    --coin-soft: #3b3220;
+    --streak-soft: #3d2a22;
+    --silver-soft: #2b3346;
+    --bronze-soft: #43301f;
+    --coin-ink: #1a1c2c;
+    --chart-done: #5fd38d;
+    --chart-planned: #2e6b4a;
+    --xp-ink: #12394d;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --paper: #151726;
+  --paper-raised: #1f2236;
+  --paper-sunk: #12131f;
+  --dot: #23273d;
+  --rule: #333c57;
+  --margin-line: #6b3e4f;
+  --ink: #eef1f6;
+  --pencil: #9fb2c8;
+  --pen: #5574f2;
+  --pen-strong: #9bb0ff;
+  --pen-soft: #273260;
+  --on-pen: #ffffff;
+  --danger: #ff7a8f;
+  --danger-paper: #3a1d27;
+  --line: #07080f;
+  --inverse: #eef1f6;
+  --on-inverse: #151726;
+  --coin-soft: #3b3220;
+  --streak-soft: #3d2a22;
+  --silver-soft: #2b3346;
+  --bronze-soft: #43301f;
+  --coin-ink: #1a1c2c;
+  --chart-done: #5fd38d;
+  --chart-planned: #2e6b4a;
+  --xp-ink: #12394d;
 }

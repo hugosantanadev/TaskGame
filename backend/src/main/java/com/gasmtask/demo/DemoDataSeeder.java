@@ -275,8 +275,11 @@ public class DemoDataSeeder implements ApplicationRunner {
     private void decorate(UUID userId) {
         Map<String, StoreItemResponse> catalog = new HashMap<>();
         store.catalog(userId, null).forEach(item -> catalog.put(item.code(), item));
+        for (String code : List.of("desk_folding", "computer_old_laptop", "bed_single")) {
+            store.purchase(userId, catalog.get(code).id());
+        }
         List<UUID> roomItems = new ArrayList<>();
-        for (String code : List.of("desk_simple", "lamp_desk", "plant_small", "poster_space", "mug_coffee")) {
+        for (String code : List.of("lamp_desk", "plant_small", "poster_space", "mug_coffee")) {
             PurchaseResponse bought = store.purchase(userId, catalog.get(code).id());
             roomItems.add(bought.inventoryItem().id());
         }

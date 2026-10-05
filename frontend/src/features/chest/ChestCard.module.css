@@ -7,7 +7,7 @@
   gap: var(--space-4);
   align-items: center;
   padding: var(--space-4);
-  border: var(--px) solid var(--ink);
+  border: var(--px) solid var(--line);
   border-radius: var(--radius-l);
   background:
     repeating-linear-gradient(45deg, transparent 0 10px, color-mix(in srgb, var(--chest) 8%, transparent) 10px 20px),
@@ -74,7 +74,7 @@
   gap: var(--space-3);
   align-items: center;
   padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-sunk);
 }
@@ -100,7 +100,7 @@
 
 .pips li {
   height: 0.6rem;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   background: var(--paper);
 }
 
@@ -114,6 +114,7 @@
 
 .pips li[data-status='FROZEN'] {
   background: var(--xp);
+  color: var(--on-bright);
 }
 
 .pips li[data-status='REST'] {

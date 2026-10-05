@@ -5,9 +5,11 @@ import java.util.UUID;
 
 import com.gasmtask.shared.security.AuthenticatedUser;
 import com.gasmtask.store.domain.StoreItemCategory;
+import com.gasmtask.store.dto.EquipmentTrackResponse;
 import com.gasmtask.store.dto.InventoryItemResponse;
 import com.gasmtask.store.dto.PurchaseResponse;
 import com.gasmtask.store.dto.StoreItemResponse;
+import com.gasmtask.store.service.EquipmentService;
 import com.gasmtask.store.service.InventoryService;
 import com.gasmtask.store.service.StoreService;
 
@@ -31,10 +33,19 @@ public class StoreController {
 
     private final StoreService storeService;
     private final InventoryService inventoryService;
+    private final EquipmentService equipmentService;
 
-    public StoreController(StoreService storeService, InventoryService inventoryService) {
+    public StoreController(StoreService storeService, InventoryService inventoryService,
+                           EquipmentService equipmentService) {
         this.storeService = storeService;
         this.inventoryService = inventoryService;
+        this.equipmentService = equipmentService;
+    }
+
+    @GetMapping("/equipment")
+    @Operation(summary = "Melhorias do quarto: o degrau de cada trilha, o próximo à venda e o bônus em moedas")
+    public List<EquipmentTrackResponse> equipment(@AuthenticationPrincipal AuthenticatedUser user) {
+        return equipmentService.overview(user.id());
     }
 
     @GetMapping("/store/items")

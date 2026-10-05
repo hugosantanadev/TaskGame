@@ -15,11 +15,11 @@
   width: 100%;
   max-width: var(--content-width);
   padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4);
-  border: var(--px) solid var(--ink);
+  border: var(--px) solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
   color: var(--ink);
-  box-shadow: 4px 4px 0 var(--ink);
+  box-shadow: 4px 4px 0 var(--line);
   pointer-events: auto;
 }
 
@@ -45,7 +45,7 @@
 .points,
 .coins,
 .streak {
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
@@ -115,7 +115,7 @@
   gap: var(--space-1);
   padding: 0.125rem var(--space-2);
   border-radius: var(--radius-m);
-  background: var(--ink);
+  background: var(--inverse);
   color: var(--coin);
   font-weight: 700;
 }
@@ -126,7 +126,7 @@
   align-items: center;
   gap: var(--space-1);
   padding: 0.125rem var(--space-2);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
   color: var(--ink);

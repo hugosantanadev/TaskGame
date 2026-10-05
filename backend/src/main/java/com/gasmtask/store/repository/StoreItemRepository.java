@@ -16,4 +16,6 @@ public interface StoreItemRepository extends JpaRepository<StoreItem, UUID> {
     List<StoreItem> findByAvailableTrueAndCategoryOrderBySortOrderAsc(StoreItemCategory category);
 
     List<StoreItem> findByCodeIn(Collection<String> codes);
+
+    List<StoreItem> findByCategoryOrderBySortOrderAsc(StoreItemCategory category);
 }

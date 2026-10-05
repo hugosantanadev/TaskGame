@@ -44,7 +44,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
 }
@@ -77,12 +77,12 @@
 }
 
 .row[data-unlocked] {
-  border: 2px solid var(--ink);
-  box-shadow: 3px 3px 0 var(--ink);
+  border: 2px solid var(--line);
+  box-shadow: 3px 3px 0 var(--line);
 }
 
 .row[data-unlocked] .badge {
-  border-color: var(--ink);
+  border-color: var(--line);
   background: var(--coin);
   color: var(--coin-ink);
 }
@@ -92,7 +92,7 @@
   margin-top: var(--space-1);
   overflow: hidden;
   padding: 2px;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--paper-sunk);
 }
@@ -129,10 +129,10 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-4);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-l);
   background: color-mix(in srgb, var(--pen) 12%, var(--paper-raised));
-  box-shadow: 4px 4px 0 var(--ink);
+  box-shadow: 4px 4px 0 var(--line);
 }
 
 .stateIcon {
@@ -159,7 +159,7 @@
   display: grid;
   gap: var(--space-3);
   padding: var(--space-4);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-l);
   background: var(--paper-raised);
 }
@@ -198,7 +198,7 @@
   height: 0.875rem;
   overflow: hidden;
   padding: 2px;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--paper-sunk);
 }
@@ -215,4 +215,10 @@
   grid-column: 1 / -1;
   color: var(--pencil);
   font-size: var(--text-xs);
+}
+
+.actionsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
 }

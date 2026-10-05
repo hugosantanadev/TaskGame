@@ -124,7 +124,7 @@ export const WEARABLES: Record<string, Wearable> = {
     sprite: layer(
       12,
       ['...kooooooook...', '..kyyyyyyyyyyk..', '..kggggggggggk..', '..kskbbbbbbksk..'],
-      { o: '#ef7d57', y: '#ffcd75', g: '#38b764', b: '#41a6f6' },
+      { o: '#29366f', y: '#f4f4f4', g: '#29366f', b: '#f4f4f4' },
     ),
   },
   hoodie_purple: {

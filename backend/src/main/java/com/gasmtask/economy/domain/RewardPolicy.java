@@ -57,7 +57,10 @@ public record RewardPolicy(
         return !completedAt.isBefore(windowStart) && !completedAt.isAfter(windowEnd);
     }
 
-    public Reward rewardFor(int points, int baseCoins, boolean onTime, boolean withProof) {
-        return new Reward(points, baseCoins, onTime ? onTimeBonus : 0, withProof ? proofBonus : 0);
+    public Reward rewardFor(int points, int baseCoins, boolean onTime, boolean withProof, int equipmentBonus) {
+        if (equipmentBonus < 0) {
+            throw new IllegalArgumentException("Bônus de melhoria inválido");
+        }
+        return new Reward(points, baseCoins, onTime ? onTimeBonus : 0, withProof ? proofBonus : 0, equipmentBonus);
     }
 }

@@ -4,7 +4,7 @@
   inset: auto 0 0;
   z-index: 10;
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  border-top: var(--px) solid var(--ink);
+  border-top: var(--px) solid var(--line);
   background: var(--paper-raised);
 }
 
@@ -56,10 +56,10 @@
 }
 
 .active {
-  border-color: var(--ink);
+  border-color: var(--line);
   background: var(--coin);
   box-shadow: inset 0 -3px 0 var(--coin-shade);
-  color: var(--ink);
+  color: var(--on-bright);
   font-weight: 700;
 }
 

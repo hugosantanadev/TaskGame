@@ -29,6 +29,7 @@ import com.gasmtask.shared.exception.BusinessException;
 import com.gasmtask.shared.exception.ErrorCode;
 import com.gasmtask.shared.storage.FileStorage;
 import com.gasmtask.shared.time.UserCalendar;
+import com.gasmtask.store.service.EquipmentService;
 import com.gasmtask.streak.domain.StreakView;
 import com.gasmtask.streak.service.DayClosingService;
 import com.gasmtask.streak.service.StreakService;
@@ -62,13 +63,14 @@ public class TaskCompletionService {
     private final ProgressionService progression;
     private final AttributeService attributes;
     private final ChallengeService challenges;
+    private final EquipmentService equipment;
 
     public TaskCompletionService(TaskOccurrenceRepository occurrences, ProofRepository proofs, FileStorage storage,
                                  WalletService wallet, StreakService streaks, DayClosingService closing,
                                  RewardPolicy rewards, UserService users, UserCalendar calendar,
                                  OccurrenceMapper mapper, AchievementService achievements,
                                  ProgressionService progression, AttributeService attributes,
-                                 ChallengeService challenges) {
+                                 ChallengeService challenges, EquipmentService equipment) {
         this.occurrences = occurrences;
         this.proofs = proofs;
         this.storage = storage;
@@ -83,6 +85,7 @@ public class TaskCompletionService {
         this.progression = progression;
         this.attributes = attributes;
         this.challenges = challenges;
+        this.equipment = equipment;
     }
 
     @Transactional
@@ -112,7 +115,8 @@ public class TaskCompletionService {
 
         boolean onTime = rewards.isOnTime(today, occurrence.getPlannedTime(), occurrence.getDurationMinutes(),
                 occurrence.plannedInAdvance(info.zone()), now);
-        Reward reward = rewards.rewardFor(occurrence.getPoints(), occurrence.getBaseCoins(), onTime, upload != null);
+        Reward reward = rewards.rewardFor(occurrence.getPoints(), occurrence.getBaseCoins(), onTime, upload != null,
+                equipment.coinBonus(userId, occurrence.getCategory()));
         occurrence.complete(now.toInstant(), onTime, reward);
         if (upload != null) {
             storeProof(userId, occurrence, upload, now.toInstant());
@@ -120,6 +124,7 @@ public class TaskCompletionService {
         wallet.creditReward(userId, occurrence.getId(), CoinTransactionReason.TASK_REWARD, reward.baseCoins());
         wallet.creditReward(userId, occurrence.getId(), CoinTransactionReason.ON_TIME_BONUS, reward.onTimeBonus());
         wallet.creditReward(userId, occurrence.getId(), CoinTransactionReason.PROOF_BONUS, reward.proofBonus());
+        wallet.creditReward(userId, occurrence.getId(), CoinTransactionReason.EQUIPMENT_BONUS, reward.equipmentBonus());
 
         // A ocorrência concluída é a mesma instância que está na lista de hoje
         DayProgress progress = DayProgress.of(todays);

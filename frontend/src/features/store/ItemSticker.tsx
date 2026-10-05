@@ -10,6 +10,7 @@ const COLORS: Record<StoreItemCategory, string> = {
   FURNITURE: 'var(--cat-home)',
   DECORATION: 'var(--cat-reading)',
   CHARACTER: 'var(--cat-spirituality)',
+  EQUIPMENT: 'var(--cat-study)',
 }
 
 /** Ícone genérico para itens que ainda não ganharam desenho (itens novos no catálogo). */

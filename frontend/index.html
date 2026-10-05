@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="Sua rotina vira um jogo: tarefas de verdade valem XP, moedas, elo e dias seguidos." />
     <meta name="theme-color" content="#ffffff" />
+    <script>
+      // Aplica o tema escolhido antes da primeira pintura (sem piscar o claro no modo escuro)
+      try {
+        var theme = localStorage.getItem('gasmtask-theme')
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
+      } catch (e) {}
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <title>GasmTask</title>

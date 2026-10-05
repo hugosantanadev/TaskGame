@@ -43,7 +43,7 @@
 
 /* Cumprido: borda cheia e o verde de "concluído", como uma tarefa feita */
 .challenge[data-done] {
-  border-color: var(--ink);
+  border-color: var(--line);
   background: color-mix(in srgb, var(--done) 22%, var(--paper));
 }
 
@@ -52,7 +52,7 @@
   place-items: center;
   width: 2.5rem;
   height: 2.5rem;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--pen-soft);
   box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--pen) 25%, transparent);
@@ -64,7 +64,7 @@
 }
 
 .challenge[data-done] .mark {
-  border-color: var(--ink);
+  border-color: var(--line);
   background: var(--done);
   color: var(--done-ink);
   font-size: 1.125rem;

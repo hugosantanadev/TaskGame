@@ -8,10 +8,10 @@
 .option {
   min-height: 2.5rem;
   padding: 0 var(--space-4);
-  border: var(--px) solid var(--ink);
+  border: var(--px) solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
-  box-shadow: 0 3px 0 var(--ink);
+  box-shadow: 0 3px 0 var(--line);
   color: var(--ink);
   font-family: var(--font-display);
   font-weight: 700;
@@ -22,6 +22,6 @@
 .option[aria-pressed='true'] {
   transform: translateY(3px);
   background: var(--pen);
-  box-shadow: 0 0 0 var(--ink);
+  box-shadow: 0 0 0 var(--line);
   color: var(--on-pen);
 }

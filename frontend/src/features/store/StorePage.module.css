@@ -23,7 +23,7 @@
   gap: var(--space-1);
   min-height: 2.25rem;
   padding: 0 var(--space-3);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--coin);
   color: var(--coin-ink);
@@ -63,10 +63,10 @@
   grid-template-rows: auto auto auto 1fr auto;
   gap: var(--space-1);
   padding: var(--space-3);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
-  box-shadow: 3px 3px 0 var(--ink);
+  box-shadow: 3px 3px 0 var(--line);
 }
 
 .card[data-owned] {
@@ -176,7 +176,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
   color: var(--ink);
@@ -203,10 +203,10 @@
   grid-template-columns: auto minmax(0, 1fr);
   gap: var(--space-2) var(--space-3);
   padding: var(--space-4);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-l);
   background: color-mix(in srgb, var(--streak) 14%, var(--paper-raised));
-  box-shadow: 4px 4px 0 var(--ink);
+  box-shadow: 4px 4px 0 var(--line);
 }
 
 .freezeIcon {
@@ -214,7 +214,7 @@
   place-items: center;
   width: 3rem;
   height: 3rem;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--pen-soft);
   color: var(--streak-ink);

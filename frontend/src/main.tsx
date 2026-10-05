@@ -12,6 +12,10 @@ import { queryClient } from './app/queryClient'
 import { router } from './app/router'
 import { UpdatePrompt } from './app/UpdatePrompt'
 import { AuthProvider } from './auth/AuthProvider'
+import { applyTheme, readTheme } from './lib/theme'
+
+// O index.html já marcou o tema; aqui só acerta a cor da barra do navegador
+applyTheme(readTheme())
 
 const root = document.getElementById('root')
 if (!root) throw new Error('Elemento #root não encontrado no index.html')

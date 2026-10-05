@@ -32,8 +32,8 @@ export function StatsPage() {
 
   return (
     <div className={styles.page}>
-      <PageTitle title="Estatísticas" />
-      <h1 className={styles.heading}>Estatísticas</h1>
+      <PageTitle title="Evolução" />
+      <h1 className={styles.heading}>Evolução</h1>
       <WeekSummarySection currentWeek={currentWeek} firstWeek={firstWeek} />
       <MissionEvolutionSection />
       <TrainingSection />

@@ -68,9 +68,9 @@
 }
 
 .chip:has(input:checked) {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--paper-raised);
+  border-color: var(--line);
+  background: var(--inverse);
+  color: var(--on-inverse);
 }
 
 .chip:has(input:focus-visible) {

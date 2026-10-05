@@ -24,10 +24,11 @@
   width: 1.4em;
   height: 1.4em;
   overflow: hidden;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--coin);
-  box-shadow: 2px 2px 0 var(--ink);
+  color: var(--on-bright);
+  box-shadow: 2px 2px 0 var(--line);
 }
 
 .mascot {

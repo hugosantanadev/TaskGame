@@ -29,8 +29,8 @@ const FEATURES: { icon: IconName; title: string; text: string }[] = [
   },
   {
     icon: 'coin',
-    title: 'Loja e quarto',
-    text: 'Moedas viram móveis, roupas e decoração. Monte o seu quarto em pixel art.',
+    title: 'Quarto que evolui',
+    text: 'Começa com um colchão e um celular. Cada melhoria muda o quarto e rende mais moedas na categoria dela.',
   },
   {
     icon: 'chest',
@@ -39,7 +39,8 @@ const FEATURES: { icon: IconName; title: string; text: string }[] = [
   },
 ]
 
-const DEMO_ROOM = ['poster_space', 'bed_cozy', 'desk_simple', 'lamp_desk', 'mug_coffee', 'plant_small', 'rug_round', 'chair_gamer']
+const DEMO_DECOR = ['poster_space', 'lamp_desk', 'plant_small', 'rug_round', 'chair_gamer']
+const DEMO_EQUIPMENT = { COMPUTER: 3, DESK: 3, BED: 2, BOOKSHELF: 2, GYM: 1, PEACE: 1, ORGANIZER: 2 } as const
 
 /**
  * Página pública do GasmTask (/bem-vindo): o que é o app, como funciona e os planos. É a porta de entrada do
@@ -130,7 +131,13 @@ export function LandingPage() {
           <h2 id="room-title" className={styles.sectionTitle}>
             Seu quarto, do seu jeito
           </h2>
-          <RoomScene items={DEMO_ROOM} wearing={['headphones_basic', 'hoodie_purple']} period="SUNSET" />
+          <RoomScene
+            equipment={DEMO_EQUIPMENT}
+            items={DEMO_DECOR}
+            wearing={['headphones_basic', 'hoodie_purple']}
+            period="SUNSET"
+            label="Um quarto montado no GasmTask"
+          />
         </section>
 
         <section className={styles.section} aria-labelledby="plans-title">

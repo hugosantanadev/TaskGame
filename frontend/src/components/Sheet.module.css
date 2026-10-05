@@ -4,7 +4,7 @@
   max-height: 90dvh;
   margin: auto auto 0;
   padding: 0;
-  border: var(--px) solid var(--ink);
+  border: var(--px) solid var(--line);
   border-bottom: none;
   border-radius: var(--radius-l) var(--radius-l) 0 0;
   background: var(--paper-raised);

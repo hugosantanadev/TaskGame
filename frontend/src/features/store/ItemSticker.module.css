@@ -6,7 +6,7 @@
   width: 3.25rem;
   height: 3.25rem;
   padding: 0.3rem;
-  border: var(--px) solid var(--ink);
+  border: var(--px) solid var(--line);
   border-radius: var(--radius-m);
   background:
     linear-gradient(to top, color-mix(in srgb, var(--sticker) 35%, var(--paper)) 30%, transparent 30%),

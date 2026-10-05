@@ -9,7 +9,7 @@ type NavItem = { to: string; label: string; icon: ComponentType<SVGProps<SVGSVGE
 
 const ITEMS: NavItem[] = [
   { to: '/', label: 'Hoje', icon: TodayIcon, section: ['/semana', '/missoes', '/extras'] },
-  { to: '/estatisticas', label: 'Estatísticas', icon: StatsIcon },
+  { to: '/estatisticas', label: 'Evolução', icon: StatsIcon },
   { to: '/loja', label: 'Loja', icon: StoreIcon },
   { to: '/ranking', label: 'Ranking', icon: RankingIcon },
   { to: '/perfil', label: 'Perfil', icon: ProfileIcon },

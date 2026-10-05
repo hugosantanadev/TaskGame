@@ -49,6 +49,9 @@ public class RoomService {
     @Transactional
     public RoomResponse place(UUID userId, UUID inventoryItemId) {
         InventoryItem item = owned(userId, inventoryItemId);
+        if (item.getStoreItem().isEquipment()) {
+            throw new BusinessException(ErrorCode.ITEM_NOT_FOR_ROOM, "Melhorias aparecem no quarto sozinhas.");
+        }
         if (!item.getStoreItem().isRoomItem()) {
             throw new BusinessException(ErrorCode.ITEM_NOT_FOR_ROOM);
         }

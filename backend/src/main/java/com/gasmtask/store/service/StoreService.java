@@ -30,14 +30,16 @@ public class StoreService {
     private final WalletService wallet;
     private final UserCalendar calendar;
     private final StoreMapper mapper;
+    private final EquipmentService equipment;
 
     public StoreService(StoreItemRepository storeItems, InventoryItemRepository inventory, WalletService wallet,
-                        UserCalendar calendar, StoreMapper mapper) {
+                        UserCalendar calendar, StoreMapper mapper, EquipmentService equipment) {
         this.storeItems = storeItems;
         this.inventory = inventory;
         this.wallet = wallet;
         this.calendar = calendar;
         this.mapper = mapper;
+        this.equipment = equipment;
     }
 
     @Transactional(readOnly = true)
@@ -62,6 +64,9 @@ public class StoreService {
         }
         if (inventory.existsByUserIdAndStoreItemId(userId, item.getId())) {
             throw new BusinessException(ErrorCode.ITEM_ALREADY_OWNED);
+        }
+        if (item.isEquipment()) {
+            equipment.checkPurchase(userId, item);
         }
         InventoryItem owned = inventory.save(InventoryItem.acquire(userId, item, calendar.now()));
         wallet.debitPurchase(userId, item.getId(), item.getPrice());

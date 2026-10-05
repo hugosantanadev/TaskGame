@@ -13,7 +13,8 @@ public class StoreMapper {
 
     public StoreItemResponse toResponse(StoreItem item, boolean owned) {
         return new StoreItemResponse(item.getId(), item.getCode(), item.getName(), item.getDescription(),
-                item.getCategory(), item.getSlot(), item.getPrice(), item.getAssetKey(), owned);
+                item.getCategory(), item.getSlot(), item.getPrice(), item.getAssetKey(), owned, item.getTrack(),
+                item.getTier());
     }
 
     public InventoryItemResponse toResponse(InventoryItem owned, boolean inRoom, CharacterSlot equippedSlot) {

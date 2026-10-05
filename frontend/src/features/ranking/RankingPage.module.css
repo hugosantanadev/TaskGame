@@ -44,10 +44,10 @@
   display: grid;
   gap: var(--space-2);
   padding: var(--space-4);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-l);
   background: color-mix(in srgb, var(--pen) 12%, var(--paper-raised));
-  box-shadow: 4px 4px 0 var(--ink);
+  box-shadow: 4px 4px 0 var(--line);
 }
 
 .meText {
@@ -83,14 +83,14 @@
   gap: var(--space-3);
   min-height: 3.25rem;
   padding: var(--space-2) var(--space-3);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
 }
 
 .row[data-you] {
   background: var(--pen-soft);
-  box-shadow: 0 3px 0 var(--ink);
+  box-shadow: 0 3px 0 var(--line);
 }
 
 .meta {
@@ -103,7 +103,7 @@
 /* Título do jogador ao lado do elo; o de Mestre é dourado */
 .title {
   padding: 0 var(--space-1);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--paper);
   font-family: var(--font-display);
@@ -113,6 +113,7 @@
 
 .title[data-master] {
   background: var(--coin);
+  color: var(--on-bright);
 }
 
 .position {
@@ -129,19 +130,19 @@
 
 /* Pódio: o primeiro lugar ganha o amarelo das moedas; segundo e terceiro, contorno forte */
 .row[data-podium='1'] .position {
-  border-color: var(--ink);
+  border-color: var(--line);
   background: var(--coin);
   color: var(--coin-ink);
 }
 
 .row[data-podium='2'] .position {
-  border-color: var(--ink);
-  background: #e3e9f2;
+  border-color: var(--line);
+  background: var(--silver-soft);
 }
 
 .row[data-podium='3'] .position {
-  border-color: var(--ink);
-  background: #f2c7a5;
+  border-color: var(--line);
+  background: var(--bronze-soft);
 }
 
 .who {
@@ -196,7 +197,7 @@
   grid-column: 1 / -1;
   height: 0.625rem;
   overflow: hidden;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
 }

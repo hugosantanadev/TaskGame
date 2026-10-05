@@ -17,6 +17,7 @@ import com.gasmtask.progression.service.ProgressionService;
 import com.gasmtask.shared.time.TimeOfDay;
 import com.gasmtask.shared.time.UserCalendar;
 import com.gasmtask.store.dto.InventoryItemResponse;
+import com.gasmtask.store.service.EquipmentService;
 import com.gasmtask.store.service.InventoryService;
 import com.gasmtask.streak.dto.StreakResponse;
 import com.gasmtask.streak.service.StreakService;
@@ -42,11 +43,13 @@ public class GameStateService {
     private final UserCalendar calendar;
     private final ProgressionService progression;
     private final AttributeService attributes;
+    private final EquipmentService equipment;
 
     public GameStateService(StreakService streaks, WalletService wallet, InventoryService inventory,
                             CharacterService characters, AchievementService achievements,
                             TaskOccurrenceRepository occurrences, UserService users, UserCalendar calendar,
-                            ProgressionService progression, AttributeService attributes) {
+                            ProgressionService progression, AttributeService attributes,
+                            EquipmentService equipment) {
         this.streaks = streaks;
         this.wallet = wallet;
         this.inventory = inventory;
@@ -57,6 +60,7 @@ public class GameStateService {
         this.calendar = calendar;
         this.progression = progression;
         this.attributes = attributes;
+        this.equipment = equipment;
     }
 
     @Transactional
@@ -82,7 +86,7 @@ public class GameStateService {
                 new GameStateResponse.RoomState(owned.stream()
                         .filter(InventoryItemResponse::inRoom)
                         .map(GameStateService::itemOf)
-                        .toList()),
+                        .toList(), equipment.tiers(userId)),
                 new GameStateResponse.CharacterLook(characters.view(userId).state(), equipped,
                         attributes.levels(userId)));
     }

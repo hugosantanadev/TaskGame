@@ -31,7 +31,8 @@
   place-items: center;
   width: var(--shield);
   height: calc(var(--shield) * 1.15);
-  background: var(--ink);
+  background: var(--inverse);
+  color: var(--on-inverse);
   clip-path: polygon(50% 0, 100% 16%, 100% 62%, 50% 100%, 0 62%, 0 16%);
 }
 

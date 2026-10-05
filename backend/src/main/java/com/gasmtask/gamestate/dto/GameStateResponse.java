@@ -8,6 +8,7 @@ import com.gasmtask.character.domain.CharacterSlot;
 import com.gasmtask.character.domain.CharacterState;
 import com.gasmtask.progression.dto.RankStatusResponse;
 import com.gasmtask.shared.time.TimeOfDay;
+import com.gasmtask.store.domain.EquipmentTrack;
 import com.gasmtask.streak.domain.TodayStatus;
 
 /**
@@ -38,7 +39,11 @@ public record GameStateResponse(
     public record Item(String code, String assetKey) {
     }
 
-    public record RoomState(List<Item> items) {
+    /**
+     * @param items     decoração colocada à mão
+     * @param equipment degrau de cada trilha de melhoria (0 = o quarto de quem está começando)
+     */
+    public record RoomState(List<Item> items, Map<EquipmentTrack, Integer> equipment) {
     }
 
     /**

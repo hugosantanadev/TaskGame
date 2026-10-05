@@ -7,7 +7,8 @@ import { itemKind } from '../../lib/collection'
 import { hourIn, safeTimeZone, timeOfDay } from '../../lib/datetime'
 import { useNow } from '../../lib/useNow'
 import { ItemSticker } from '../store/ItemSticker'
-import { useCharacter, useRemoveItem, useRoom } from '../store/storeApi'
+import { tiersOf } from '../../lib/equipment'
+import { useCharacter, useEquipment, useRemoveItem, useRoom } from '../store/storeApi'
 import styles from './Collection.module.css'
 import { RoomScene } from './RoomScene'
 
@@ -16,6 +17,7 @@ export function RoomPage() {
   const room = useRoom()
   const remove = useRemoveItem()
   const character = useCharacter()
+  const equipment = useEquipment()
   const user = useCurrentUser()
   const period = timeOfDay(hourIn(safeTimeZone(user.timeZone), useNow()))
 
@@ -28,13 +30,16 @@ export function RoomPage() {
       <h1 className={styles.heading}>Seu quarto</h1>
       {room.data && (
         <RoomScene
+          equipment={tiersOf(equipment.data)}
           items={room.data.items.map((placed) => placed.item.code)}
           wearing={wornCodes(character.data)}
           sleeping={character.data?.state === 'SLEEPING'}
           period={period}
         />
       )}
-      <p className={styles.note}>A janela acompanha a hora do dia. Compre móveis e decorações na loja e coloque aqui.</p>
+      <p className={styles.note}>
+        As melhorias (cama, mesa, computador…) aparecem sozinhas. Aqui você escolhe a decoração que fica no quarto.
+      </p>
       {room.isPending && <p className={styles.note}>Carregando…</p>}
       {(room.error ?? remove.error) && (
         <p className={styles.error} role="alert">
@@ -43,8 +48,8 @@ export function RoomPage() {
       )}
       {room.data && room.data.items.length === 0 && (
         <div className={styles.empty}>
-          <p className={styles.emptyTitle}>O quarto está vazio.</p>
-          <p className={styles.note}>Por enquanto é só você e a janela. Que tal uma caneca de café?</p>
+          <p className={styles.emptyTitle}>Nenhuma decoração ainda.</p>
+          <p className={styles.note}>Que tal começar por uma caneca de café? Custa só 5 moedas.</p>
         </div>
       )}
       {room.data && room.data.items.length > 0 && (
@@ -65,9 +70,14 @@ export function RoomPage() {
           ))}
         </ul>
       )}
-      <ButtonLink to="/loja?visao=colecao" variant="secondary" block>
-        Escolher na minha coleção
-      </ButtonLink>
+      <div className={styles.actionsRow}>
+        <ButtonLink to="/loja" variant="secondary">
+          Melhorar o quarto
+        </ButtonLink>
+        <ButtonLink to="/loja?visao=colecao" variant="secondary">
+          Minha coleção
+        </ButtonLink>
+      </div>
     </div>
   )
 }

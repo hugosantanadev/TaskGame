@@ -34,6 +34,7 @@ public enum ErrorCode {
     ITEM_NOT_AVAILABLE(HttpStatus.UNPROCESSABLE_CONTENT, "Esse item não está à venda."),
     ITEM_NOT_FOR_ROOM(HttpStatus.UNPROCESSABLE_CONTENT, "Esse item é do personagem, não do quarto."),
     ITEM_NOT_FOR_SLOT(HttpStatus.UNPROCESSABLE_CONTENT, "Esse item não serve nesse lugar do personagem."),
+    EQUIPMENT_LOCKED(HttpStatus.UNPROCESSABLE_CONTENT, "Compre antes o degrau anterior dessa melhoria."),
     PASSWORD_MISMATCH(HttpStatus.UNPROCESSABLE_CONTENT, "Senha incorreta."),
     TITLE_LOCKED(HttpStatus.UNPROCESSABLE_CONTENT, "Esse título ainda não foi ganho: treine o atributo até o nível dele."),
     CHEST_ALREADY_OPENED(HttpStatus.CONFLICT, "Esse baú já foi aberto."),

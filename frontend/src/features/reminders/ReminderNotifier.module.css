@@ -16,11 +16,11 @@
   width: 100%;
   max-width: var(--content-width);
   padding: var(--space-3) var(--space-2) var(--space-3) var(--space-3);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
   color: var(--ink);
-  box-shadow: 4px 4px 0 var(--ink);
+  box-shadow: 4px 4px 0 var(--line);
   pointer-events: auto;
 }
 

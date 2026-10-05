@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { CHARACTER_HEIGHT, CHARACTER_WIDTH, WEARABLES, dressCharacter } from './art/character'
+import { EQUIPMENT_ART, EQUIPMENT_CODES, equipmentSprite } from './art/equipment'
 import { FURNITURE } from './art/furniture'
 import { BOOK, CLOUD, ICONS, LAPTOP, MOON, SUN, TWINKLE, chestSprite, windowSprite } from './art/scenery'
 import { mirror, recolor, spriteSize, stack, toRuns, type Sprite } from './sprite'
@@ -59,6 +60,16 @@ describe('arte', () => {
     ;(['MORNING', 'AFTERNOON', 'SUNSET', 'NIGHT'] as const).forEach((period) =>
       expectWellFormed(`janela ${period}`, windowSprite(period)),
     )
+  })
+
+  it('toda melhoria tem desenho bem formado e é achada pelo código', () => {
+    Object.entries(EQUIPMENT_ART).forEach(([track, tiers]) => {
+      expect(tiers).toHaveLength(4)
+      tiers.forEach((art, tier) => art && expectWellFormed(`${track} ${tier}`, art))
+    })
+    Object.values(EQUIPMENT_CODES)
+      .flat()
+      .forEach((code) => expect(equipmentSprite(code), code).not.toBeNull())
   })
 
   it('cada roupa ocupa a grade inteira do personagem', () => {

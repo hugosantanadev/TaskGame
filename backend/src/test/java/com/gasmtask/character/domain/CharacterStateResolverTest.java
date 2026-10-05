@@ -63,7 +63,7 @@ class CharacterStateResolverTest {
     @Test
     void concluirEncerraAAtividade() {
         TaskOccurrence study = task(TaskCategory.STUDY, "08:00", 60);
-        study.complete(PLANNED, false, new Reward(1, 1, 0, 0));
+        study.complete(PLANNED, false, new Reward(1, 1, 0, 0, 0));
 
         assertThat(at(List.of(study), "08:10")).isEqualTo(CharacterState.IDLE);
     }

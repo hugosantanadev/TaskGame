@@ -32,7 +32,7 @@
   position: relative;
   margin-top: var(--space-6);
   padding: var(--space-6) var(--space-4);
-  border: var(--px) solid var(--ink);
+  border: var(--px) solid var(--line);
   border-radius: var(--radius-l);
   background: var(--paper-raised);
   box-shadow: var(--shadow-step);

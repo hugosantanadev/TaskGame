@@ -158,7 +158,15 @@ export type DailyChallenge = {
   coinReward: number
 }
 
-export type Reward = { points: number; baseCoins: number; onTimeBonus: number; proofBonus: number; totalCoins: number }
+/** `equipmentBonus`: moedas a mais das melhorias do quarto na categoria da tarefa. */
+export type Reward = {
+  points: number
+  baseCoins: number
+  onTimeBonus: number
+  proofBonus: number
+  equipmentBonus: number
+  totalCoins: number
+}
 
 export type CompletionResult = {
   occurrence: Occurrence
@@ -192,7 +200,10 @@ export type ExtraInput = {
 
 // ---------------------------------------------------------------- Fase 3: loja, coleção, quarto, personagem e conquistas
 
-export type StoreItemCategory = 'FURNITURE' | 'DECORATION' | 'CHARACTER'
+export type StoreItemCategory = 'FURNITURE' | 'DECORATION' | 'CHARACTER' | 'EQUIPMENT'
+
+/** Trilhas de melhoria do quarto; cada uma rende moedas a mais nas tarefas das categorias dela. */
+export type EquipmentTrack = 'COMPUTER' | 'DESK' | 'BED' | 'BOOKSHELF' | 'GYM' | 'PEACE' | 'ORGANIZER'
 export type CharacterSlot = 'HEAD' | 'OUTFIT' | 'ACCESSORY'
 export type CharacterState = 'IDLE' | 'STUDYING' | 'AT_COMPUTER' | 'READING' | 'SLEEPING'
 
@@ -206,6 +217,21 @@ export type StoreItem = {
   price: number
   assetKey: string | null
   owned: boolean
+  /** Só nas melhorias: a trilha e o degrau (1 a 3). */
+  track: EquipmentTrack | null
+  tier: number | null
+}
+
+/** Uma trilha de melhoria: degrau atual (0 = começo), o próximo à venda e o bônus por tarefa. */
+export type EquipmentStatus = {
+  track: EquipmentTrack
+  categories: TaskCategory[]
+  tier: number
+  coinBonus: number
+  current: StoreItem | null
+  next: StoreItem | null
+  nextBonus: number | null
+  steps: StoreItem[]
 }
 
 /** `id` é o item no inventário: é ele que vai para o quarto ou para o personagem. */
@@ -389,7 +415,7 @@ export type GameState = {
   rank: RankStatus
   totals: { completedTasks: number; achievements: number }
   inventory: GameItem[]
-  room: { items: GameItem[] }
+  room: { items: GameItem[]; equipment: Record<EquipmentTrack, number> }
   character: {
     state: CharacterState
     equipped: Partial<Record<CharacterSlot, GameItem>>

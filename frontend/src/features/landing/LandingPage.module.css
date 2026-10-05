@@ -46,9 +46,10 @@
 .kicker {
   width: fit-content;
   padding: 0.125rem var(--space-2);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--coin);
+  color: var(--on-bright);
   font-family: var(--font-display);
   font-size: var(--text-s);
   font-weight: 700;
@@ -74,10 +75,10 @@
 
 .sceneFrame {
   overflow: hidden;
-  border: var(--px) solid var(--ink);
+  border: var(--px) solid var(--line);
   border-radius: var(--radius-l);
   background: #73d6ff;
-  box-shadow: 6px 6px 0 var(--ink);
+  box-shadow: 6px 6px 0 var(--line);
 }
 
 .scene {
@@ -107,7 +108,7 @@
 .steps li {
   position: relative;
   padding: var(--space-3) var(--space-4) var(--space-3) 3.75rem;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper);
   counter-increment: step;
@@ -123,7 +124,7 @@
   place-items: center;
   width: 2.25rem;
   height: 2.25rem;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--pen);
   box-shadow: inset 0 -3px 0 var(--pen-strong);
@@ -147,10 +148,10 @@
   align-content: start;
   gap: var(--space-2);
   padding: var(--space-4);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper);
-  box-shadow: 0 4px 0 var(--ink);
+  box-shadow: 0 4px 0 var(--line);
 }
 
 .featureIcon {
@@ -158,7 +159,7 @@
   place-items: center;
   width: 2.75rem;
   height: 2.75rem;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--paper-sunk);
   font-size: 1.5rem;
@@ -187,10 +188,10 @@
   align-content: start;
   gap: var(--space-3);
   padding: var(--space-6) var(--space-4) var(--space-4);
-  border: var(--px) solid var(--ink);
+  border: var(--px) solid var(--line);
   border-radius: var(--radius-l);
   background: var(--paper);
-  box-shadow: 6px 6px 0 var(--ink);
+  box-shadow: 6px 6px 0 var(--line);
 }
 
 .plan[data-soon] {
@@ -209,9 +210,10 @@
 
 .soon {
   padding: 0 var(--space-2);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-s);
   background: var(--xp);
+  color: var(--on-bright);
   font-size: var(--text-xs);
 }
 
@@ -243,7 +245,7 @@
   max-width: 64rem;
   margin: 0 auto;
   padding: var(--space-6) var(--space-4) calc(env(safe-area-inset-bottom, 0px) + var(--space-6));
-  border-top: 2px solid var(--ink);
+  border-top: 2px solid var(--line);
 }
 
 .footerLinks {

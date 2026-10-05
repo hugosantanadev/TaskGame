@@ -37,7 +37,7 @@
 .day {
   position: relative;
   overflow: hidden;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
 }
