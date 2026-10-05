@@ -25,6 +25,7 @@ import com.gasmtask.task.dto.TaskRequest;
 import com.gasmtask.task.dto.TaskResponse;
 import com.gasmtask.task.mapper.TaskMapper;
 import com.gasmtask.task.repository.TaskRepository;
+import com.gasmtask.user.service.AccountService;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,15 +42,17 @@ public class TaskService {
     private final PlanningProperties limits;
     private final UserCalendar calendar;
     private final TaskMapper mapper;
+    private final AccountService accounts;
 
     public TaskService(TaskRepository tasks, PlanningService planning, RewardPolicy rewards, PlanningProperties limits,
-                       UserCalendar calendar, TaskMapper mapper) {
+                       UserCalendar calendar, TaskMapper mapper, AccountService accounts) {
         this.tasks = tasks;
         this.planning = planning;
         this.rewards = rewards;
         this.limits = limits;
         this.calendar = calendar;
         this.mapper = mapper;
+        this.accounts = accounts;
     }
 
     @Transactional(readOnly = true)
@@ -68,6 +71,7 @@ public class TaskService {
     @Transactional
     public TaskResponse create(UUID userId, TaskRequest request) {
         TaskDefinition definition = toDefinition(request);
+        accounts.requireRoomForMission(userId, tasks.countByUserIdAndArchivedAtIsNull(userId));
         checkDailyLimits(userId, null, definition);
         // As semanas existem antes da missão; assim a geração abaixo respeita a escolha de incluir hoje.
         planning.ensureUpcomingWeeks(userId);

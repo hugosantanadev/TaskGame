@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import com.gasmtask.character.domain.Attribute;
 import com.gasmtask.character.domain.AttributeLevels;
+import com.gasmtask.character.domain.Title;
 import com.gasmtask.character.dto.AttributeGainResponse;
 import com.gasmtask.character.dto.AttributeResponse;
 import com.gasmtask.planning.repository.CategoryPoints;
@@ -51,9 +52,10 @@ public class AttributeService {
     public AttributeGainResponse gainFrom(UUID userId, TaskCategory category, int points) {
         Attribute attribute = Attribute.of(category);
         int after = xpByAttribute(userId).get(attribute);
-        int before = Math.max(0, after - points);
-        return new AttributeGainResponse(points, AttributeLevels.levelOf(after) > AttributeLevels.levelOf(before),
-                AttributeResponse.of(attribute, after));
+        int levelBefore = AttributeLevels.levelOf(Math.max(0, after - points));
+        int levelAfter = AttributeLevels.levelOf(after);
+        return new AttributeGainResponse(points, levelAfter > levelBefore, AttributeResponse.of(attribute, after),
+                Title.reachedBetween(attribute, levelBefore, levelAfter));
     }
 
     private Map<Attribute, Integer> xpByAttribute(UUID userId) {

@@ -28,7 +28,7 @@ public class RankingRepository {
     /** Elo: o XP atual de cada um. */
     private static final String XP_SCORES = """
             WITH scores AS (
-                SELECT u.id AS user_id, u.display_name, u.ranking_visible,
+                SELECT u.id AS user_id, u.display_name, u.ranking_visible, u.active_title AS title,
                     COALESCE(p.xp, 0) AS value, COALESCE(p.xp, 0) AS xp
                 FROM users u
                 LEFT JOIN player_progress p ON p.user_id = u.id
@@ -37,13 +37,13 @@ public class RankingRepository {
     /** Métricas da semana: somam as ocorrências concluídas no intervalo de datas. */
     private static final String PERIOD_SCORES = """
             WITH scores AS (
-                SELECT u.id AS user_id, u.display_name, u.ranking_visible, CAST(%s AS integer) AS value,
+                SELECT u.id AS user_id, u.display_name, u.ranking_visible, u.active_title AS title, CAST(%s AS integer) AS value,
                     COALESCE(p.xp, 0) AS xp
                 FROM users u
                 LEFT JOIN player_progress p ON p.user_id = u.id
                 LEFT JOIN task_occurrences o
                     ON o.user_id = u.id AND o.status = 'COMPLETED' AND o.occurrence_date BETWEEN :from AND :to
-                GROUP BY u.id, u.display_name, u.ranking_visible, p.xp
+                GROUP BY u.id, u.display_name, u.ranking_visible, u.active_title, p.xp
             )""";
 
     /**
@@ -52,7 +52,7 @@ public class RankingRepository {
      */
     private static final String STREAK_SCORES = """
             WITH scores AS (
-                SELECT u.id AS user_id, u.display_name, u.ranking_visible,
+                SELECT u.id AS user_id, u.display_name, u.ranking_visible, u.active_title AS title,
                     s.current_streak + CASE
                         WHEN (s.last_closed_date IS NULL OR d.today > s.last_closed_date)
                             AND t.planned > 0 AND t.done = t.planned THEN 1
@@ -71,7 +71,7 @@ public class RankingRepository {
 
     private static final String RANKED = """
             , ranked AS (
-                SELECT user_id, display_name, value, xp, RANK() OVER (ORDER BY value DESC) AS position
+                SELECT user_id, display_name, title, value, xp, RANK() OVER (ORDER BY value DESC) AS position
                 FROM scores
                 WHERE ranking_visible AND value > 0
             )
@@ -86,14 +86,14 @@ public class RankingRepository {
     public List<RankedRow> page(RankingMetric metric, LocalDate from, LocalDate to, Instant now, UUID me,
                                 int limit, long offset) {
         String sql = ranked(metric) + """
-                SELECT position, display_name, value, xp, user_id = :me AS you
+                SELECT position, display_name, title, value, xp, user_id = :me AS you
                 FROM ranked
                 ORDER BY position, display_name, user_id
                 LIMIT :limit OFFSET :offset
                 """;
         return jdbc.query(sql, params(from, to, now, me).addValue("limit", limit).addValue("offset", offset),
-                (rs, row) -> new RankedRow(rs.getInt("position"), rs.getString("display_name"), rs.getInt("value"),
-                        rs.getInt("xp"), rs.getBoolean("you")));
+                (rs, row) -> new RankedRow(rs.getInt("position"), rs.getString("display_name"), rs.getString("title"),
+                        rs.getInt("value"), rs.getInt("xp"), rs.getBoolean("you")));
     }
 
     public long count(RankingMetric metric, LocalDate from, LocalDate to, Instant now) {
@@ -136,7 +136,7 @@ public class RankingRepository {
     }
 
     /** @param xp XP atual da pessoa, para mostrar o elo dela em qualquer métrica */
-    public record RankedRow(int position, String displayName, int value, int xp, boolean you) {
+    public record RankedRow(int position, String displayName, String title, int value, int xp, boolean you) {
     }
 
     /** @param position onde estaria entre os visíveis (1 + quantos têm valor maior) */

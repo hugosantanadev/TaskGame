@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.gasmtask.challenge.service.ChallengeService;
+import com.gasmtask.chest.service.ChestService;
 import com.gasmtask.economy.domain.RewardPolicy;
 import com.gasmtask.economy.service.WalletService;
 import com.gasmtask.planning.domain.DayProgress;
@@ -43,11 +44,12 @@ public class TodayService {
     private final OccurrenceMapper mapper;
     private final ProgressionService progression;
     private final ChallengeService challenges;
+    private final ChestService chests;
 
     public TodayService(DayClosingService closing, PlanningService planning, TaskOccurrenceRepository occurrences,
                         StreakService streaks, WalletService wallet, RewardPolicy rewards, UserService users,
                         UserCalendar calendar, OccurrenceMapper mapper, ProgressionService progression,
-                        ChallengeService challenges) {
+                        ChallengeService challenges, ChestService chests) {
         this.closing = closing;
         this.planning = planning;
         this.occurrences = occurrences;
@@ -59,6 +61,7 @@ public class TodayService {
         this.mapper = mapper;
         this.progression = progression;
         this.challenges = challenges;
+        this.chests = chests;
     }
 
     @Transactional
@@ -84,7 +87,8 @@ public class TodayService {
                 streaks.responseOf(streaks.view(userId, today, progress)),
                 onboarding,
                 progression.status(userId),
-                challenges.today(userId));
+                challenges.today(userId),
+                chests.pending(userId).orElse(null));
     }
 
     /**

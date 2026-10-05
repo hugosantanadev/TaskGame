@@ -5,6 +5,7 @@ import com.gasmtask.user.dto.ReminderSettingsRequest;
 import com.gasmtask.user.dto.ReminderSettingsResponse;
 import com.gasmtask.user.dto.UpdateProfileRequest;
 import com.gasmtask.user.dto.UserResponse;
+import com.gasmtask.user.service.AccountService;
 import com.gasmtask.user.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,9 +29,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class MeController {
 
     private final UserService userService;
+    private final AccountService accountService;
 
-    public MeController(UserService userService) {
+    public MeController(UserService userService, AccountService accountService) {
         this.userService = userService;
+        this.accountService = accountService;
+    }
+
+    @GetMapping("/export")
+    @Operation(summary = "Baixa todos os seus dados num JSON (LGPD: portabilidade)")
+    public ResponseEntity<String> export(@AuthenticationPrincipal AuthenticatedUser user) {
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"gasmtask-meus-dados.json\"")
+                .body(accountService.export(user.id()));
     }
 
     @GetMapping

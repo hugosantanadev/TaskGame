@@ -23,8 +23,11 @@ public record RankingResponse(
         PageResponse<Entry> entries,
         Me me) {
 
-    /** @param rank o elo da pessoa (pelo XP atual), em qualquer métrica */
-    public record Entry(int position, String displayName, int value, RankResponse rank, boolean you) {
+    /**
+     * @param title título que a pessoa escolheu mostrar (código, ex.: GYM_RAT); nulo sem título
+     * @param rank  o elo da pessoa (pelo XP atual), em qualquer métrica
+     */
+    public record Entry(int position, String displayName, String title, int value, RankResponse rank, boolean you) {
     }
 
     /**

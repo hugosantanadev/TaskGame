@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -47,6 +49,14 @@ public class User {
     @Embedded
     private ReminderSettings reminderSettings;
 
+    /** Código do título que a pessoa mostra (ex.: STUDY_MASTER); quem valida se foi ganho é o personagem. */
+    @Column(name = "active_title", length = 30)
+    private String activeTitle;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private Plan plan;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -65,6 +75,7 @@ public class User {
         user.timeZone = zone.getId();
         user.rankingVisible = true;
         user.reminderSettings = ReminderSettings.defaults();
+        user.plan = Plan.FREE;
         user.createdAt = now;
         user.updatedAt = now;
         return user;
@@ -87,6 +98,11 @@ public class User {
 
     public void changeReminderSettings(ReminderSettings settings, Instant now) {
         this.reminderSettings = settings;
+        this.updatedAt = now;
+    }
+
+    public void changeActiveTitle(String titleCode, Instant now) {
+        this.activeTitle = titleCode;
         this.updatedAt = now;
     }
 

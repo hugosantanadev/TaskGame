@@ -19,4 +19,6 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
     @EntityGraph(attributePaths = "schedule")
     List<Task> findByUserIdAndArchivedAtIsNotNullOrderByArchivedAtDesc(UUID userId);
+
+    long countByUserIdAndArchivedAtIsNull(UUID userId);
 }

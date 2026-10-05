@@ -1,7 +1,7 @@
 package com.gasmtask.shared;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,7 +28,8 @@ class ErrorHandlingIT extends IntegrationTest {
     void wrongHttpMethodAnswersWithProblemDetails() throws Exception {
         RegisteredUser user = registerUser();
 
-        mvc.perform(delete(ME).header(HttpHeaders.AUTHORIZATION, bearer(user.accessToken())))
+        // /me aceita GET, PATCH e DELETE (excluir a conta); PUT não existe
+        mvc.perform(put(ME).header(HttpHeaders.AUTHORIZATION, bearer(user.accessToken())))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.code").value("METHOD_NOT_ALLOWED"));
     }

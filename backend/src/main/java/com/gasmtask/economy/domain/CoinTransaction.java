@@ -43,6 +43,9 @@ public class CoinTransaction {
     @Column(name = "challenge_id", updatable = false)
     private UUID challengeId;
 
+    @Column(name = "chest_id", updatable = false)
+    private UUID chestId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -71,6 +74,21 @@ public class CoinTransaction {
         transaction.userId = userId;
         transaction.reason = CoinTransactionReason.STREAK_FREEZE;
         transaction.amount = -price;
+        transaction.createdAt = now;
+        return transaction;
+    }
+
+    /** Moedas de um baú semanal aberto. */
+    public static CoinTransaction chestReward(UUID userId, UUID chestId, int amount, Instant now) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Recompensa precisa ser positiva");
+        }
+        CoinTransaction transaction = new CoinTransaction();
+        transaction.id = UUID.randomUUID();
+        transaction.userId = userId;
+        transaction.chestId = chestId;
+        transaction.reason = CoinTransactionReason.CHEST_REWARD;
+        transaction.amount = amount;
         transaction.createdAt = now;
         return transaction;
     }

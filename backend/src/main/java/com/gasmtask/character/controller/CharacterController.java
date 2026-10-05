@@ -3,6 +3,7 @@ package com.gasmtask.character.controller;
 import com.gasmtask.character.domain.CharacterSlot;
 import com.gasmtask.character.dto.CharacterResponse;
 import com.gasmtask.character.dto.EquipRequest;
+import com.gasmtask.character.dto.TitleRequest;
 import com.gasmtask.character.service.CharacterService;
 import com.gasmtask.shared.security.AuthenticatedUser;
 
@@ -47,5 +48,12 @@ public class CharacterController {
     @Operation(summary = "Esvazia o slot; o item continua na coleção")
     public CharacterResponse unequip(@AuthenticationPrincipal AuthenticatedUser user, @PathVariable CharacterSlot slot) {
         return characterService.unequip(user.id(), slot);
+    }
+
+    @PutMapping("/title")
+    @Operation(summary = "Escolhe o título exibido (um já ganho) ou tira o título com title nulo")
+    public CharacterResponse chooseTitle(@AuthenticationPrincipal AuthenticatedUser user,
+                                         @RequestBody TitleRequest request) {
+        return characterService.chooseTitle(user.id(), request.title());
     }
 }

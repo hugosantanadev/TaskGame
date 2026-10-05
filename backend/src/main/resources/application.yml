@@ -84,3 +84,8 @@ app:
   streak:                           # protetor de sequência: salva um dia de falha na virada do dia
     freeze-price: 40
     max-freezes: 2
+  plans:                            # limites por plano, para virar SaaS (0 = sem limite)
+    free:
+      max-active-missions: 0
+    pro:
+      max-active-missions: 0

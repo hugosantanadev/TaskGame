@@ -15,6 +15,8 @@ public final class UserMapper {
                 user.getDisplayName(),
                 user.getTimeZone(),
                 user.isRankingVisible(),
-                user.getCreatedAt());
+                user.getCreatedAt(),
+                user.getActiveTitle(),
+                user.getPlan());
     }
 }

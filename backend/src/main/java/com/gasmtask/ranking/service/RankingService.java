@@ -57,7 +57,7 @@ public class RankingService {
 
         List<RankingResponse.Entry> entries = repository
                 .page(metric, from, to, now, userId, safeSize, (long) safePage * safeSize).stream()
-                .map(row -> new RankingResponse.Entry(row.position(), row.displayName(), row.value(),
+                .map(row -> new RankingResponse.Entry(row.position(), row.displayName(), row.title(), row.value(),
                         RankResponse.of(RankLadder.rankOf(row.xp())), row.you()))
                 .toList();
         long total = repository.count(metric, from, to, now);

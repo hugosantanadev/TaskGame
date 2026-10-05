@@ -100,6 +100,14 @@ public class UserService {
         return ReminderSettingsResponse.of(user.getReminderSettings());
     }
 
+    /** Troca o título exibido; quem confere se o título foi ganho é o módulo do personagem. */
+    @Transactional
+    public UserResponse changeActiveTitle(UUID userId, String titleCode) {
+        User user = load(userId);
+        user.changeActiveTitle(titleCode, clock.instant());
+        return UserMapper.toResponse(user);
+    }
+
     /** Fuso e data de cadastro: base de "hoje" e da exceção do primeiro dia (RN03). */
     @Transactional(readOnly = true)
     public UserTimeInfo timeInfo(UUID userId) {

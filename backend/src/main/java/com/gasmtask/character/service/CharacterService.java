@@ -2,16 +2,20 @@ package com.gasmtask.character.service;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.gasmtask.character.domain.Attribute;
 import com.gasmtask.character.domain.CharacterEquipment;
 import com.gasmtask.character.domain.CharacterSlot;
 import com.gasmtask.character.domain.CharacterState;
 import com.gasmtask.character.domain.CharacterStateResolver;
 import com.gasmtask.character.domain.PlayerCharacter;
+import com.gasmtask.character.domain.Title;
+import com.gasmtask.character.dto.TitleResponse;
 import com.gasmtask.character.dto.CharacterResponse;
 import com.gasmtask.character.repository.CharacterEquipmentRepository;
 import com.gasmtask.character.repository.PlayerCharacterRepository;
@@ -65,7 +69,7 @@ public class CharacterService {
                 .map(slot -> new CharacterResponse.Slot(slot, bySlot.containsKey(slot)
                         ? mapper.toResponse(bySlot.get(slot).getInventoryItem(), false, slot)
                         : null))
-                .toList(), attributes.attributes(userId));
+                .toList(), attributes.attributes(userId), titles(userId), users.getProfile(userId).activeTitle());
     }
 
     @Transactional
@@ -80,6 +84,24 @@ public class CharacterService {
                 current -> current.swap(item, calendar.now()),
                 () -> equipment.save(CharacterEquipment.equip(character, slot, item, calendar.now())));
         return view(userId);
+    }
+
+    /** Escolhe o título exibido (só um já ganho) ou tira o título com {@code null}. */
+    @Transactional
+    public CharacterResponse chooseTitle(UUID userId, Title title) {
+        if (title != null && !title.unlockedBy(attributes.levels(userId))) {
+            throw new BusinessException(ErrorCode.TITLE_LOCKED);
+        }
+        users.changeActiveTitle(userId, title == null ? null : title.name());
+        return view(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TitleResponse> titles(UUID userId) {
+        Map<Attribute, Integer> levels = attributes.levels(userId);
+        return Arrays.stream(Title.values())
+                .map(title -> new TitleResponse(title, title.attribute(), title.level(), title.unlockedBy(levels)))
+                .toList();
     }
 
     @Transactional

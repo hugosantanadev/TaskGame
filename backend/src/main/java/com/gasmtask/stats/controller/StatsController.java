@@ -1,12 +1,17 @@
 package com.gasmtask.stats.controller;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 
 import com.gasmtask.shared.security.AuthenticatedUser;
 import com.gasmtask.stats.domain.StatsGranularity;
+import com.gasmtask.stats.dto.MissionEvolutionResponse;
+import com.gasmtask.stats.dto.MissionSummaryResponse;
 import com.gasmtask.stats.dto.StatsHistoryResponse;
 import com.gasmtask.stats.dto.StatsOverviewResponse;
 import com.gasmtask.stats.dto.WeekSummaryResponse;
+import com.gasmtask.stats.service.MissionStatsService;
 import com.gasmtask.stats.service.StatsService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,9 +31,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class StatsController {
 
     private final StatsService statsService;
+    private final MissionStatsService missionStats;
 
-    public StatsController(StatsService statsService) {
+    public StatsController(StatsService statsService, MissionStatsService missionStats) {
         this.statsService = statsService;
+        this.missionStats = missionStats;
+    }
+
+    @GetMapping("/stats/missions")
+    @Operation(summary = "Cada missão (ativas e arquivadas): concluídas, perdidas, taxa e sequência")
+    public List<MissionSummaryResponse> missions(@AuthenticationPrincipal AuthenticatedUser user) {
+        return missionStats.missions(user.id());
+    }
+
+    @GetMapping("/stats/missions/{taskId}")
+    @Operation(summary = "Evolução de uma missão semana a semana (até 26 semanas), com melhor mês e média semanal")
+    public MissionEvolutionResponse missionEvolution(@AuthenticationPrincipal AuthenticatedUser user,
+                                                     @PathVariable UUID taskId,
+                                                     @RequestParam(defaultValue = "12") int weeks) {
+        return missionStats.evolution(user.id(), taskId, weeks);
     }
 
     @GetMapping("/stats/overview")

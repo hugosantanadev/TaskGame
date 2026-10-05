@@ -66,6 +66,21 @@ public class WalletService {
         return true;
     }
 
+    /** Paga as moedas de um baú semanal, uma vez só (restrição única no banco). */
+    @Transactional
+    public boolean creditChest(UUID userId, UUID chestId, int amount) {
+        if (amount <= 0 || transactions.existsByChestId(chestId)) {
+            return false;
+        }
+        Instant now = calendar.now();
+        transactions.save(CoinTransaction.chestReward(userId, chestId, amount, now));
+        if (wallets.credit(userId, amount, now) == 0) {
+            wallets.saveAndFlush(Wallet.open(userId, now));
+            wallets.credit(userId, amount, now);
+        }
+        return true;
+    }
+
     /** Debita um protetor de sequência. Sem saldo, lança INSUFFICIENT_COINS e nada muda. */
     @Transactional
     public void debitStreakFreeze(UUID userId, int price) {

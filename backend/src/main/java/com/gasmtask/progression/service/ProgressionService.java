@@ -68,7 +68,7 @@ public class ProgressionService {
         if (events.existsByOccurrenceIdAndReason(occurrenceId, XpReason.TASK_COMPLETED)) {
             return XpChange.none(currentXp(userId));
         }
-        return apply(userId, XpReason.TASK_COMPLETED, points, occurrenceId, null, null);
+        return apply(userId, XpReason.TASK_COMPLETED, points, occurrenceId, null, null, null);
     }
 
     /** Bônus do dia cumprido. Uma vez por dia. */
@@ -77,7 +77,7 @@ public class ProgressionService {
         if (events.existsByUserIdAndEventDateAndReason(userId, date, XpReason.DAY_FULFILLED)) {
             return XpChange.none(currentXp(userId));
         }
-        return apply(userId, XpReason.DAY_FULFILLED, properties.dayFulfilledBonus(), null, date, null);
+        return apply(userId, XpReason.DAY_FULFILLED, properties.dayFulfilledBonus(), null, date, null, null);
     }
 
     /** Perda por obrigatória que passou do dia sem ser concluída. Uma vez por tarefa. */
@@ -86,7 +86,7 @@ public class ProgressionService {
         if (events.existsByOccurrenceIdAndReason(occurrenceId, XpReason.TASK_MISSED)) {
             return XpChange.none(currentXp(userId));
         }
-        return apply(userId, XpReason.TASK_MISSED, -properties.missedMandatoryPenalty(), occurrenceId, null, null);
+        return apply(userId, XpReason.TASK_MISSED, -properties.missedMandatoryPenalty(), occurrenceId, null, null, null);
     }
 
     /** XP de um desafio diário cumprido. Uma vez por desafio. */
@@ -95,7 +95,7 @@ public class ProgressionService {
         if (events.existsByChallengeId(challengeId)) {
             return XpChange.none(currentXp(userId));
         }
-        return apply(userId, XpReason.CHALLENGE_COMPLETED, xp, null, null, challengeId);
+        return apply(userId, XpReason.CHALLENGE_COMPLETED, xp, null, null, challengeId, null);
     }
 
     @Transactional(readOnly = true)
@@ -138,13 +138,22 @@ public class ProgressionService {
                         .toList());
     }
 
+    /** XP de um baú semanal aberto. Uma vez por baú. */
+    @Transactional
+    public XpChange awardChest(UUID userId, UUID chestId, int xp) {
+        if (events.existsByChestId(chestId)) {
+            return XpChange.none(currentXp(userId));
+        }
+        return apply(userId, XpReason.CHEST_OPENED, xp, null, null, null, chestId);
+    }
+
     private XpChange apply(UUID userId, XpReason reason, int amount, UUID occurrenceId, LocalDate date,
-                           UUID challengeId) {
+                           UUID challengeId, UUID chestId) {
         PlayerProgress current = lock(userId);
         Rank before = current.rank();
         int applied = current.apply(amount, calendar.now());
         if (applied != 0) {
-            events.save(XpEvent.of(userId, applied, reason, occurrenceId, date, challengeId, calendar.now()));
+            events.save(XpEvent.of(userId, applied, reason, occurrenceId, date, challengeId, chestId, calendar.now()));
         }
         return new XpChange(applied, current.getXp(), before, current.rank(), syncRewards(userId, current));
     }

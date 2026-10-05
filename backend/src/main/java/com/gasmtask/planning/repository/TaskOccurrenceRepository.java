@@ -26,6 +26,10 @@ public interface TaskOccurrenceRepository extends JpaRepository<TaskOccurrence, 
 
     boolean existsByTaskIdAndOccurrenceDate(UUID taskId, LocalDate date);
 
+    List<TaskOccurrence> findByUserIdAndTaskIdOrderByOccurrenceDateAsc(UUID userId, UUID taskId);
+
+    List<TaskOccurrence> findByUserIdAndTaskIdIsNotNullOrderByOccurrenceDateAsc(UUID userId);
+
     long countByUserIdAndOccurrenceDateAndKind(UUID userId, LocalDate date, TaskKind kind);
 
     boolean existsByUserIdAndOccurrenceDateAndStatus(UUID userId, LocalDate date, OccurrenceStatus status);
