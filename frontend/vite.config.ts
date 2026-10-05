@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
-const PAPER = '#f7f9fa'
+const PAPER = '#ffffff'
 
 export default defineConfig(({ mode }) => {
   // O mesmo .env da raiz que o backend lê: SERVER_PORT define a porta da API em desenvolvimento.
@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
         manifest: {
           name: 'GasmTask',
           short_name: 'GasmTask',
-          description: 'Tarefas da vida real viram pontos, moedas e dias seguidos.',
+          description: 'Sua rotina vira um jogo: tarefas de verdade valem XP, moedas, elo e dias seguidos.',
           lang: 'pt-BR',
           start_url: '/',
           scope: '/',

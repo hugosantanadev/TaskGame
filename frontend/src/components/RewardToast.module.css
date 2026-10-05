@@ -15,7 +15,7 @@
   width: 100%;
   max-width: var(--content-width);
   padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4);
-  border: 2px solid var(--ink);
+  border: var(--px) solid var(--ink);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
   color: var(--ink);
@@ -45,11 +45,12 @@
 .points,
 .coins,
 .streak {
+  border: 2px solid var(--ink);
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
   padding: 0.125rem var(--space-2);
-  border-radius: 999px;
+  border-radius: var(--radius-m);
   font-weight: 700;
 }
 
@@ -81,14 +82,14 @@
   width: 2.75rem;
   height: 2.75rem;
   border: none;
-  border-radius: 50%;
+  border-radius: var(--radius-s);
   background: transparent;
   color: var(--pencil);
   font-size: var(--text-l);
   cursor: pointer;
 }
 
-/* O único movimento automático do app: o aviso entra como um carimbo */
+/* O aviso entra como um carimbo */
 @media (prefers-reduced-motion: no-preference) {
   .toast {
     animation: stamp 260ms cubic-bezier(0.2, 1.4, 0.4, 1);
@@ -119,13 +120,14 @@
   font-weight: 700;
 }
 
-/* XP: a moeda do elo, na cor da caneta */
+/* XP: a moeda do elo, com a gema azul */
 .xp {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-1);
   padding: 0.125rem var(--space-2);
   border: 2px solid var(--ink);
-  border-radius: 999px;
+  border-radius: var(--radius-m);
   background: var(--paper-raised);
   color: var(--ink);
   font-weight: 800;

@@ -1,0 +1,199 @@
+/* Comemoração: cartão de jogo no meio da tela, com confete de pixel caindo por trás do conteúdo */
+.dialog {
+  width: calc(100% - 2 * var(--space-4));
+  max-width: 24rem;
+  margin: auto;
+  padding: 0;
+  overflow: visible;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+}
+
+.dialog::backdrop {
+  background:
+    repeating-conic-gradient(from 0deg at 50% 40%, rgb(255 205 117 / 0.16) 0deg 12deg, transparent 12deg 24deg),
+    rgb(26 28 44 / 0.72);
+}
+
+.card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  overflow: hidden;
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  border: var(--px) solid var(--ink);
+  border-radius: var(--radius-l);
+  background: var(--paper);
+  box-shadow: 0 6px 0 var(--ink);
+  text-align: center;
+}
+
+.card > :not(.confetti) {
+  position: relative;
+}
+
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.confetti span {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 8px;
+  opacity: 0;
+}
+
+.kicker {
+  padding: 0.125rem var(--space-2);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-s);
+  background: var(--coin);
+  font-family: var(--font-display);
+  font-size: var(--text-s);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 9rem;
+}
+
+.burst {
+  position: absolute;
+  width: 11rem;
+  height: 11rem;
+  border-radius: 50%;
+  background: repeating-conic-gradient(var(--coin) 0deg 15deg, transparent 15deg 30deg);
+  opacity: 0.55;
+  mask: radial-gradient(circle, #000 35%, transparent 70%);
+}
+
+.headline {
+  font-size: var(--text-2xl);
+  line-height: 1.05;
+}
+
+.banner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: var(--px) solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--pen-soft);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-l);
+  font-weight: 700;
+}
+
+.banner[data-master] {
+  background: var(--coin);
+}
+
+.note {
+  color: var(--pencil);
+  font-size: var(--text-s);
+}
+
+.loot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.loot li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--paper-sunk);
+  font-family: var(--font-display);
+  font-size: var(--text-l);
+  font-weight: 700;
+}
+
+.items {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.items li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border: 2px dashed var(--rule);
+  border-radius: var(--radius-m);
+  text-align: left;
+}
+
+.actions {
+  display: grid;
+  gap: var(--space-1);
+  width: 100%;
+  margin-top: var(--space-2);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dialog[open] .card {
+    animation: pop-in 320ms ease-out;
+  }
+
+  .confetti span {
+    animation: confetti-fall 2s linear infinite;
+  }
+
+  .hop {
+    animation: celebrate-hop 0.8s steps(1) infinite;
+  }
+
+  .burst {
+    animation: burst-spin 8s linear infinite;
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(32rem) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes celebrate-hop {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes burst-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

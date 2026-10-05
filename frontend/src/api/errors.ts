@@ -43,10 +43,14 @@ const MESSAGES: Record<string, string> = {
   ITEM_NOT_AVAILABLE: 'Esse item saiu da loja.',
   ITEM_NOT_FOR_ROOM: 'Esse item é do personagem, não do quarto.',
   ITEM_NOT_FOR_SLOT: 'Esse item não serve nesse lugar do personagem.',
+  PASSWORD_MISMATCH: 'Senha incorreta.',
+  TITLE_LOCKED: 'Esse título ainda não foi ganho: treine o atributo até o nível dele.',
+  CHEST_ALREADY_OPENED: 'Esse baú já foi aberto.',
+  PLAN_LIMIT_REACHED: 'Seu plano chegou ao limite desse recurso.',
 }
 
 /** Códigos em que o texto do servidor é mais específico que o genérico (diz o dia ou o limite). */
-const DETAIL_FIRST = new Set(['DAY_LOCKED', 'DAILY_LIMIT_REACHED'])
+const DETAIL_FIRST = new Set(['DAY_LOCKED', 'DAILY_LIMIT_REACHED', 'PLAN_LIMIT_REACHED'])
 
 export function messageFor(code: string, detail?: string): string {
   if (detail && DETAIL_FIRST.has(code)) return detail

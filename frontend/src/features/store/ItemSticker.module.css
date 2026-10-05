@@ -1,19 +1,29 @@
+/* Vitrine de pixel: fundo claro da cor da categoria, contorno de tinta e o desenho centralizado */
 .sticker {
   display: grid;
   flex: none;
   place-items: center;
-  width: 3rem;
-  height: 3rem;
-  border: 2px solid var(--ink);
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0.3rem;
+  border: var(--px) solid var(--ink);
   border-radius: var(--radius-m);
-  background: var(--sticker);
+  background:
+    linear-gradient(to top, color-mix(in srgb, var(--sticker) 35%, var(--paper)) 30%, transparent 30%),
+    color-mix(in srgb, var(--sticker) 14%, var(--paper));
+  box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--sticker) 45%, var(--paper));
   color: var(--ink);
   font-size: 1.5rem;
-  transform: rotate(-3deg);
 }
 
 .sticker[data-size='l'] {
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 5.5rem;
+  height: 5.5rem;
+  padding: 0.5rem;
   font-size: 2.25rem;
+}
+
+.art {
+  width: 100%;
+  height: 100%;
 }

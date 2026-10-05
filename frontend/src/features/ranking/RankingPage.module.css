@@ -8,7 +8,6 @@
   font-size: var(--text-2xl);
   font-weight: 800;
   line-height: 1.1;
-  letter-spacing: -0.02em;
 }
 
 .range,
@@ -84,14 +83,36 @@
   gap: var(--space-3);
   min-height: 3.25rem;
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--rule);
+  border: 2px solid var(--ink);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
 }
 
 .row[data-you] {
-  border: 2px solid var(--pen);
-  background: color-mix(in srgb, var(--pen) 8%, var(--paper-raised));
+  background: var(--pen-soft);
+  box-shadow: 0 3px 0 var(--ink);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+/* Título do jogador ao lado do elo; o de Mestre é dourado */
+.title {
+  padding: 0 var(--space-1);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-s);
+  background: var(--paper);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.title[data-master] {
+  background: var(--coin);
 }
 
 .position {
@@ -100,8 +121,9 @@
   width: 2.25rem;
   height: 2.25rem;
   border: 2px solid var(--rule);
-  border-radius: 50%;
-  font-weight: 800;
+  border-radius: var(--radius-s);
+  font-family: var(--font-display);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
@@ -112,9 +134,14 @@
   color: var(--coin-ink);
 }
 
-.row[data-podium='2'] .position,
+.row[data-podium='2'] .position {
+  border-color: var(--ink);
+  background: #e3e9f2;
+}
+
 .row[data-podium='3'] .position {
   border-color: var(--ink);
+  background: #f2c7a5;
 }
 
 .who {
@@ -141,7 +168,7 @@
 .youTag {
   flex: none;
   padding: 0 var(--space-2);
-  border-radius: 999px;
+  border-radius: var(--radius-m);
   background: var(--pen);
   color: var(--on-pen);
   font-size: var(--text-xs);
@@ -170,7 +197,7 @@
   height: 0.625rem;
   overflow: hidden;
   border: 2px solid var(--ink);
-  border-radius: 999px;
+  border-radius: var(--radius-m);
   background: var(--paper-raised);
 }
 

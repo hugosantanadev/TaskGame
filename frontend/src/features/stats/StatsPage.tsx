@@ -11,14 +11,15 @@ import {
   CircleIcon,
   CrossIcon,
   MinusIcon,
-  ShieldIcon,
   TrophyIcon,
 } from '../../components/gameIcons'
 import { PageTitle } from '../../components/PageTitle'
+import { PixelIcon } from '../../game/pixel/PixelSprite'
 import { ToggleGroup } from '../../components/ToggleGroup'
 import { categoryColor, categoryLabel } from '../../lib/categories'
 import { safeTimeZone } from '../../lib/datetime'
 import { addDays, formatShortDate, longDay, plural, shortDay, todayIso, weekStartOf } from '../../lib/days'
+import { MissionEvolutionSection, TrainingSection } from './EvolutionSections'
 import { PlannedDoneChart } from './PlannedDoneChart'
 import styles from './StatsPage.module.css'
 import { useStatsHistory, useStatsOverview, useWeekSummary } from './statsApi'
@@ -34,6 +35,8 @@ export function StatsPage() {
       <PageTitle title="Estatísticas" />
       <h1 className={styles.heading}>Estatísticas</h1>
       <WeekSummarySection currentWeek={currentWeek} firstWeek={firstWeek} />
+      <MissionEvolutionSection />
+      <TrainingSection />
       <HistorySection />
       <OverviewSection />
     </div>
@@ -46,7 +49,7 @@ const DAY_STATUS: Record<SummaryDayStatus, { label: string; icon: ReactNode }> =
   FULFILLED: { label: 'cumprido', icon: <CheckIcon /> },
   FAILED: { label: 'falhou', icon: <CrossIcon /> },
   REST: { label: 'descanso', icon: <MinusIcon /> },
-  FROZEN: { label: 'protegido pelo protetor de sequência', icon: <ShieldIcon /> },
+  FROZEN: { label: 'protegido pelo protetor de sequência', icon: <PixelIcon name="shield" /> },
   PENDING: { label: 'em andamento', icon: <CircleIcon /> },
   UPCOMING: { label: 'ainda não chegou', icon: null },
 }

@@ -33,7 +33,7 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
 - RF16 — Listar itens da loja por categoria, indicando os já adquiridos.
 - RF17 — Comprar itens com moedas.
 - RF18 — Ver o inventário.
-- RF19 — Colocar e retirar itens do quarto, e equipar e desequipar itens do personagem. No MVP isso aparece como listas, sem renderização.
+- RF19 — Colocar e retirar itens do quarto, e equipar e desequipar itens do personagem. No MVP isso aparecia como listas; depois ganhou o quarto e o personagem desenhados (RF35).
 
 **Análise e social**
 - RF20 — Ranking semanal por pontos, tarefas concluídas, moedas ganhas ou streak, com a posição do próprio usuário.
@@ -50,6 +50,14 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
 - RF27 — Atributos de RPG: cada categoria de tarefa treina um atributo do personagem, com nível próprio.
 - RF28 — Desafios diários: três metas sorteadas por dia, valendo XP e moedas.
 - RF29 — Protetor de sequência: item comprado com moedas que salva um dia de falha.
+
+**Evolução, recompensas e SaaS**
+- RF30 — Evolução por missão: para cada missão (ex.: Academia), concluídas, perdidas, taxa, sequência atual e recorde, e o gráfico semana a semana com média semanal e melhor mês.
+- RF31 — Títulos: cada atributo dá três títulos ("Rato de academia", "Mestre nos estudos"…); a pessoa escolhe um para exibir no topo do dia, no perfil e no ranking.
+- RF32 — Baú semanal: no começo de cada semana, um baú que depende dos dias cumpridos na anterior, aberto com uma comemoração.
+- RF33 — Conta: baixar todos os dados em JSON e excluir a conta, confirmando com a senha (LGPD).
+- RF34 — Planos (Grátis e Pro) com limites configuráveis, e uma página pública que apresenta o app.
+- RF35 — Camada visual em pixel art: personagem vestido, quarto montado, baús e a cena do dia, a partir do `code` de cada item.
 
 ## 2. Requisitos não funcionais
 
@@ -158,13 +166,20 @@ Onde o enunciado original deixava brecha, principalmente em regras que afetam a 
 - RN33 ⚑ — **Desafios diários.** No primeiro acesso do dia, sorteiam-se três entre os desafios que o plano do dia permite cumprir e que ainda não foram cumpridos. O sorteio é fixo por pessoa e por dia e fica gravado. O catálogo: Madrugador (2 tarefas antes do meio-dia, só sorteado antes das 10h), Pontual (2 no horário), Registro (1 com foto), Milha extra (1 extra), Variedade (3 categorias), Dia completo e Maratona (4 tarefas). O progresso vem das tarefas do dia. Cada desafio cumprido paga +10 XP e +3 moedas uma vez; o que não foi cumprido expira com o dia.
 - RN34 ⚑ — **Protetor de sequência.** Custa 40 moedas, e dá para guardar até 2. Na virada do dia, uma falha com protetor guardado consome um e fecha como dia protegido (FROZEN): a sequência não zera nem sobe. O protetor salva a sequência, não o XP, então a obrigatória perdida ainda custa XP.
 
+**Evolução, recompensas e SaaS**
+- RN35 ⚑ — **Evolução por missão.** Sai das ocorrências da missão: concluídas e perdidas desde o começo, taxa sobre as decididas (concluídas + perdidas), sequência de ocorrências concluídas seguidas (atual e recorde) e as últimas 12 semanas (até 26) no mesmo formato de planejado × concluído. Missões arquivadas continuam com histórico.
+- RN36 ⚑ — **Títulos.** Três por atributo, nos níveis 3, 6 e 10; o do nível 10 é sempre um "Mestre". Ganho não se perde, porque atributo só sobe. Só um título é exibido por vez, e só um já ganho pode ser escolhido (TITLE_LOCKED). A conclusão que faz um atributo cruzar o nível avisa quais títulos chegaram.
+- RN37 ⚑ — **Baú semanal.** Criado no primeiro acesso da semana para a semana anterior, se a pessoa já existia nela, uma vez só. Conta os dias FULFILLED (o protegido não conta): 0 ou 1 dia não dá baú; 2 ou 3, madeira (15 moedas, 15 XP); 4 ou 5, prata (30/30); 6, ouro (50/50 + um item de até 40 moedas que a pessoa não tem); 7, lendário (80/80 + item de até 120). Se ela comprar o item antes de abrir, ele vira metade do preço máximo em moedas. Abrir paga uma vez (CHEST_ALREADY_OPENED).
+- RN38 — **Planos.** Toda conta nasce FREE. Os limites ficam em `app.plans.*` (hoje `max-active-missions: 0`, sem limite), e passar do limite responde PLAN_LIMIT_REACHED. O Pro existe no modelo para a cobrança entrar sem migration.
+- RN39 — **Conta.** A exportação reúne perfil, missões, ocorrências, extratos, conquistas e coleção num JSON só. A exclusão pede a senha (PASSWORD_MISMATCH), apaga os dados em cascata e, depois do commit, a pasta de fotos de prova; o cookie de refresh é limpo.
+
 ## 4. Entidades e relacionamentos
 
 Dois termos precisam ficar claros. Uma **missão** é o que você quer fazer ("Estudar Java, 5× por semana, 08:00"). Uma **ocorrência** é uma instância datada dela ("Estudar Java, seg 28/09, 08:00"). É a ocorrência que é concluída, perdida e recompensada.
 
 | Entidade | Responsabilidade | Relacionamentos |
 |---|---|---|
-| User | Identidade e perfil: e-mail, hash da senha, nome de exibição, fuso, visibilidade no ranking. As preferências de lembrete ficam embutidas (`@Embeddable`) | Raiz dos dados do usuário |
+| User | Identidade e perfil: e-mail, hash da senha, nome de exibição, fuso, visibilidade no ranking, título exibido e plano (FREE, PRO). As preferências de lembrete ficam embutidas (`@Embeddable`) | Raiz dos dados do usuário |
 | RefreshToken | Sessão renovável: hash, expiração, revogação | N:1 User |
 | Task | Missão: nome, descrição, categoria, tipo, pontos, duração estimada, exigência de prova, ativa ou arquivada | N:1 User |
 | TaskSchedule | Recorrência: dia da semana + horário | N:1 Task, único por dia |
@@ -178,6 +193,7 @@ Dois termos precisam ficar claros. Uma **missão** é o que você quer fazer ("E
 | PlayerProgress | XP atual (define o elo) e maior XP já alcançado (define as roupas de elo ganhas) | 1:1 User |
 | XpEvent | Extrato imutável de XP: valor (+/−), motivo (TASK_COMPLETED, DAY_FULFILLED, TASK_MISSED, CHALLENGE_COMPLETED, BACKFILL) e referência | N:1 User; aponta para TaskOccurrence, dia ou DailyChallenge |
 | DailyChallenge | Desafio sorteado para um dia: código, meta, recompensa (XP e moedas) e quando foi cumprido | N:1 User, único por (dia, código) |
+| WeeklyChest | Baú de uma semana: dias cumpridos, nível, moedas, XP, item sorteado e quando foi aberto | N:1 User, único por semana |
 | Achievement | Catálogo: código, nome, critério, limiar, categoria opcional, `assetKey` opcional | Seed |
 | UserAchievement | Desbloqueio e data | N:1 User, N:1 Achievement |
 | StoreItem | Catálogo: código estável, nome, descrição, categoria (FURNITURE, DECORATION, CHARACTER), slot, preço, disponibilidade, `assetKey` opcional | Seed |
@@ -191,6 +207,7 @@ Há algumas diferenças em relação à lista de entidades do enunciado:
 - **TaskCompletion** foi absorvida pela TaskOccurrence. A relação seria 1:1 e sempre lida junto.
 - **Reward** não virou tabela. A regra fica na RewardPolicy (configurável) e cada recompensa paga é registrada como CoinTransaction.
 - **Entidades novas**: TaskOccurrence (sem ela não existe "planejado × concluído" nem "perdida"), Wallet, Streak, DailyResult (histórico do streak e base das estatísticas diárias) e RefreshToken (logout real).
+- **Títulos** não têm tabela: são um enum (`Title`) derivado do nível dos atributos, e o User guarda só o escolhido.
 - **Modo jogo:** o Streak ganhou os protetores guardados; as roupas de elo são StoreItems fora da loja (`available = false`), entregues no inventário com preço pago zero; os atributos não têm tabela, porque saem das ocorrências concluídas.
 - **Room e Character** nascem finos de propósito. São as raízes que a camada visual vai enriquecer com posição, camada e aparência base, por meio de migrations que só adicionam colunas.
 
@@ -210,6 +227,7 @@ erDiagram
     USER ||--o{ INVENTORY_ITEM : "possui"
     USER ||--|| ROOM : "tem"
     USER ||--|| CHARACTER : "tem"
+    USER ||--o{ WEEKLY_CHEST : "abre"
     TASK ||--o{ TASK_SCHEDULE : "recorre em"
     TASK ||--o{ TASK_OCCURRENCE : "gera"
     WEEKLY_PLAN ||--o{ TASK_OCCURRENCE : "agrupa"
@@ -218,6 +236,8 @@ erDiagram
     TASK_OCCURRENCE ||--o{ XP_EVENT : "rende ou custa"
     DAILY_CHALLENGE ||--o| XP_EVENT : "paga"
     DAILY_CHALLENGE ||--o| COIN_TRANSACTION : "paga"
+    WEEKLY_CHEST ||--o| XP_EVENT : "paga"
+    WEEKLY_CHEST ||--o| COIN_TRANSACTION : "paga"
     ACHIEVEMENT ||--o{ USER_ACHIEVEMENT : "concede"
     STORE_ITEM ||--o{ INVENTORY_ITEM : "origina"
     INVENTORY_ITEM ||--o| COIN_TRANSACTION : "pago por"
@@ -298,9 +318,10 @@ gasmtask/
 │   │   ├── character/         # PlayerCharacter (não Character, por causa de java.lang.Character), CharacterEquipment, CharacterSlot, CharacterStateResolver, Attribute e AttributeService
 │   │   ├── progression/       # XP e elo: PlayerProgress, XpEvent, RankLadder, ProgressionService
 │   │   ├── challenge/         # desafios diários: ChallengeType, ChallengePicker, ChallengeService
+│   │   ├── chest/             # baú semanal: ChestTier, WeeklyChest, ChestService
 │   │   ├── demo/              # DemoDataSeeder (perfil dev)
 │   │   ├── ranking/           # RankingService, RankingRepository (SQL), métrica, período e escopo
-│   │   ├── stats/             # estatísticas e resumo semanal (somente leitura): PeriodTotals, StatsGranularity
+│   │   ├── stats/             # estatísticas, resumo semanal e evolução por missão (somente leitura)
 │   │   ├── notification/      # ReminderPlanner, ReminderService (o NotificationGateway entra com o Web Push)
 │   │   └── gamestate/         # GameStateService: junta o que os outros módulos já calculam
 │   ├── src/main/resources/
@@ -315,17 +336,22 @@ gasmtask/
 │   │   ├── api/               # cliente HTTP, tipos das DTOs, chamadas por recurso
 │   │   ├── auth/              # sessão: token em memória + refresh silencioso
 │   │   ├── features/
-│   │   │   ├── today/         # TodayPage, TaskCard, DayProgress, StreakBadge
-│   │   │   ├── planning/      # WeekPlanner, TaskForm, ExtraForm
-│   │   │   ├── stats/         # StatsPage, PlannedVsDoneChart, WeeklySummary
-│   │   │   ├── store/         # StorePage, StoreItemCard, InventoryList
-│   │   │   ├── ranking/       # RankingPage
-│   │   │   └── profile/       # ProfilePage, Achievements, RoomPage, CharacterPage, Settings
-│   │   ├── game/              # tipos do GameState e canal de feedback de recompensa
-│   │   ├── components/        # Button, Card, BottomNav, ProgressBar, Sheet, EmptyState
+│   │   │   ├── today/         # TodayPage, TodayHero (cena do dia), OccurrenceRow, ChallengesPanel
+│   │   │   ├── chest/         # ChestCard, ChestProgress, abrir o baú
+│   │   │   ├── planning/      # WeekPage
+│   │   │   ├── missions/      # MissionsPage, MissionFormPage, ExtraFormPage
+│   │   │   ├── stats/         # StatsPage, PlannedDoneChart, evolução por missão e treino
+│   │   │   ├── store/         # StorePage, ItemSticker (vitrine em pixel art)
+│   │   │   ├── ranking/       # RankingPage, RankPage
+│   │   │   ├── profile/       # ProfilePage, CharacterPage, RoomPage, RoomScene
+│   │   │   └── landing/       # página pública (/bem-vindo)
+│   │   ├── game/
+│   │   │   ├── pixel/         # motor de sprites (texto → SVG) e a arte: personagem, roupas, móveis, cenário, marca
+│   │   │   └── …              # canal de recompensas, momentos de comemoração, memória do elo
+│   │   ├── components/        # Button, BottomNav, Sheet, RankBadge, RewardToast, Celebration
 │   │   ├── styles/            # tokens.css (variáveis), global.css
 │   │   └── sw.ts              # service worker
-│   ├── public/icons/
+│   ├── public/icons/          # gerados por scripts/generate-icons.ts a partir do mascote
 │   ├── vite.config.ts
 │   ├── nginx.conf
 │   └── Dockerfile
@@ -348,6 +374,8 @@ Todas as rotas ficam sob `/api/v1`, trocam JSON e exigem `Authorization: Bearer 
 | POST | `/auth/refresh` | Novo access token; rotaciona o refresh |
 | POST | `/auth/logout` | Revoga o refresh e limpa o cookie |
 | GET · PATCH | `/me` | Ver perfil; editar nome, fuso e visibilidade no ranking |
+| DELETE | `/me` | Excluir a conta (corpo `{ "password" }`) |
+| GET | `/me/export` | Todos os dados da conta em JSON (download) |
 | GET · PUT | `/me/reminder-settings` | Ver e editar preferências de lembrete |
 | GET | `/me/game-state` | Estado consolidado para a futura camada visual |
 | GET · POST | `/tasks` | Listar missões (ativas ou arquivadas); criar missão |
@@ -376,9 +404,14 @@ Todas as rotas ficam sob `/api/v1`, trocam JSON e exigem `Authorization: Bearer 
 | PUT · DELETE | `/room/items/{inventoryItemId}` | Colocar ou retirar item do quarto |
 | GET | `/character` | Slots equipados e estado derivado |
 | PUT · DELETE | `/character/slots/{slot}` | Equipar ou desequipar |
+| PUT | `/character/title` | Escolher o título exibido (`{ "title": "STUDY_MASTER" }`, ou null para tirar) |
+| GET | `/chests` | Baús semanais, abertos e fechados |
+| POST | `/chests/{id}/open` | Abrir o baú: moedas, XP e, no ouro e no lendário, um item |
 | GET | `/rankings?metric=XP` | Ranking paginado por elo (padrão) ou da semana (`POINTS`, `COMPLETED_TASKS`, `COINS_EARNED`, `STREAK`), com a posição do usuário |
 | GET | `/stats/overview` | Totais e streaks |
 | GET | `/stats/history?granularity=WEEK&periods=8` | Planejado × concluído por semana ou mês |
+| GET | `/stats/missions` | Cada missão: concluídas, perdidas, taxa e sequência |
+| GET | `/stats/missions/{taskId}?weeks=12` | Evolução de uma missão semana a semana, melhor mês e média semanal |
 | GET | `/weeks/{weekStart}/summary` | Resumo semanal |
 | GET | `/reminders/upcoming?hours=24` | Próximos lembretes calculados |
 
@@ -458,6 +491,9 @@ Esse fluxo funcionando de ponta a ponta é o critério de pronto do MVP.
 | Testes | JUnit Jupiter, AssertJ e Mockito nas regras; Spring Boot Test + MockMvc + PostgreSQL embutido (zonky `embedded-postgres`) nos endpoints | O H2 esconde diferenças do Postgres (tipos, constraints, funções de data). Testar contra o banco real evita falso verde. O PostgreSQL embutido roda os binários oficiais como processo local, então os testes não dependem de Docker. |
 | Provas | Interface `FileStorage` com implementação em disco (volume Docker); validação pelo conteúdo; acesso só do dono | Permite trocar por S3/MinIO sem tocar no domínio. Se as provas virarem sociais um dia, é preciso remover o EXIF antes, porque foto de celular carrega GPS. |
 | Assets futuros | `assetKey` lógico e opcional (ex.: `furniture.bookshelf.v1`) em itens e conquistas, no lugar de assetUrl/spriteId | A camada visual resolve chave → sprite. URL e engine gráfica são detalhes que mudam. |
+| Pixel art | Sprites escritos como grades de texto (uma letra por cor) e desenhados como SVG de retângulos; roupas são camadas do mesmo tamanho empilhadas sobre o corpo; o item é achado pelo `code` | Sem arquivos de imagem: a arte é versionada e revisada como código, escala nítida em qualquer tela e pesa poucos KB. Um teste garante que todo desenho está bem formado. Itens sem desenho caem num ícone genérico. |
+| Identidade visual | Fundo branco, paleta inspirada na Sweetie 16, contorno de tinta, sombras em degrau, fonte Pixelify Sans nos títulos e Atkinson Hyperlegible no texto; animações curtas que somem com "reduzir movimento" | Cara de jogo sem perder leitura: a fonte de pixel fica só onde é grande, o texto corrido continua legível. |
+| SaaS | Plano na conta, limites em configuração, exportação e exclusão de conta, página pública; telas pouco usadas carregadas sob demanda | Cobrança (Stripe ou Mercado Pago) entra sem migration, mudando só o plano da conta e os limites. A LGPD pede portabilidade e exclusão desde o primeiro usuário. |
 | Frontend | React Router, TanStack Query, CSS Modules com variáveis CSS; sem kit de UI e sem biblioteca de gráficos | O TanStack Query cuida de cache e invalidação (concluir uma tarefa atualiza Hoje, carteira e streak). Variáveis CSS deixam o futuro tema dia/noite barato. Os gráficos do MVP são barras simples. |
 | PWA | vite-plugin-pwa com `injectManifest`; cache só dos arquivos do app, API sempre pela rede | O service worker próprio já fica pronto para push, e cachear resposta autenticada arrisca mostrar dado velho. Instalar no celular exige HTTPS, então o README terá o passo a passo com túnel (cloudflared ou ngrok). |
 | Notificações | No MVP: preferências, cálculo dos lembretes (`ReminderPlanner`, exposto em `/reminders/upcoming`) e lembrete local enquanto o app está aberto (aviso na tela ou notificação do sistema em segundo plano). Web Push (VAPID) fica para a fase seguinte, junto com a interface de envio (`NotificationGateway`) e o job que a usa: sem o push, ela não teria quem a chamasse | Push exige chaves VAPID, criptografia do payload e inscrições salvas, e no iPhone só funciona com o app instalado (iOS 16.4+). É a complexidade que o enunciado autoriza adiar. |
@@ -476,4 +512,4 @@ O MVP é construído em cinco fases. Cada uma termina executável e testada:
 4. **Visão** (concluída). Ranking, estatísticas, resumo semanal, estrutura de lembretes e game-state.
 5. **Entrega** (concluída). Testes restantes, usuário de demonstração no perfil `dev`, imagem única para publicar e revisão final da documentação.
 
-Depois do MVP veio o **modo jogo** (RF26 a RF29, RN31 a RN34): elo ranqueado, atributos, desafios diários e protetor de sequência.
+Depois do MVP veio o **modo jogo** (RF26 a RF29, RN31 a RN34): elo ranqueado, atributos, desafios diários e protetor de sequência. Em seguida, **evolução e identidade** (RF30 a RF35, RN35 a RN39): evolução por missão, títulos, baú semanal, base de SaaS e a camada visual em pixel art.

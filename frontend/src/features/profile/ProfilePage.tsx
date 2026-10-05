@@ -1,19 +1,29 @@
 import { useMemo, useState, type FormEvent } from 'react'
 
-import type { ReminderSettings, User } from '../../api/types'
-import { asApiError } from '../../api/errors'
-import { useAuth, useCurrentUser } from '../../auth/context'
 import { Link } from 'react-router'
 
+import type { Plan, ReminderSettings, User } from '../../api/types'
+import { asApiError } from '../../api/errors'
+import { useAuth, useCurrentUser } from '../../auth/context'
 import { Button } from '../../components/Button'
 import { ShirtIcon, SofaIcon, TrophyIcon } from '../../components/gameIcons'
 import { Field, FormAlert, SelectField } from '../../components/Field'
 import { PageTitle } from '../../components/PageTitle'
+import { RankBadge } from '../../components/RankBadge'
+import { Sheet } from '../../components/Sheet'
+import { Avatar } from '../../game/pixel/Avatar'
+import { wornCodes } from '../../game/pixel/items'
+import { PixelIcon } from '../../game/pixel/PixelSprite'
 import { formatLongDate, safeTimeZone, timeZoneOptions } from '../../lib/datetime'
 import { formatTime } from '../../lib/days'
+import { isMasterTitle, titleLabel } from '../../lib/titles'
+import { useMyRank } from '../ranking/rankingApi'
 import { useReminderSettings, useUpdateReminderSettings } from '../reminders/remindersApi'
+import { useCharacter } from '../store/storeApi'
 import styles from './ProfilePage.module.css'
-import { useProfile, useUpdateProfile, type ProfileChanges } from './profileApi'
+import { useDeleteAccount, useExportData, useProfile, useUpdateProfile, type ProfileChanges } from './profileApi'
+
+const PLAN_LABEL: Record<Plan, string> = { FREE: 'Plano Grátis', PRO: 'Plano Pro' }
 
 export function ProfilePage() {
   const { logout } = useAuth()
@@ -22,7 +32,8 @@ export function ProfilePage() {
   return (
     <div className={styles.page}>
       <PageTitle title="Perfil" />
-      <h1 className={styles.title}>Perfil</h1>
+      <h1 className="visually-hidden">Perfil</h1>
+      <PlayerCard profile={profile} />
 
       <nav className={styles.collection} aria-label="Sua coleção">
         <Link to="/perfil/conquistas" className={styles.collectionLink}>
@@ -41,7 +52,7 @@ export function ProfilePage() {
 
       <section className={styles.section} aria-labelledby="profile-data">
         <h2 id="profile-data" className={styles.sectionTitle}>
-          Seus dados
+          Jogador
         </h2>
         <ProfileForm profile={profile} />
       </section>
@@ -66,12 +77,54 @@ export function ProfilePage() {
             <dt>Desde</dt>
             <dd>{formatLongDate(profile.createdAt, safeTimeZone(profile.timeZone))}</dd>
           </div>
+          <div className={styles.fact}>
+            <dt>Plano</dt>
+            <dd>
+              {PLAN_LABEL[profile.plan]}
+              {profile.plan === 'FREE' && <span className={styles.planNote}> · tudo liberado durante o lançamento</span>}
+            </dd>
+          </div>
         </dl>
         <Button variant="secondary" tone="danger" className={styles.logout} onClick={() => void logout()}>
           Sair da conta
         </Button>
       </section>
+
+      <section className={styles.section} aria-labelledby="profile-privacy">
+        <h2 id="profile-privacy" className={styles.sectionTitle}>
+          Seus dados
+        </h2>
+        <PrivacySection />
+      </section>
     </div>
+  )
+}
+
+/** Cartão do jogador: o personagem, o nome, o título, o elo e o plano. */
+function PlayerCard({ profile }: { profile: User }) {
+  const character = useCharacter()
+  const rank = useMyRank()
+  const title = character.data?.activeTitle ?? profile.activeTitle
+  return (
+    <section className={styles.player} aria-label="Seu jogador">
+      <Link to="/perfil/personagem" className={styles.playerAvatar} aria-label="Ver o personagem">
+        <Avatar wearing={wornCodes(character.data)} sleeping={character.data?.state === 'SLEEPING'} scale={4} />
+      </Link>
+      <div className={styles.playerText}>
+        <p className={styles.playerName}>{profile.displayName}</p>
+        {title && (
+          <p className={styles.playerTitle} data-master={isMasterTitle(title) || undefined}>
+            <PixelIcon name="star" /> {titleLabel(title)}
+          </p>
+        )}
+        <div className={styles.playerMeta}>
+          {rank.data && <RankBadge rank={rank.data.status} size="s" />}
+          <span className={styles.plan} data-plan={profile.plan}>
+            {PLAN_LABEL[profile.plan]}
+          </span>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -292,5 +345,69 @@ function NotificationPermission() {
         <p className={styles.toggleHint}>Este navegador não mostra avisos do sistema; os lembretes aparecem dentro do app.</p>
       )}
     </div>
+  )
+}
+
+// ------------------------------------------------------------------ dados e exclusão da conta
+
+/** Portabilidade e exclusão (LGPD): baixar tudo em JSON e apagar a conta de vez, confirmando com a senha. */
+function PrivacySection() {
+  const exportData = useExportData()
+  const [deleting, setDeleting] = useState(false)
+  return (
+    <>
+      <p className={styles.hint}>Baixe tudo o que o GasmTask guarda sobre você: missões, histórico, moedas e coleção.</p>
+      {exportData.error && <FormAlert>{asApiError(exportData.error).message}</FormAlert>}
+      <div className={styles.actions}>
+        <Button variant="secondary" disabled={exportData.isPending} onClick={() => exportData.mutate()}>
+          {exportData.isPending ? 'Preparando…' : 'Baixar meus dados'}
+        </Button>
+        <Button variant="quiet" tone="danger" onClick={() => setDeleting(true)}>
+          Excluir conta
+        </Button>
+      </div>
+      <Sheet open={deleting} title="Excluir sua conta?" onClose={() => setDeleting(false)}>
+        <DeleteAccountForm onCancel={() => setDeleting(false)} />
+      </Sheet>
+    </>
+  )
+}
+
+function DeleteAccountForm({ onCancel }: { onCancel: () => void }) {
+  const remove = useDeleteAccount()
+  const [password, setPassword] = useState('')
+  const error = remove.error ? asApiError(remove.error) : null
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    remove.mutate(password)
+  }
+
+  return (
+    <form className={styles.form} onSubmit={handleSubmit}>
+      <p>
+        Isso apaga de vez suas missões, o histórico, as moedas, a coleção, o personagem e as fotos de prova. Não dá para
+        desfazer.
+      </p>
+      {error && <FormAlert>{error.message}</FormAlert>}
+      <Field
+        label="Sua senha"
+        name="password"
+        type="password"
+        autoComplete="current-password"
+        required
+        value={password}
+        onChange={(event) => setPassword(event.target.value)}
+        error={error?.fieldErrors.password}
+      />
+      <div className={styles.actions}>
+        <Button type="submit" tone="danger" disabled={!password || remove.isPending}>
+          {remove.isPending ? 'Excluindo…' : 'Excluir para sempre'}
+        </Button>
+        <Button type="button" variant="quiet" onClick={onCancel}>
+          Cancelar
+        </Button>
+      </div>
+    </form>
   )
 }

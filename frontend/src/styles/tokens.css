@@ -1,71 +1,78 @@
 /*
- * Tokens visuais do GasmTask: uma agenda de papel com estojo de marca-textos neon.
- * Papel frio com grade de pontos, caneta violeta para ações, grafite para texto secundário.
- * Cada cor viva tem um significado fixo e só aparece com ele:
- *   recompensas (moedas, sequência, concluído), categorias (fita na borda da tarefa)
- *   e o céu do dia (o cabeçalho de Hoje muda de cor com o período).
+ * Tokens visuais do GasmTask: um joguinho de pixel art sobre fundo branco.
+ * Paleta inspirada na Sweetie 16 (paleta livre e conhecida da pixel art): azul-cobalto para ações, verde de
+ * "feito", amarelo-moeda, laranja de sequência e carmim de perigo, tudo contornado por um azul-marinho quase
+ * preto. Cada cor viva tem um significado fixo e só aparece com ele.
+ * Os nomes antigos (paper, pen, pencil...) continuam: as telas herdam a paleta nova sem mudar uma linha.
  */
 :root {
   color-scheme: light;
 
-  --paper: #f6f7fb;
+  /* Base */
+  --paper: #ffffff;
   --paper-raised: #ffffff;
-  --dot: #cfd5e8;
-  --rule: #e0e4f1;
-  --margin-line: #ff9cbd;
-  --ink: #1b1838;
-  --pencil: #5d5a7a;
-  --pen: #6b2bd9;
-  --pen-strong: #5420b5;
+  --paper-sunk: #f2f5fa;
+  --dot: #e3e9f2;
+  --rule: #d3dce8;
+  --margin-line: #f7b9a3;
+  --ink: #1a1c2c;
+  --pencil: #566c86;
+  --pen: #3b5dc9;
+  --pen-strong: #29366f;
+  --pen-soft: #dfe6fb;
   --on-pen: #ffffff;
-  --danger: #c4122f;
-  --danger-paper: #ffe9ec;
+  --danger: #b13e53;
+  --danger-paper: #fde8ec;
 
   /* Recompensas */
-  --coin: #ffd60a;
-  --coin-ink: #3d3100;
-  --streak: #ff8a1f;
-  --streak-ink: #3f1d00;
-  --done: #3ddc84;
-  --done-ink: #053a1d;
+  --coin: #ffcd75;
+  --coin-ink: #4a2c00;
+  --coin-shade: #e8a33d;
+  --streak: #ef7d57;
+  --streak-ink: #1a1c2c;
+  --done: #a7f070;
+  --done-ink: #0f3d1f;
+  --done-strong: #38b764;
+  --xp: #73eff7;
+  --xp-ink: #12394d;
   --highlight-yellow: var(--coin);
   --highlight-green: var(--done);
 
-  /* Gráficos: concluído sobre planejado, dois passos do mesmo verde (o marca-texto é claro demais para marca) */
+  /* Gráficos: concluído sobre planejado, dois passos do mesmo verde (contraste validado) */
   --chart-done: #1a7f45;
   --chart-planned: #72c793;
 
-  /* Categorias */
-  --cat-study: #2f6bff;
-  --cat-reading: #ff4fa3;
-  --cat-spirituality: #9b5cff;
-  --cat-exercise: #ff3b47;
-  --cat-sleep: #00b8d9;
-  --cat-project: #7cc800;
-  --cat-home: #ffb000;
-  --cat-other: #8a94a8;
+  /* Categorias (fita na borda da tarefa e cor do atributo que ela treina) */
+  --cat-study: #3b5dc9;
+  --cat-reading: #e8558e;
+  --cat-spirituality: #8d5ad1;
+  --cat-exercise: #b13e53;
+  --cat-sleep: #41a6f6;
+  --cat-project: #38b764;
+  --cat-home: #f2a33a;
+  --cat-other: #94b0c2;
 
-  /* Elos: cada um tem a sua cor, sempre acompanhada do nome */
+  /* Céu do dia (cena de pixel art da tela Hoje) */
+  --sky-morning: #ffd98a;
+  --sky-afternoon: #8fe4ff;
+  --sky-sunset: #f79a6e;
+  --sky-night: #29366f;
+  --on-sky-day: #1a1c2c;
+  --on-sky-night: #ffffff;
+
+  /* Elos */
   --tier-iron: #6b7385;
   --tier-bronze: #b4693a;
   --tier-silver: #8e9bb0;
   --tier-gold: #d9a300;
   --tier-platinum: #1fa89b;
-  --tier-diamond: #5b5cf0;
-  --tier-master: #d0306b;
-  --tier-legend: #ff6a00;
+  --tier-diamond: #3b5dc9;
+  --tier-master: #b13e53;
+  --tier-legend: #ef7d57;
   --on-tier: #ffffff;
 
-  /* Céu do dia */
-  --sky-morning: #ffc56b;
-  --sky-afternoon: #6fd0ff;
-  --sky-sunset: #ff8fab;
-  --sky-night: #5b4fe0;
-  --on-sky-day: #1b1838;
-  --on-sky-night: #ffffff;
-
   --font-text: 'Atkinson Hyperlegible Next Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Bricolage Grotesque Variable', 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif;
+  --font-display: 'Pixelify Sans Variable', 'Atkinson Hyperlegible Next Variable', system-ui, sans-serif;
 
   /* Escala tipográfica clássica: 12, 14, 16, 21, 24, 36 e 60 px */
   --text-xs: 0.75rem;
@@ -83,41 +90,13 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
 
-  --line: 2.75rem; /* altura de uma linha da pauta */
-  --radius-s: 6px;
-  --radius-m: 10px;
-  --radius-l: 1.25rem;
-  --nav-height: 4rem;
+  /* Pixel art: cantos quase retos e sombras em degrau, sem desfoque */
+  --line: 2.75rem;
+  --radius-s: 2px;
+  --radius-m: 4px;
+  --radius-l: 6px;
+  --px: 3px; /* espessura do contorno de pixel */
+  --shadow-step: 4px 4px 0 var(--ink);
+  --nav-height: 4.25rem;
   --content-width: 34rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-
-    --paper: #0f0d1f;
-    --paper-raised: #1a1631;
-    --dot: #2b2652;
-    --rule: #2f2a55;
-    --margin-line: #a8466c;
-    --ink: #efeaff;
-    --pencil: #aaa4cc;
-    --pen: #b79cff;
-    --pen-strong: #d3c4ff;
-    --on-pen: #1a1040;
-    --danger: #ff8a9a;
-    --danger-paper: #3b1420;
-
-    --coin: #f5cf1d;
-    --streak: #ff9a3d;
-    --done: #36c977;
-    --chart-done: #36c977;
-    --chart-planned: #235c3e;
-
-    --sky-morning: #9c5a14;
-    --sky-afternoon: #1f6f9f;
-    --sky-sunset: #a3385e;
-    --sky-night: #3b2fa8;
-    --on-sky-day: #ffffff;
-  }
 }

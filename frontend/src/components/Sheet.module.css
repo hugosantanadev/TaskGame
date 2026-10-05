@@ -4,15 +4,16 @@
   max-height: 90dvh;
   margin: auto auto 0;
   padding: 0;
-  border: none;
+  border: var(--px) solid var(--ink);
+  border-bottom: none;
   border-radius: var(--radius-l) var(--radius-l) 0 0;
   background: var(--paper-raised);
   color: var(--ink);
-  box-shadow: 0 -12px 40px rgb(27 24 56 / 0.22);
+  box-shadow: 0 -6px 0 var(--coin);
 }
 
 .sheet::backdrop {
-  background: rgb(15 13 31 / 0.5);
+  background: rgb(26 28 44 / 0.55);
 }
 
 .body {
@@ -43,7 +44,7 @@
   width: 2.75rem;
   height: 2.75rem;
   border: none;
-  border-radius: 50%;
+  border-radius: var(--radius-s);
   background: transparent;
   color: var(--pencil);
   font-size: var(--text-xl);

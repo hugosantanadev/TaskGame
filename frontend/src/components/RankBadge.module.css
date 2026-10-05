@@ -59,7 +59,7 @@
 .pip {
   width: calc(var(--shield) * 0.14);
   height: calc(var(--shield) * 0.14);
-  border-radius: 50%;
+  border-radius: var(--radius-s);
   background: color-mix(in srgb, var(--on-tier) 35%, transparent);
 }
 

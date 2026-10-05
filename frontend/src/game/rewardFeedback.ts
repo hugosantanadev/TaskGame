@@ -1,4 +1,4 @@
-import type { CompletionResult, ProofAttached, RankRef } from '../api/types'
+import type { CompletionResult, OpenedChest, ProofAttached, RankRef } from '../api/types'
 
 /**
  * Canal de feedback de recompensa: quem conclui publica, quem mostra (o aviso na tela, e no futuro
@@ -11,6 +11,8 @@ export type RewardEvent =
   | { kind: 'purchase'; title: string; balance: number; detail?: string }
   /** O elo mudou fora de uma conclusão (ex.: caiu na virada do dia por obrigatórias perdidas). */
   | { kind: 'rank'; from: RankRef; to: RankRef }
+  /** Baú semanal aberto: vira uma comemoração em tela cheia. */
+  | { kind: 'chest'; result: OpenedChest }
 
 type Listener = (event: RewardEvent) => void
 

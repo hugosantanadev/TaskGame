@@ -3,26 +3,27 @@ import { createBrowserRouter } from 'react-router'
 import { AppShell } from '../components/AppShell'
 import { LoginPage } from '../features/auth/LoginPage'
 import { RegisterPage } from '../features/auth/RegisterPage'
-import { AchievementsPage } from '../features/achievements/AchievementsPage'
-import { ExtraFormPage } from '../features/missions/ExtraFormPage'
-import { MissionFormPage } from '../features/missions/MissionFormPage'
 import { MissionsPage } from '../features/missions/MissionsPage'
 import { WeekPage } from '../features/planning/WeekPage'
-import { RankingPage } from '../features/ranking/RankingPage'
-import { RankPage } from '../features/ranking/RankPage'
-import { CharacterPage } from '../features/profile/CharacterPage'
-import { RoomPage } from '../features/profile/RoomPage'
-import { StatsPage } from '../features/stats/StatsPage'
-import { StorePage } from '../features/store/StorePage'
-import { ProfilePage } from '../features/profile/ProfilePage'
 import { TodayPage } from '../features/today/TodayPage'
 import { NotFoundPage, RouteError } from './ErrorPages'
 import { GuestOnly, RequireAuth } from './guards'
+import { SessionScreen } from './SessionScreen'
 
+/*
+ * Hoje, Semana, Missões e as telas de entrada vêm no pacote principal: são as que abrem todo dia. O resto é
+ * carregado na primeira visita, para o app abrir rápido no celular.
+ */
 export const router = createBrowserRouter([
   {
     errorElement: <RouteError />,
+    hydrateFallbackElement: <SessionScreen />,
     children: [
+      // Pública: aberta com ou sem sessão
+      {
+        path: '/bem-vindo',
+        lazy: async () => ({ Component: (await import('../features/landing/LandingPage')).LandingPage }),
+      },
       {
         element: <GuestOnly />,
         children: [
@@ -39,17 +40,50 @@ export const router = createBrowserRouter([
               { path: '/', element: <TodayPage /> },
               { path: '/semana', element: <WeekPage /> },
               { path: '/missoes', element: <MissionsPage /> },
-              { path: '/missoes/nova', element: <MissionFormPage /> },
-              { path: '/missoes/:id', element: <MissionFormPage /> },
-              { path: '/extras/nova', element: <ExtraFormPage /> },
-              { path: '/estatisticas', element: <StatsPage /> },
-              { path: '/loja', element: <StorePage /> },
-              { path: '/ranking', element: <RankingPage /> },
-              { path: '/ranking/elo', element: <RankPage /> },
-              { path: '/perfil', element: <ProfilePage /> },
-              { path: '/perfil/conquistas', element: <AchievementsPage /> },
-              { path: '/perfil/quarto', element: <RoomPage /> },
-              { path: '/perfil/personagem', element: <CharacterPage /> },
+              {
+                path: '/missoes/nova',
+                lazy: async () => ({ Component: (await import('../features/missions/MissionFormPage')).MissionFormPage }),
+              },
+              {
+                path: '/missoes/:id',
+                lazy: async () => ({ Component: (await import('../features/missions/MissionFormPage')).MissionFormPage }),
+              },
+              {
+                path: '/extras/nova',
+                lazy: async () => ({ Component: (await import('../features/missions/ExtraFormPage')).ExtraFormPage }),
+              },
+              {
+                path: '/estatisticas',
+                lazy: async () => ({ Component: (await import('../features/stats/StatsPage')).StatsPage }),
+              },
+              {
+                path: '/loja',
+                lazy: async () => ({ Component: (await import('../features/store/StorePage')).StorePage }),
+              },
+              {
+                path: '/ranking',
+                lazy: async () => ({ Component: (await import('../features/ranking/RankingPage')).RankingPage }),
+              },
+              {
+                path: '/ranking/elo',
+                lazy: async () => ({ Component: (await import('../features/ranking/RankPage')).RankPage }),
+              },
+              {
+                path: '/perfil',
+                lazy: async () => ({ Component: (await import('../features/profile/ProfilePage')).ProfilePage }),
+              },
+              {
+                path: '/perfil/conquistas',
+                lazy: async () => ({ Component: (await import('../features/achievements/AchievementsPage')).AchievementsPage }),
+              },
+              {
+                path: '/perfil/quarto',
+                lazy: async () => ({ Component: (await import('../features/profile/RoomPage')).RoomPage }),
+              },
+              {
+                path: '/perfil/personagem',
+                lazy: async () => ({ Component: (await import('../features/profile/CharacterPage')).CharacterPage }),
+              },
             ],
           },
         ],

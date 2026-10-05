@@ -6,7 +6,8 @@ import { listJoin, plural } from '../lib/days'
 import { ATTRIBUTE_LABELS } from '../lib/attributes'
 import { challengeName } from '../lib/challenges'
 import { compareRanks, rankLabel } from '../lib/rank'
-import { CoinIcon, CrossIcon, FlameIcon, ShirtIcon, StarIcon, TrophyIcon } from './gameIcons'
+import { PixelIcon } from '../game/pixel/PixelSprite'
+import { CrossIcon, TrophyIcon } from './gameIcons'
 import { RankBadge } from './RankBadge'
 import styles from './RewardToast.module.css'
 
@@ -14,7 +15,16 @@ import styles from './RewardToast.module.css'
 export function RewardToast() {
   const [event, setEvent] = useState<RewardEvent | null>(null)
 
-  useEffect(() => onReward(setEvent), [])
+  // Baú aberto e subida de elo viram a comemoração em tela cheia (Celebration); aqui ficam os avisos pequenos
+  useEffect(
+    () =>
+      onReward((next) => {
+        if (next.kind === 'chest') return
+        if (next.kind === 'rank' && compareRanks(next.to, next.from) > 0) return
+        setEvent(next)
+      }),
+    [],
+  )
 
   useEffect(() => {
     if (!event) return
@@ -57,12 +67,16 @@ function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' 
       <p className={styles.title}>Feito: {event.title}</p>
       <p className={styles.amounts}>
         <span className={styles.points}>
-          <StarIcon /> +{plural(reward.points, 'ponto', 'pontos')}
+          <PixelIcon name="star" /> +{plural(reward.points, 'ponto', 'pontos')}
         </span>
         <span className={styles.coins}>
-          <CoinIcon /> +{plural(reward.totalCoins, 'moeda', 'moedas')}
+          <PixelIcon name="coin" /> +{plural(reward.totalCoins, 'moeda', 'moedas')}
         </span>
-        {xp.gained > 0 && <span className={styles.xp}>+{xp.gained} XP</span>}
+        {xp.gained > 0 && (
+          <span className={styles.xp}>
+            <PixelIcon name="gem" /> +{xp.gained} XP
+          </span>
+        )}
         {attribute.gained > 0 && (
           <span className={styles.xp}>
             {attributeName} +{attribute.gained}
@@ -75,19 +89,9 @@ function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' 
         </p>
       )}
       {parts.length > 1 && <p className={styles.detail}>Moedas: {listJoin(parts)}.</p>}
-      {xp.promoted && (
-        <p className={styles.rankUp}>
-          Subiu para <RankBadge rank={xp.status} size="s" />
-        </p>
-      )}
-      {xp.unlockedItems.map((item) => (
-        <p key={item.code} className={styles.achievement}>
-          <ShirtIcon /> Roupa de elo: {item.name}
-        </p>
-      ))}
       {streak.increasedNow && (
         <p className={styles.streak}>
-          <FlameIcon /> Dia cumprido. Sequência de {plural(streak.current, 'dia', 'dias')}.
+          <PixelIcon name="flame" /> Dia cumprido. Sequência de {plural(streak.current, 'dia', 'dias')}.
         </p>
       )}
       <ChallengeLines challenges={event.result.completedChallenges} />
@@ -103,7 +107,7 @@ function Completed({ event }: { event: Extract<RewardEvent, { kind: 'completed' 
 function ChallengeLines({ challenges }: { challenges: DailyChallenge[] }) {
   return challenges.map((challenge) => (
     <p key={challenge.code} className={styles.achievement}>
-      <StarIcon /> Desafio cumprido: {challengeName(challenge.code)} (+{challenge.xpReward} XP
+      <PixelIcon name="star" /> Desafio cumprido: {challengeName(challenge.code)} (+{challenge.xpReward} XP
       {challenge.coinReward > 0 ? `, +${plural(challenge.coinReward, 'moeda', 'moedas')}` : ''})
     </p>
   ))
@@ -129,7 +133,7 @@ function ProofSent({ event }: { event: Extract<RewardEvent, { kind: 'proof' }> }
       {event.result.proofBonus > 0 && (
         <p className={styles.amounts}>
           <span className={styles.coins}>
-            <CoinIcon /> +{plural(event.result.proofBonus, 'moeda', 'moedas')}
+            <PixelIcon name="coin" /> +{plural(event.result.proofBonus, 'moeda', 'moedas')}
           </span>
         </p>
       )}

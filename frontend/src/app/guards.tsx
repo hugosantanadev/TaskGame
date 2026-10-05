@@ -3,13 +3,17 @@ import { Navigate, Outlet, useLocation } from 'react-router'
 import { useAuth } from '../auth/context'
 import { SessionScreen } from './SessionScreen'
 
-/** Rotas do app: sem sessão, vai para /entrar lembrando de onde veio. */
+/**
+ * Rotas do app: sem sessão, quem abre o endereço principal conhece o app em /bem-vindo; quem veio de um link
+ * interno vai para /entrar, lembrando de onde veio.
+ */
 export function RequireAuth() {
   const { state } = useAuth()
   const location = useLocation()
 
   if (state.status === 'authenticated') return <Outlet />
   if (state.status === 'anonymous') {
+    if (location.pathname === '/' && !location.search) return <Navigate to="/bem-vindo" replace />
     return <Navigate to="/entrar" replace state={{ from: location.pathname + location.search }} />
   }
   return <SessionScreen />

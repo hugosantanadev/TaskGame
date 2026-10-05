@@ -10,6 +10,7 @@ import type {
   StoreItem,
   StoreItemCategory,
   Streak,
+  TitleCode,
   Wallet,
 } from '../../api/types'
 import { publishReward } from '../../game/rewardFeedback'
@@ -88,6 +89,19 @@ export function useUnequip() {
   return useMutation({
     mutationFn: (slot: CharacterSlot) => apiRequest<CharacterView>(`/character/slots/${slot}`, { method: 'DELETE' }),
     onSuccess: refresh,
+  })
+}
+
+/** Escolhe o título exibido (null tira). O ranking e o perfil mostram o novo na próxima leitura. */
+export function useChooseTitle() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (title: TitleCode | null) => apiRequest<CharacterView>('/character/title', { method: 'PUT', body: { title } }),
+    onSuccess: (character) => {
+      queryClient.setQueryData(['character'], character)
+      void queryClient.invalidateQueries({ queryKey: ['me'] })
+      void queryClient.invalidateQueries({ queryKey: ['ranking'] })
+    },
   })
 }
 

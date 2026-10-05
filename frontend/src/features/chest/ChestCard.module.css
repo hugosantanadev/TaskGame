@@ -1,0 +1,148 @@
+/* Baú esperando: cartão com a cor do baú, contorno de pixel e o baú balançando de vez em quando */
+.card {
+  --chest: var(--tier-bronze);
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-4);
+  border: var(--px) solid var(--ink);
+  border-radius: var(--radius-l);
+  background:
+    repeating-linear-gradient(45deg, transparent 0 10px, color-mix(in srgb, var(--chest) 8%, transparent) 10px 20px),
+    color-mix(in srgb, var(--chest) 18%, var(--paper));
+  box-shadow: var(--shadow-step);
+}
+
+.card[data-tier='SILVER'] {
+  --chest: var(--tier-silver);
+}
+
+.card[data-tier='GOLD'] {
+  --chest: var(--tier-gold);
+}
+
+.card[data-tier='LEGENDARY'] {
+  --chest: var(--cat-spirituality);
+}
+
+.chest {
+  display: block;
+  width: 5rem;
+  height: auto;
+}
+
+.text {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.kicker {
+  color: var(--pencil);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: var(--text-xl);
+  line-height: 1.1;
+}
+
+.detail {
+  font-size: var(--text-s);
+}
+
+.error {
+  color: var(--danger);
+  font-size: var(--text-s);
+  font-weight: 700;
+}
+
+.button {
+  justify-self: start;
+  margin-top: var(--space-2);
+}
+
+/* Progresso do baú da semana: discreto, abaixo dos desafios */
+.progress {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--paper-sunk);
+}
+
+.mini {
+  display: block;
+  width: 3rem;
+  height: auto;
+}
+
+.progressTitle {
+  font-size: var(--text-m);
+}
+
+.pips {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pips li {
+  height: 0.6rem;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+}
+
+.pips li[data-status='FULFILLED'] {
+  background: var(--done-strong);
+}
+
+.pips li[data-status='FAILED'] {
+  background: var(--danger);
+}
+
+.pips li[data-status='FROZEN'] {
+  background: var(--xp);
+}
+
+.pips li[data-status='REST'] {
+  background: var(--rule);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chest {
+    animation: chest-wiggle 3s ease-in-out infinite;
+    transform-origin: 50% 100%;
+  }
+}
+
+@keyframes chest-wiggle {
+  0%,
+  70%,
+  100% {
+    transform: rotate(0);
+  }
+  75% {
+    transform: rotate(-6deg);
+  }
+  80% {
+    transform: rotate(6deg);
+  }
+  85% {
+    transform: rotate(-4deg);
+  }
+  90% {
+    transform: rotate(3deg);
+  }
+}

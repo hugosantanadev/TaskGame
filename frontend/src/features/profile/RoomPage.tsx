@@ -1,15 +1,23 @@
 import { asApiError } from '../../api/errors'
+import { useCurrentUser } from '../../auth/context'
 import { Button, ButtonLink } from '../../components/Button'
 import { PageTitle } from '../../components/PageTitle'
+import { wornCodes } from '../../game/pixel/items'
 import { itemKind } from '../../lib/collection'
+import { hourIn, safeTimeZone, timeOfDay } from '../../lib/datetime'
+import { useNow } from '../../lib/useNow'
 import { ItemSticker } from '../store/ItemSticker'
-import { useRemoveItem, useRoom } from '../store/storeApi'
+import { useCharacter, useRemoveItem, useRoom } from '../store/storeApi'
 import styles from './Collection.module.css'
+import { RoomScene } from './RoomScene'
 
-/** O quarto, por enquanto como lista (RF19). A ilustração futura vai consumir estes mesmos itens. */
+/** O quarto desenhado (RF19) e, embaixo, a lista do que está nele para tirar. */
 export function RoomPage() {
   const room = useRoom()
   const remove = useRemoveItem()
+  const character = useCharacter()
+  const user = useCurrentUser()
+  const period = timeOfDay(hourIn(safeTimeZone(user.timeZone), useNow()))
 
   return (
     <div className={styles.page}>
@@ -18,7 +26,15 @@ export function RoomPage() {
         Voltar ao perfil
       </ButtonLink>
       <h1 className={styles.heading}>Seu quarto</h1>
-      <p className={styles.note}>Os móveis e as decorações que você colocou aqui. Por enquanto o quarto é uma lista; a ilustração vem depois.</p>
+      {room.data && (
+        <RoomScene
+          items={room.data.items.map((placed) => placed.item.code)}
+          wearing={wornCodes(character.data)}
+          sleeping={character.data?.state === 'SLEEPING'}
+          period={period}
+        />
+      )}
+      <p className={styles.note}>A janela acompanha a hora do dia. Compre móveis e decorações na loja e coloque aqui.</p>
       {room.isPending && <p className={styles.note}>Carregando…</p>}
       {(room.error ?? remove.error) && (
         <p className={styles.error} role="alert">
@@ -28,7 +44,7 @@ export function RoomPage() {
       {room.data && room.data.items.length === 0 && (
         <div className={styles.empty}>
           <p className={styles.emptyTitle}>O quarto está vazio.</p>
-          <p className={styles.note}>Compre um móvel ou uma decoração na loja e coloque aqui.</p>
+          <p className={styles.note}>Por enquanto é só você e a janela. Que tal uma caneca de café?</p>
         </div>
       )}
       {room.data && room.data.items.length > 0 && (

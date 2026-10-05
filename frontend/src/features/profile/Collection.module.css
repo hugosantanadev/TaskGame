@@ -11,9 +11,8 @@
 .heading {
   font-family: var(--font-display);
   font-size: var(--text-2xl);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.1;
-  letter-spacing: -0.02em;
 }
 
 .note,
@@ -45,7 +44,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3);
-  border: 1px solid var(--rule);
+  border: 2px solid var(--ink);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
 }
@@ -72,7 +71,7 @@
   width: 3rem;
   height: 3rem;
   border: 2px solid var(--pencil);
-  border-radius: 50%;
+  border-radius: var(--radius-s);
   color: var(--pencil);
   font-size: 1.375rem;
 }
@@ -89,11 +88,13 @@
 }
 
 .bar {
-  height: 0.5rem;
+  height: 0.75rem;
   margin-top: var(--space-1);
   overflow: hidden;
-  border-radius: 999px;
-  background: var(--rule);
+  padding: 2px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-s);
+  background: var(--paper-sunk);
 }
 
 .bar span {
@@ -140,7 +141,7 @@
   place-items: center;
   width: 4rem;
   height: 4rem;
-  border-radius: 50%;
+  border-radius: var(--radius-s);
   background: var(--pen);
   color: var(--on-pen);
   font-size: 2rem;
@@ -194,17 +195,20 @@
 
 .attributeBar {
   grid-column: 1 / -1;
-  height: 0.625rem;
+  height: 0.875rem;
   overflow: hidden;
-  border-radius: 999px;
-  background: var(--rule);
+  padding: 2px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-s);
+  background: var(--paper-sunk);
 }
 
 .attributeBar span {
   display: block;
   height: 100%;
-  border-radius: 999px;
-  background: var(--attribute);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 8px, var(--paper-sunk) 8px 10px),
+    var(--attribute);
 }
 
 .attributeMeta {

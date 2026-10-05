@@ -1,18 +1,20 @@
+/* Barra de jogo: faixa branca com contorno de pixel em cima e a aba atual como um bloco colorido */
 .nav {
   position: fixed;
   inset: auto 0 0;
   z-index: 10;
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-top: var(--px) solid var(--ink);
   background: var(--paper-raised);
-  border-top: 1px solid var(--rule);
 }
 
 .list {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-1);
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: 0;
+  padding: var(--space-1) var(--space-2);
   list-style: none;
 }
 
@@ -22,11 +24,19 @@
   align-items: center;
   justify-content: center;
   gap: 0.125rem;
-  height: var(--nav-height);
+  height: calc(var(--nav-height) - var(--space-2));
   padding: 0 0.125rem;
+  border: var(--px) solid transparent;
+  border-radius: var(--radius-m);
   color: var(--pencil);
+  font-family: var(--font-display);
   font-size: var(--text-xs);
   text-decoration: none;
+  transition: transform 100ms ease-out;
+}
+
+.link:active {
+  transform: translateY(2px);
 }
 
 .link:focus-visible {
@@ -45,14 +55,16 @@
   white-space: nowrap;
 }
 
-/* Aba atual: tinta de caneta e um sublinhado firme */
 .active {
-  color: var(--pen);
+  border-color: var(--ink);
+  background: var(--coin);
+  box-shadow: inset 0 -3px 0 var(--coin-shade);
+  color: var(--ink);
   font-weight: 700;
 }
 
-.active .label {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.3em;
+@media (prefers-reduced-motion: no-preference) {
+  .active .icon {
+    animation: bob 1.6s ease-in-out infinite;
+  }
 }

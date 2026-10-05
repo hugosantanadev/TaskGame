@@ -4,10 +4,11 @@ import { useSearchParams } from 'react-router'
 import { asApiError } from '../../api/errors'
 import type { InventoryItem, StoreItem, StoreItemCategory } from '../../api/types'
 import { Button, ButtonLink } from '../../components/Button'
-import { CheckIcon, CoinIcon, ShieldIcon } from '../../components/gameIcons'
+import { CheckIcon } from '../../components/gameIcons'
 import { PageTitle } from '../../components/PageTitle'
 import { Sheet } from '../../components/Sheet'
 import { ToggleGroup } from '../../components/ToggleGroup'
+import { PixelIcon } from '../../game/pixel/PixelSprite'
 import { itemKind, SLOT_LABEL } from '../../lib/collection'
 import { plural } from '../../lib/days'
 import { ItemSticker } from './ItemSticker'
@@ -52,7 +53,7 @@ export function StorePage() {
         <h1 className={styles.heading}>Loja</h1>
         {wallet.data && (
           <p className={styles.balance}>
-            <CoinIcon /> {balance}
+            <PixelIcon name="coin" /> {balance}
             <span className="visually-hidden"> moedas</span>
           </p>
         )}
@@ -110,7 +111,7 @@ function FreezeCard({ balance }: { balance: number }) {
   return (
     <section className={styles.freeze} aria-labelledby="freeze-title">
       <span className={styles.freezeIcon} aria-hidden="true">
-        <ShieldIcon />
+        <PixelIcon name="shield" />
       </span>
       <div className={styles.freezeText}>
         <h2 id="freeze-title" className={styles.name}>
@@ -130,7 +131,7 @@ function FreezeCard({ balance }: { balance: number }) {
       </div>
       <div className={styles.freezeBuy}>
         <span className={styles.price}>
-          <CoinIcon /> {freezePrice}
+          <PixelIcon name="coin" /> {freezePrice}
           <span className="visually-hidden"> moedas</span>
         </span>
         <Button
@@ -157,7 +158,7 @@ function StoreItemCard({ item, balance, onBuy }: { item: StoreItem; balance: num
       <p className={styles.description}>{item.description}</p>
       <div className={styles.footer}>
         <span className={styles.price}>
-          <CoinIcon /> {item.price}
+          <PixelIcon name="coin" /> {item.price}
           <span className="visually-hidden"> moedas</span>
         </span>
         {item.owned ? (
@@ -193,7 +194,7 @@ function PurchaseConfirm({ item, balance, onDone }: { item: StoreItem; balance: 
         </p>
       )}
       <Button block disabled={purchase.isPending} onClick={() => purchase.mutate(item, { onSuccess: onDone })}>
-        <CoinIcon /> Comprar por {item.price}
+        <PixelIcon name="coin" /> Comprar por {item.price}
       </Button>
     </div>
   )

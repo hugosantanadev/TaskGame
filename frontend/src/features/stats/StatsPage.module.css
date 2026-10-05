@@ -8,7 +8,6 @@
   font-size: var(--text-2xl);
   font-weight: 800;
   line-height: 1.1;
-  letter-spacing: -0.02em;
 }
 
 .section {
@@ -84,7 +83,7 @@
   width: 2.75rem;
   height: 2.75rem;
   border: 2px solid var(--rule);
-  border-radius: 50%;
+  border-radius: var(--radius-s);
   background: var(--paper-raised);
   color: var(--ink);
   font-size: 1.25rem;
@@ -158,7 +157,7 @@
   width: 2.25rem;
   height: 2.25rem;
   border: 2px solid var(--rule);
-  border-radius: 50%;
+  border-radius: var(--radius-s);
   color: var(--pencil);
   font-size: 1.125rem;
 }
@@ -245,7 +244,7 @@
   gap: var(--space-1);
   padding: var(--space-1) var(--space-3);
   border: 2px solid var(--ink);
-  border-radius: 999px;
+  border-radius: var(--radius-m);
   background: var(--coin);
   color: var(--coin-ink);
   font-size: var(--text-s);
@@ -259,7 +258,7 @@
   align-content: start;
   gap: 0.125rem;
   padding: var(--space-3);
-  border: 1px solid var(--rule);
+  border: 2px solid var(--ink);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
 }
@@ -299,7 +298,7 @@
   gap: var(--space-3);
   min-height: 2.75rem;
   padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
+  border: 2px solid var(--ink);
   border-left: 6px solid var(--tape);
   border-radius: var(--radius-s);
   background: var(--paper-raised);

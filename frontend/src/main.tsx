@@ -4,7 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router/dom'
 
 import '@fontsource-variable/atkinson-hyperlegible-next'
-import '@fontsource-variable/bricolage-grotesque'
+import '@fontsource-variable/pixelify-sans'
 import './styles/tokens.css'
 import './styles/global.css'
 

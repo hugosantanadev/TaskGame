@@ -5,19 +5,25 @@ import { asApiError } from '../../api/errors'
 import type { Occurrence, Period, Today } from '../../api/types'
 import { useCurrentUser } from '../../auth/context'
 import { Button, ButtonLink } from '../../components/Button'
-import { CoinIcon, FlameIcon, PlusIcon, ShieldIcon, StarIcon } from '../../components/gameIcons'
+import { PlusIcon } from '../../components/gameIcons'
 import { PageTitle } from '../../components/PageTitle'
 import { RankBadge } from '../../components/RankBadge'
+import { wornCodes } from '../../game/pixel/items'
+import { PixelIcon } from '../../game/pixel/PixelSprite'
 import { readSeenRank, writeSeenRank } from '../../game/rankMemory'
 import { publishReward } from '../../game/rewardFeedback'
 import { sameRank } from '../../lib/rank'
 import { DAY_PERIODS, describeDay, hourIn, safeTimeZone, timeOfDay } from '../../lib/datetime'
-import { addDays, formatTime, minutesOf, plural } from '../../lib/days'
+import { addDays, formatTime, minutesOf, plural, weekStartOf } from '../../lib/days'
 import { useNow } from '../../lib/useNow'
+import { ChestCard, ChestProgress } from '../chest/ChestCard'
+import { useWeekSummary } from '../stats/statsApi'
+import { useCharacter } from '../store/storeApi'
 import { ChallengesPanel } from './ChallengesPanel'
 import { CompleteSheet } from './CompleteSheet'
 import { DayTabs } from './DayTabs'
 import { OccurrenceRow } from './OccurrenceRow'
+import { TodayHero } from './TodayHero'
 import styles from './TodayPage.module.css'
 import { useToday } from './todayApi'
 
@@ -33,6 +39,7 @@ export function TodayPage() {
   const now = useNow()
   const zone = safeTimeZone(user.timeZone)
   const today = useToday()
+  const character = useCharacter()
   const [selected, setSelected] = useState<Occurrence | null>(null)
   const day = describeDay(now, zone)
   const period: Period = timeOfDay(hourIn(zone, now))
@@ -51,61 +58,51 @@ export function TodayPage() {
   }, [rank, user.id])
 
   return (
-    <div className={styles.page} data-period={period}>
+    <div className={styles.page}>
       <PageTitle title="Hoje" />
-      <header className={styles.sky}>
-        <p className={styles.greeting}>
-          {GREETINGS[period]}, {firstName}.
-        </p>
-        <h1 className={styles.date}>
-          <span className="visually-hidden">
-            Hoje, {day.weekday}, {day.day} de {day.month} de {day.year}
-          </span>
-          <span className={styles.day} aria-hidden="true">
-            {day.day}
-          </span>
-          <span className={styles.dateText} aria-hidden="true">
-            <span className={styles.weekday}>{day.weekday}</span>
-            <span className={styles.month}>
-              {day.month} de {day.year}
-            </span>
-          </span>
-        </h1>
-        {data && (
-          <ul className={styles.chips} aria-label="Seu placar">
-            <li className={styles.rankChip}>
-              <Link to="/ranking/elo" className={styles.rankLink} aria-label={`Seu elo: ver elos e recompensas`}>
-                <RankBadge rank={data.rank} size="s" />
-              </Link>
-            </li>
-            <li className={styles.streakChip}>
-              <FlameIcon /> {plural(data.streak.current, 'dia', 'dias')}
-              <span className="visually-hidden"> de sequência</span>
-              {data.streak.freezes > 0 && (
-                <span className={styles.shields}>
-                  <ShieldIcon aria-hidden="true" /> {data.streak.freezes}
-                  <span className="visually-hidden">
-                    {' '}
-                    {data.streak.freezes === 1 ? 'protetor guardado' : 'protetores guardados'}
-                  </span>
+      <TodayHero
+        period={period}
+        greeting={`${GREETINGS[period]}, ${firstName}.`}
+        day={day}
+        wearing={wornCodes(character.data)}
+        state={character.data?.state ?? 'IDLE'}
+        title={character.data?.activeTitle ?? user.activeTitle}
+      />
+      {data && (
+        <ul className={styles.chips} aria-label="Seu placar">
+          <li className={styles.rankChip}>
+            <Link to="/ranking/elo" className={styles.rankLink} aria-label="Seu elo: ver elos e recompensas">
+              <RankBadge rank={data.rank} size="s" />
+            </Link>
+          </li>
+          <li className={styles.streakChip}>
+            <PixelIcon name="flame" /> {data.streak.current}
+            <span className="visually-hidden"> {data.streak.current === 1 ? 'dia' : 'dias'} de sequência</span>
+            {data.streak.freezes > 0 && (
+              <span className={styles.shields}>
+                <PixelIcon name="shield" /> {data.streak.freezes}
+                <span className="visually-hidden">
+                  {' '}
+                  {data.streak.freezes === 1 ? 'protetor guardado' : 'protetores guardados'}
                 </span>
-              )}
-            </li>
-            <li className={styles.coinChip}>
-              <CoinIcon /> {data.walletBalance}
-              <span className="visually-hidden"> moedas</span>
-            </li>
-            <li className={styles.pointChip}>
-              <StarIcon /> {plural(data.progress.points, 'ponto', 'pontos')} hoje
-            </li>
-          </ul>
-        )}
-        {data && data.streak.lastFrozenDate === addDays(data.date, -1) && (
-          <p className={styles.frozenNote}>
-            <ShieldIcon aria-hidden="true" /> Seu protetor salvou a sequência ontem.
-          </p>
-        )}
-      </header>
+              </span>
+            )}
+          </li>
+          <li className={styles.coinChip}>
+            <PixelIcon name="coin" /> {data.walletBalance}
+            <span className="visually-hidden"> moedas</span>
+          </li>
+          <li className={styles.pointChip}>
+            <PixelIcon name="star" /> {data.progress.points}
+            <span className="visually-hidden"> pontos hoje</span>
+          </li>
+        </ul>
+      )}
+      {data && data.streak.lastFrozenDate === addDays(data.date, -1) && (
+        <p className={styles.frozenNote}>
+          <PixelIcon name="shield" /> Seu protetor salvou a sequência ontem.
+        </p>
+      )}
 
       <DayTabs />
 
@@ -131,6 +128,8 @@ function DayContent({ data, period, onSelect }: { data: Today; period: Period; o
 
   return (
     <>
+      {data.pendingChest && <ChestCard chest={data.pendingChest} />}
+
       <ProgressPanel data={data} />
 
       {next && (
@@ -193,6 +192,8 @@ function DayContent({ data, period, onSelect }: { data: Today; period: Period; o
 
       <ChallengesPanel challenges={data.challenges} />
 
+      <WeekChest date={data.date} />
+
       <div className={styles.actions}>
         <ButtonLink to="/missoes/nova">
           <PlusIcon /> Nova missão
@@ -203,6 +204,12 @@ function DayContent({ data, period, onSelect }: { data: Today; period: Period; o
       </div>
     </>
   )
+}
+
+/** O baú que esta semana está valendo, para dar vontade de cumprir mais um dia. */
+function WeekChest({ date }: { date: string }) {
+  const summary = useWeekSummary(weekStartOf(date))
+  return summary.data ? <ChestProgress summary={summary.data} /> : null
 }
 
 function ProgressPanel({ data }: { data: Today }) {

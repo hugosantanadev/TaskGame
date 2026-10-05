@@ -1,10 +1,14 @@
 .page {
+  background:
+    radial-gradient(circle, var(--dot) 1.5px, transparent 1.6px) 0 0 / 22px 22px,
+    var(--paper);
   display: grid;
   align-content: start;
   gap: var(--space-6);
   max-width: 26rem;
   min-height: 100dvh;
   margin: 0 auto;
+  box-sizing: border-box;
   padding: calc(env(safe-area-inset-top, 0px) + 3rem) var(--space-4) calc(env(safe-area-inset-bottom, 0px) + var(--space-8));
 }
 
@@ -18,22 +22,26 @@
   color: var(--pencil);
 }
 
-/* Folha de caderno com a linha de margem vermelha */
-.sheet {
-  position: relative;
-  padding: var(--space-6) var(--space-4) var(--space-6) 3rem;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-m);
-  background: var(--paper-raised);
+.home {
+  width: fit-content;
+  text-decoration: none;
 }
 
-.sheet::before {
-  content: '';
+/* Painel de jogo: contorno de tinta, sombra em degrau e o mascote espiando por cima */
+.sheet {
+  position: relative;
+  margin-top: var(--space-6);
+  padding: var(--space-6) var(--space-4);
+  border: var(--px) solid var(--ink);
+  border-radius: var(--radius-l);
+  background: var(--paper-raised);
+  box-shadow: var(--shadow-step);
+}
+
+.avatar {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 2rem;
-  border-left: 2px solid var(--margin-line);
+  top: -3.25rem;
+  right: var(--space-4);
 }
 
 .title {

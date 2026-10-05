@@ -1,3 +1,4 @@
+/* Abas de jogo: botõezinhos que afundam quando escolhidos */
 .group {
   display: flex;
   flex-wrap: wrap;
@@ -7,17 +8,20 @@
 .option {
   min-height: 2.5rem;
   padding: 0 var(--space-4);
-  border: 2px solid var(--rule);
-  border-radius: 999px;
+  border: var(--px) solid var(--ink);
+  border-radius: var(--radius-m);
   background: var(--paper-raised);
+  box-shadow: 0 3px 0 var(--ink);
   color: var(--ink);
-  font: inherit;
+  font-family: var(--font-display);
   font-weight: 700;
   cursor: pointer;
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out;
 }
 
 .option[aria-pressed='true'] {
-  border-color: var(--pen);
+  transform: translateY(3px);
   background: var(--pen);
+  box-shadow: 0 0 0 var(--ink);
   color: var(--on-pen);
 }

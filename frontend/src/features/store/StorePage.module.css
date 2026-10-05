@@ -15,7 +15,6 @@
   font-size: var(--text-2xl);
   font-weight: 800;
   line-height: 1.1;
-  letter-spacing: -0.02em;
 }
 
 .balance {
@@ -25,7 +24,7 @@
   min-height: 2.25rem;
   padding: 0 var(--space-3);
   border: 2px solid var(--ink);
-  border-radius: 999px;
+  border-radius: var(--radius-m);
   background: var(--coin);
   color: var(--coin-ink);
   font-size: var(--text-l);
@@ -114,11 +113,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.price svg {
-  color: var(--coin-ink);
-  background: var(--coin);
-  border-radius: 50%;
-}
 
 .buy {
   min-height: 2.5rem;
@@ -138,7 +132,7 @@
   color: var(--done-ink);
   background: var(--done);
   padding: 0.125rem var(--space-2);
-  border-radius: 999px;
+  border-radius: var(--radius-m);
 }
 
 .missing {
@@ -182,7 +176,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3);
-  border: 1px solid var(--rule);
+  border: 2px solid var(--ink);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
   color: var(--ink);
@@ -221,10 +215,10 @@
   width: 3rem;
   height: 3rem;
   border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: var(--streak);
+  border-radius: var(--radius-s);
+  background: var(--pen-soft);
   color: var(--streak-ink);
-  font-size: 1.5rem;
+  font-size: 1.75rem;
 }
 
 .freezeText {

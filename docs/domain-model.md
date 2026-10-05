@@ -20,6 +20,7 @@ erDiagram
     USER ||--o{ INVENTORY_ITEM : "possui"
     USER ||--|| ROOM : "tem"
     USER ||--|| CHARACTER : "tem"
+    USER ||--o{ WEEKLY_CHEST : "abre"
     TASK ||--o{ TASK_SCHEDULE : "recorre em"
     TASK ||--o{ TASK_OCCURRENCE : "gera"
     WEEKLY_PLAN ||--o{ TASK_OCCURRENCE : "agrupa"
@@ -28,6 +29,8 @@ erDiagram
     TASK_OCCURRENCE ||--o{ XP_EVENT : "rende ou custa"
     DAILY_CHALLENGE ||--o| XP_EVENT : "paga"
     DAILY_CHALLENGE ||--o| COIN_TRANSACTION : "paga"
+    WEEKLY_CHEST ||--o| XP_EVENT : "paga"
+    WEEKLY_CHEST ||--o| COIN_TRANSACTION : "paga"
     ACHIEVEMENT ||--o{ USER_ACHIEVEMENT : "concede"
     STORE_ITEM ||--o{ INVENTORY_ITEM : "origina"
     INVENTORY_ITEM ||--o| COIN_TRANSACTION : "pago por"
@@ -403,3 +406,36 @@ Restrições: `UNIQUE (user_id, challenge_date, code)`; `CHECK (code IN ('EARLY_
 - `streaks` ganha `freezes` (INTEGER, obrigatória, `CHECK (freezes >= 0)`) e `last_frozen_date` (DATE, opcional).
 - `daily_results.status` aceita FROZEN: falha salva por um protetor.
 - `coin_transactions.reason` aceita STREAK_FREEZE, que, como PURCHASE, é sempre negativo: `CHECK ((reason IN ('PURCHASE', 'STREAK_FREEZE')) = (amount < 0))`.
+
+## Títulos, baú semanal e planos (migration V10)
+
+### Em `users`
+
+| Coluna | Tipo | Regras |
+|---|---|---|
+| active_title | VARCHAR(30) | opcional; código do título exibido (ex.: `STUDY_MASTER`). Só aceita um título já ganho |
+| plan | VARCHAR(10) | obrigatória, padrão `FREE`; `CHECK (plan IN ('FREE', 'PRO'))` |
+
+Os títulos em si não têm tabela: são um enum (`Title`), três por atributo, nos níveis 3, 6 e 10, e saem do nível atual de cada atributo. Como atributo só sobe, título ganho não se perde. O nome exibido ("Mestre nos estudos") fica no app, a partir do código.
+
+### weekly_chests
+
+| Coluna | Tipo | Regras |
+|---|---|---|
+| id | UUID | PK |
+| user_id | UUID | obrigatória, FK → users (on delete cascade) |
+| week_start | DATE | obrigatória; a segunda-feira da semana premiada |
+| fulfilled_days | INTEGER | obrigatória; dias cumpridos naquela semana (0 a 7) |
+| tier | VARCHAR(10) | obrigatória; NONE, WOOD, SILVER, GOLD ou LEGENDARY |
+| coins | INTEGER | obrigatória |
+| xp | INTEGER | obrigatória |
+| item_code | VARCHAR(40) | opcional; item da loja sorteado (só no ouro e no lendário) |
+| created_at | TIMESTAMPTZ | obrigatória |
+| opened_at | TIMESTAMPTZ | opcional; nula enquanto o baú está fechado |
+
+Restrições: `UNIQUE (user_id, week_start)`; `CHECK (EXTRACT(ISODOW FROM week_start) = 1)`; `CHECK (fulfilled_days BETWEEN 0 AND 7 AND coins >= 0 AND xp >= 0)`. Abrir trava a linha (`SELECT … FOR UPDATE`): duas abas abrindo juntas pagam uma vez só.
+
+### Extratos
+
+- `xp_events` ganha `chest_id` (FK → weekly_chests, on delete set null) e o motivo CHEST_OPENED, com índice único parcial em `chest_id`.
+- `coin_transactions` ganha `chest_id` e o motivo CHEST_REWARD, também com índice único parcial: cada baú paga uma vez.

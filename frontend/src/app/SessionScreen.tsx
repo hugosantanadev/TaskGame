@@ -17,6 +17,11 @@ export function SessionScreen() {
         </div>
       ) : (
         <p className={styles.loading} aria-live="polite">
+          <span className={styles.dots} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
           Abrindo sua agenda…
         </p>
       )}

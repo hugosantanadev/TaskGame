@@ -4,21 +4,24 @@
   gap: var(--space-1);
   padding: var(--space-1);
   border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: var(--paper-raised);
+  border-radius: var(--radius-m);
+  background: var(--paper-sunk);
 }
 
 .tab {
   display: grid;
   place-items: center;
   min-height: 2.5rem;
-  border-radius: 999px;
-  color: var(--ink);
+  border-radius: var(--radius-s);
+  color: var(--pencil);
+  font-family: var(--font-display);
   font-weight: 700;
   text-decoration: none;
 }
 
+/* Aba atual: bloco de tinta, como a opção marcada num menu de jogo */
 .active {
   background: var(--ink);
-  color: var(--paper-raised);
+  box-shadow: inset 0 -3px 0 var(--pen);
+  color: #ffffff;
 }

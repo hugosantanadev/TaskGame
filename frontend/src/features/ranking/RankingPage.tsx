@@ -9,6 +9,7 @@ import { RankBadge } from '../../components/RankBadge'
 import { ToggleGroup } from '../../components/ToggleGroup'
 import { formatShortDate, plural } from '../../lib/days'
 import { rankProgress } from '../../lib/rank'
+import { isMasterTitle, titleLabel } from '../../lib/titles'
 import styles from './RankingPage.module.css'
 import { useMyRank, useRanking } from './rankingApi'
 
@@ -89,7 +90,14 @@ export function RankingPage() {
                       <span className={styles.nameText}>{entry.displayName}</span>
                       {entry.you && <span className={styles.youTag}>você</span>}
                     </span>
-                    <RankBadge rank={entry.rank} size="s" />
+                    <span className={styles.meta}>
+                      <RankBadge rank={entry.rank} size="s" />
+                      {entry.title && (
+                        <span className={styles.title} data-master={isMasterTitle(entry.title) || undefined}>
+                          {titleLabel(entry.title)}
+                        </span>
+                      )}
+                    </span>
                   </span>
                   <span className={styles.value}>{valueOf(first.metric, entry.value)}</span>
                 </li>

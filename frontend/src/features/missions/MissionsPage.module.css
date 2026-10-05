@@ -16,7 +16,6 @@
   font-size: var(--text-2xl);
   font-weight: 800;
   line-height: 1.1;
-  letter-spacing: -0.02em;
 }
 
 .intro,
@@ -43,7 +42,7 @@
   display: grid;
   gap: var(--space-1);
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--rule);
+  border: 2px solid var(--ink);
   border-left: 8px solid var(--cat);
   border-radius: var(--radius-m);
   background: var(--paper-raised);

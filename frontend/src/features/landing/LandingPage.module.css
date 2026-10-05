@@ -1,0 +1,305 @@
+/*
+ * Página pública: fundo branco com uma grade de pontos bem clara (papel quadriculado de jogo), blocos com
+ * contorno de tinta e sombra em degrau. No computador o topo vira duas colunas.
+ */
+.page {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle, var(--dot) 1.5px, transparent 1.6px) 0 0 / 22px 22px,
+    var(--paper);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + var(--space-4)) var(--space-4) var(--space-4);
+}
+
+.topButton {
+  min-height: 2.5rem;
+  padding: 0 var(--space-4);
+}
+
+.main {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-4) var(--space-8);
+}
+
+.hero {
+  display: grid;
+  gap: var(--space-6);
+  align-items: center;
+}
+
+.heroText {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.kicker {
+  width: fit-content;
+  padding: 0.125rem var(--space-2);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-s);
+  background: var(--coin);
+  font-family: var(--font-display);
+  font-size: var(--text-s);
+  font-weight: 700;
+}
+
+.headline {
+  font-size: clamp(2.5rem, 9vw, 4.25rem);
+  line-height: 0.95;
+}
+
+.lead {
+  max-width: 34rem;
+  color: var(--pencil);
+  font-size: var(--text-l);
+  line-height: 1.45;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.sceneFrame {
+  overflow: hidden;
+  border: var(--px) solid var(--ink);
+  border-radius: var(--radius-l);
+  background: #73d6ff;
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.scene {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.sectionTitle {
+  font-size: var(--text-xl);
+}
+
+.steps {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  position: relative;
+  padding: var(--space-3) var(--space-4) var(--space-3) 3.75rem;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--paper);
+  counter-increment: step;
+}
+
+/* O número do passo num bloquinho azul, como a fase de um jogo */
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  top: 50%;
+  left: var(--space-3);
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-s);
+  background: var(--pen);
+  box-shadow: inset 0 -3px 0 var(--pen-strong);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  transform: translateY(-50%);
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.feature {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--paper);
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+.featureIcon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-s);
+  background: var(--paper-sunk);
+  font-size: 1.5rem;
+}
+
+.featureTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-l);
+}
+
+.featureText {
+  color: var(--pencil);
+}
+
+.plans {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  border: var(--px) solid var(--ink);
+  border-radius: var(--radius-l);
+  background: var(--paper);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.plan[data-soon] {
+  background: var(--paper-sunk);
+  box-shadow: none;
+  border-style: dashed;
+}
+
+.planName {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+}
+
+.soon {
+  padding: 0 var(--space-2);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-s);
+  background: var(--xp);
+  font-size: var(--text-xs);
+}
+
+.price {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+}
+
+.perks {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.perks li {
+  padding-left: 1.5rem;
+  background: linear-gradient(var(--done-strong), var(--done-strong)) 0.25rem 0.45em / 0.6rem 0.6rem no-repeat;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) calc(env(safe-area-inset-bottom, 0px) + var(--space-6));
+  border-top: 2px solid var(--ink);
+}
+
+.footerLinks {
+  display: flex;
+  gap: var(--space-4);
+}
+
+@media (min-width: 52rem) {
+  .hero {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cloud {
+    animation: hero-cloud 9s ease-in-out infinite alternate;
+  }
+
+  .cloudSlow {
+    animation: hero-cloud 13s ease-in-out infinite alternate-reverse;
+  }
+
+  .hop {
+    animation: hero-hop 1.2s steps(1) infinite;
+  }
+
+  .coinA {
+    animation: hero-coin 1.6s steps(2) infinite;
+  }
+
+  .coinB {
+    animation: hero-coin 1.6s steps(2) infinite 0.8s;
+  }
+}
+
+@keyframes hero-cloud {
+  to {
+    transform: translateX(14px);
+  }
+}
+
+@keyframes hero-hop {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes hero-coin {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}

@@ -7,7 +7,13 @@ export type User = {
   timeZone: string
   rankingVisible: boolean
   createdAt: string
+  /** Código do título exibido (ex.: STUDY_MASTER); null sem título. */
+  activeTitle: TitleCode | null
+  plan: Plan
 }
+
+/** Plano da conta. Hoje todo mundo é FREE e os limites estão desligados; o PRO é a base do SaaS. */
+export type Plan = 'FREE' | 'PRO'
 
 export type AuthResponse = {
   accessToken: string
@@ -136,6 +142,8 @@ export type Today = {
   onboarding: boolean
   rank: RankStatus
   challenges: DailyChallenge[]
+  /** Baú semanal ainda fechado; null se não houver. */
+  pendingChest: Chest | null
 }
 
 export type ChallengeCode = 'EARLY_BIRD' | 'ON_TIME' | 'PHOTO' | 'EXTRA_MILE' | 'VARIETY' | 'FULL_DAY' | 'MARATHON'
@@ -161,7 +169,7 @@ export type CompletionResult = {
   streak: { current: number; longest: number; increasedNow: boolean }
   unlockedAchievements: UnlockedAchievement[]
   xp: XpChange
-  attribute: { gained: number; leveledUp: boolean; status: AttributeStatus }
+  attribute: { gained: number; leveledUp: boolean; status: AttributeStatus; unlockedTitles: TitleCode[] }
   completedChallenges: DailyChallenge[]
 }
 
@@ -216,7 +224,35 @@ export type CharacterView = {
   state: CharacterState
   slots: { slot: CharacterSlot; item: InventoryItem | null }[]
   attributes: AttributeStatus[]
+  titles: TitleStatus[]
+  activeTitle: TitleCode | null
 }
+
+/** Títulos ganhos ao treinar atributos: três por atributo, nos níveis 3, 6 e 10. */
+export type TitleCode =
+  | 'STUDENT'
+  | 'SHARP_MIND'
+  | 'STUDY_MASTER'
+  | 'GYM_REGULAR'
+  | 'GYM_RAT'
+  | 'STRENGTH_MASTER'
+  | 'CURIOUS_READER'
+  | 'BOOKWORM'
+  | 'WISDOM_MASTER'
+  | 'SERENE_SOUL'
+  | 'STEADY_HEART'
+  | 'SPIRIT_MASTER'
+  | 'WELL_RESTED'
+  | 'FULL_ENERGY'
+  | 'REST_MASTER'
+  | 'HANDS_ON'
+  | 'BUILDER'
+  | 'CREATOR_MASTER'
+  | 'TIDY_HOME'
+  | 'ORGANIZED'
+  | 'DISCIPLINE_MASTER'
+
+export type TitleStatus = { code: TitleCode; attribute: Attribute; level: number; unlocked: boolean }
 
 export type Attribute = 'INTELLIGENCE' | 'STRENGTH' | 'WISDOM' | 'SPIRIT' | 'VITALITY' | 'CREATIVITY' | 'DISCIPLINE'
 
@@ -295,11 +331,42 @@ export type WeekSummary = {
   achievements: UnlockedAchievement[]
 }
 
+/** Uma missão vista de longe; `completionRate` null quando nada foi decidido ainda. */
+export type MissionSummary = {
+  taskId: string
+  name: string
+  category: TaskCategory
+  archived: boolean
+  completed: number
+  missed: number
+  completionRate: number | null
+  currentStreak: number
+  bestStreak: number
+  lastCompletedDate: string | null
+}
+
+/** A evolução de uma missão semana a semana (ex.: idas à academia). `bestMonth` é o 1º dia do mês. */
+export type MissionEvolution = {
+  summary: MissionSummary
+  weeks: HistoryPeriod[]
+  bestMonth: string | null
+  bestMonthCompleted: number
+  weeklyAverage: number
+  firstCompletedDate: string | null
+}
+
 /** Página da API (PageResponse do backend). */
 export type Page<T> = { content: T[]; page: number; size: number; totalElements: number; totalPages: number }
 
 export type RankingMetric = 'XP' | 'POINTS' | 'COMPLETED_TASKS' | 'COINS_EARNED' | 'STREAK'
-export type RankingEntry = { position: number; displayName: string; value: number; rank: RankRef; you: boolean }
+export type RankingEntry = {
+  position: number
+  displayName: string
+  title: TitleCode | null
+  value: number
+  rank: RankRef
+  you: boolean
+}
 
 /** `me.position` é onde a pessoa está (ou estaria, se oculta) entre os visíveis; null sem pontuação. */
 export type Ranking = {
@@ -370,3 +437,22 @@ export type Progression = {
   rewards: { tier: RankTier; item: StoreItem }[]
   recent: { amount: number; reason: XpReason; title: string | null; eventDate: string | null; createdAt: string }[]
 }
+
+// ---------------------------------------------------------------- Baú semanal e conta
+
+export type ChestTier = 'NONE' | 'WOOD' | 'SILVER' | 'GOLD' | 'LEGENDARY'
+
+/** Baú da semana que começou em `weekStart`; o item exato só aparece ao abrir. */
+export type Chest = {
+  id: string
+  weekStart: string
+  tier: ChestTier
+  fulfilledDays: number
+  coins: number
+  xp: number
+  hasItem: boolean
+  opened: boolean
+}
+
+/** `item` null quando o baú não trazia item ou quando ele virou moedas (a pessoa já tinha). */
+export type OpenedChest = { chest: Chest; coins: number; item: StoreItem | null; xp: XpChange; walletBalance: number }

@@ -1,75 +1,13 @@
 .page {
   display: grid;
   gap: var(--space-4);
-  --sky: var(--sky-morning);
-  --on-sky: var(--on-sky-day);
 }
 
-.page[data-period='AFTERNOON'] {
-  --sky: var(--sky-afternoon);
-}
-
-.page[data-period='SUNSET'] {
-  --sky: var(--sky-sunset);
-}
-
-.page[data-period='NIGHT'] {
-  --sky: var(--sky-night);
-  --on-sky: var(--on-sky-night);
-}
-
-/* O céu do dia: um bloco de cor chapada que acompanha o período, com o número do dia em destaque */
-.sky {
-  display: grid;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-4) var(--space-4);
-  border: 2px solid var(--ink);
-  border-radius: var(--radius-l);
-  background: var(--sky);
-  color: var(--on-sky);
-  box-shadow: 4px 4px 0 var(--ink);
-}
-
-.greeting {
-  font-weight: 700;
-}
-
-.date {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-weight: inherit;
-}
-
-.day {
-  font-family: var(--font-display);
-  font-size: var(--text-display);
-  font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
-}
-
-.dateText {
-  display: grid;
-  gap: 0.125rem;
-}
-
-.weekday {
-  font-family: var(--font-display);
-  font-size: var(--text-l);
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.month {
-  font-size: var(--text-s);
-}
-
+/* Placar: plaquinhas de jogo lado a lado, com ícones de pixel */
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: 0.375rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -79,17 +17,19 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  min-height: 2rem;
-  padding: 0 var(--space-3);
+  min-height: 2.25rem;
+  padding: 0 var(--space-2);
   border: 2px solid var(--ink);
-  border-radius: 999px;
+  border-radius: var(--radius-m);
+  box-shadow: 0 3px 0 var(--ink);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .streakChip {
-  background: var(--streak);
-  color: var(--streak-ink);
+  background: #ffe1d4;
 }
 
 .shields {
@@ -98,7 +38,7 @@
   gap: 0.125rem;
   margin-left: var(--space-1);
   padding-left: var(--space-2);
-  border-left: 2px solid currentColor;
+  border-left: 2px solid var(--ink);
 }
 
 .frozenNote {
@@ -121,20 +61,19 @@
 .rankLink {
   display: inline-flex;
   align-items: center;
-  min-height: 2rem;
-  padding: 0 var(--space-3) 0 var(--space-2);
+  min-height: 2.25rem;
+  padding: 0 var(--space-2) 0 0.375rem;
   color: inherit;
+  font-family: var(--font-text);
   text-decoration: none;
 }
 
 .coinChip {
-  background: var(--coin);
-  color: var(--coin-ink);
+  background: #fff1cf;
 }
 
 .pointChip {
-  background: var(--paper-raised);
-  color: var(--pen);
+  background: var(--pen-soft);
 }
 
 .loading {
@@ -164,17 +103,21 @@
 }
 
 .bar {
-  height: 0.875rem;
+  height: 1.25rem;
   overflow: hidden;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: var(--paper-raised);
+  padding: 2px;
+  border: var(--px) solid var(--ink);
+  border-radius: var(--radius-s);
+  background: var(--paper-sunk);
 }
 
+/* O preenchimento é cortado em blocos, como a barra de vida de um jogo */
 .bar span {
   display: block;
   height: 100%;
-  background: var(--done);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 10px, var(--paper-sunk) 10px 12px),
+    linear-gradient(var(--done) 0 50%, var(--done-strong) 50%);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -194,13 +137,20 @@
   gap: 0 var(--space-3);
   align-items: baseline;
   padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--pen);
+  border: var(--px) solid var(--ink);
   border-radius: var(--radius-m);
-  background: color-mix(in srgb, var(--pen) 10%, var(--paper-raised));
+  background: var(--pen-soft);
+  box-shadow: 0 4px 0 var(--ink);
   color: var(--ink);
   font: inherit;
   text-align: left;
   cursor: pointer;
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out;
+}
+
+.next:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--ink);
 }
 
 .nextLabel {
@@ -226,7 +176,7 @@
 .agenda {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--rule);
+  border: 2px solid var(--ink);
   border-radius: var(--radius-m);
   background: var(--paper-raised);
 }
@@ -273,9 +223,10 @@
 
 .now {
   padding: 0 var(--space-2);
+  border: 2px solid var(--ink);
   border-radius: var(--radius-s);
-  background: var(--sky);
-  color: var(--on-sky);
+  background: var(--coin);
+  color: var(--ink);
   font-family: var(--font-text);
   font-size: var(--text-xs);
 }

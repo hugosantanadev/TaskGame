@@ -2,11 +2,10 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35em;
-  font-family: var(--font-display);
-  font-weight: 750;
-  letter-spacing: -0.02em;
-  line-height: 1;
   color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1;
 }
 
 .medium {
@@ -17,20 +16,21 @@
   font-size: var(--text-2xl);
 }
 
+/* Plaquinha do mascote: amarelo de moeda, contorno de tinta e sombra em degrau */
 .mark {
-  width: 1.1em;
-  height: 1.1em;
+  display: grid;
   flex: none;
+  place-items: end center;
+  width: 1.4em;
+  height: 1.4em;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-m);
+  background: var(--coin);
+  box-shadow: 2px 2px 0 var(--ink);
 }
 
-.highlight {
-  fill: var(--highlight-yellow);
-}
-
-.check {
-  fill: none;
-  stroke: var(--pen);
-  stroke-width: 3.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.mascot {
+  width: 1.15em;
+  height: auto;
 }
